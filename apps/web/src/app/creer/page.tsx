@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import { BalanceAndPayouts } from "@/components/creator/BalanceAndPayouts";
 import { Messaging } from "@/components/creator/Messaging";
 import { NewVideoForm } from "@/components/creator/NewVideoForm";
+import { Stats } from "@/components/creator/Stats";
 import { VideoUploadWidget } from "@/components/creator/VideoUploadWidget";
 import { fetchMyVideos } from "@/lib/api-client";
 import { useAuthUser } from "@/lib/use-auth";
@@ -56,6 +57,10 @@ export default function CreatorPage() {
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
       <h1 className="text-3xl font-bold text-neutral-900 dark:text-neutral-50">Espace créateur</h1>
+
+      <div className="mt-6">
+        <Stats />
+      </div>
 
       <div className="mt-6">
         <BalanceAndPayouts />

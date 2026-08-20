@@ -23,6 +23,7 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> {
   void initState() {
     super.initState();
     _future = _apiClient.fetchVideo(widget.videoId);
+    _apiClient.recordVideoView(widget.videoId);
   }
 
   @override

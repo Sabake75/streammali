@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PurchaseButton } from "@/components/PurchaseButton";
+import { RecordView } from "@/components/RecordView";
 import { ReportButton } from "@/components/ReportButton";
 import { fetchVideo } from "@/lib/api";
 import { formatDuration, formatPrice } from "@/lib/format";
@@ -15,6 +16,7 @@ export default async function VideoDetailPage(props: PageProps<"/videos/[id]">) 
 
   return (
     <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
+      <RecordView videoId={video.id} />
       <Link href="/" className="text-sm text-neutral-500 hover:underline">
         ← Retour au catalogue
       </Link>

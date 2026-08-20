@@ -7,6 +7,7 @@ use App\Domain\Video\Enums\VideoCategory;
 use App\Domain\Video\Models\Video;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\VideoResource;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
@@ -37,5 +38,21 @@ class VideoCatalogController extends Controller
         abort_unless($video->status === VideoStatus::Approved, 404);
 
         return new VideoResource($video->load('creator'));
+    }
+
+    /**
+     * Deliberately separate from show(): the client fetches video data
+     * through a cached request (Next.js `revalidate: 60`, potentially served
+     * from a CDN too), so a side effect there would silently undercount
+     * every view served from cache. This endpoint is called directly by the
+     * client on each real page view instead, uncached.
+     */
+    public function view(Video $video): JsonResponse
+    {
+        abort_unless($video->status === VideoStatus::Approved, 404);
+
+        $video->increment('views_count');
+
+        return response()->json(['views_count' => $video->views_count]);
     }
 }

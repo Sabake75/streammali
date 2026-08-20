@@ -1,6 +1,7 @@
 import { getToken, type StoredUser } from "@/lib/auth-client";
 import type {
   CreatorBalance,
+  CreatorStats,
   CreatorVideo,
   Message,
   PaginatedResponse,
@@ -62,6 +63,17 @@ export async function logoutViewer(): Promise<void> {
   }).catch(() => undefined);
 }
 
+/**
+ * Records a real page view. Deliberately not part of fetchVideo (@/lib/api)
+ * — that fetch is cached (`next: { revalidate: 60 }`), so a side effect
+ * there would silently undercount every view served from cache. Called from
+ * a client component on mount instead, uncached, best-effort (never blocks
+ * or breaks the page if it fails).
+ */
+export async function recordVideoView(videoId: number): Promise<void> {
+  await fetch(`${API_BASE_URL}/videos/${videoId}/view`, { method: "POST" }).catch(() => undefined);
+}
+
 export async function purchaseVideo(
   videoId: number,
   payerMsisdn: string,
@@ -112,6 +124,10 @@ export async function requestPayout(input: {
 
 export async function reportVideo(videoId: number, reason: string): Promise<{ message: string }> {
   return postJson(`/videos/${videoId}/report`, { reason }, { authenticated: true });
+}
+
+export async function fetchCreatorStats(): Promise<CreatorStats> {
+  return getJson("/creator/stats");
 }
 
 export async function fetchMyMessages(): Promise<{ data: Message[] }> {

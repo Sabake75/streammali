@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import '../models/creator_stats.dart';
 import '../models/creator_video.dart';
 import '../models/message.dart';
 import '../models/paginated_response.dart';
@@ -74,6 +75,17 @@ class ApiClient {
 
     final json = jsonDecode(response.body) as Map<String, dynamic>;
     return Video.fromJson(json['data'] as Map<String, dynamic>);
+  }
+
+  /// Best-effort, never blocks or breaks the screen if it fails. Kept
+  /// separate from fetchVideo so a future caching layer there can't
+  /// silently swallow view increments (see the web client's RecordView).
+  Future<void> recordVideoView(int id) async {
+    try {
+      await http.post(Uri.parse('$baseUrl/videos/$id/view'));
+    } catch (_) {
+      // ignore — view tracking is not critical to the page working
+    }
   }
 
   Future<AuthResult> register({
@@ -214,6 +226,19 @@ class ApiClient {
 
     final json = jsonDecode(response.body) as Map<String, dynamic>;
     return CreatorVideoStatus.fromJson(json['source_status'] as Map<String, dynamic>);
+  }
+
+  Future<CreatorStats> fetchStats(String token) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/creator/stats'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+
+    if (response.statusCode != 200) {
+      throw ApiException(_extractErrorMessage(response));
+    }
+
+    return CreatorStats.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
   }
 
   Future<CreatorBalance> fetchBalance(String token) async {

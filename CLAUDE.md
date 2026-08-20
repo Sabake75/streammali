@@ -59,7 +59,7 @@ Référence complète : `CAHIER_DES_CHARGES_STREAMMALI.md`.
 
 ## État du projet
 
-**MVP fonctionnellement complet (2026-08-20)** — les trois profils ont un parcours de bout en bout sur les trois apps (API, web, mobile), testé en local à plusieurs reprises (dernier passage : 69/69 tests backend, `flutter analyze`/`test`/`build web` et `tsc`/`lint`/`build` propres). Détail par app dans `apps/{api,web,mobile}/README.md` et les `README.md` de chaque domaine métier (`apps/api/app/Domain/*/README.md`).
+**MVP fonctionnellement complet (2026-08-20)** — les trois profils ont un parcours de bout en bout sur les trois apps (API, web, mobile), testé en local à plusieurs reprises (dernier passage : 76/76 tests backend, `flutter analyze`/`test`/`build web` et `tsc`/`lint`/`build` propres). Détail par app dans `apps/{api,web,mobile}/README.md` et les `README.md` de chaque domaine métier (`apps/api/app/Domain/*/README.md`).
 
 Construit et vérifié :
 - **Inscription/auth** : Viewer par téléphone, Créateur avec pièce d'identité (stockage privé, consultable par un modérateur connecté). Token Bearer Sanctum partagé web/mobile. Tout champ téléphone (inscription, connexion, achat, retrait) est un indicatif pays + un champ chiffres seul, longueur plafonnée par pays via une bibliothèque de référence (`libphonenumber-js` côté web, `phone_numbers_parser` côté mobile) plutôt que des règles codées en dur — tous les pays sont proposés, pas seulement le Mali, pour les Maliens de la diaspora. Le mot de passe est un **code à 4 chiffres** (public peu habitué au mot de passe), toujours hashé (bcrypt) ; `POST /api/login` est limité à 5 tentatives/minute par téléphone+IP pour compenser le faible espace de combinaisons (10 000).
@@ -71,6 +71,7 @@ Construit et vérifié :
 - **Comptes** : suspension/blocage/réactivation par le modérateur, effectif immédiatement (connexion + tokens existants).
 - **Messagerie créateur ↔ modération** : fil unique par créateur (web + mobile côté créateur, action dédiée sur `/moderation/users` côté modérateur).
 - **Signalement de vidéo** : n'importe quel utilisateur connecté peut signaler une vidéo (motif obligatoire) depuis sa fiche (web + mobile) ; le modérateur voit un badge et la liste des motifs sur `/moderation/videos`, et dépublie via l'action "Refuser" déjà existante (pas de mécanisme séparé).
+- **Statistiques créateur** : dashboard vues/achats/revenus par vidéo + historique de revenu 14 jours (web + mobile), sur les données existantes (ledger, achats) plus un compteur de vues dédié, incrémenté par un endpoint séparé du fetch mis en cache pour ne pas sous-compter (voir `apps/api/app/Domain/Creator/README.md`).
 
 Deux intégrations tierces (`App\Domain\Payment\Gateways\OrangeMoneyGateway`, `App\Domain\Video\Gateways\CloudflareStreamGateway`) sont écrites contre la documentation publique de chaque fournisseur mais **jamais vérifiées avec de vrais credentials** — c'est le principal risque avant mise en production.
 
@@ -78,6 +79,6 @@ Deux intégrations tierces (`App\Domain\Payment\Gateways\OrangeMoneyGateway`, `A
 1. Obtenir un compte marchand Orange Money Mali (Orange Developer Center) et un compte Cloudflare Stream ; confirmer le contrat API exact de chacun et ajuster `OrangeMoneyGateway`/`CloudflareStreamGateway` si besoin.
 2. Choisir un hébergement (API Laravel + PostgreSQL + Redis, build Next.js, stores mobiles) et un pipeline de déploiement — rien n'est configuré à ce stade (pas de CI/CD, pas d'environnement de staging).
 3. Webhook Cloudflare (actuellement le statut n'est interrogé qu'à la demande, pas poussé).
-4. Fonctionnalités cahier des charges non prioritaires pour le MVP : aperçu gratuit avant achat, notation/commentaires, favoris/recommandations, statistiques créateur détaillées, gestion des catégories/mise en avant par le modérateur.
+4. Fonctionnalités cahier des charges non prioritaires pour le MVP : aperçu gratuit avant achat, notation/commentaires, favoris/recommandations, gestion des catégories/mise en avant par le modérateur.
 
 Les choix de stack (Laravel/PostgreSQL, Next.js, Flutter, Orange Money direct, Cloudflare Stream) sont ceux effectivement implémentés, plus indicatifs à ce stade.

@@ -82,7 +82,11 @@ Messagerie créateur ↔ modération (cahier des charges §5.1, détail dans `ap
 
 Signalement de vidéo (cahier des charges §5.2/§5.3, détail dans `app/Domain/Moderation/README.md`) : `POST /api/videos/{video}/report` — `{ reason }`, n'importe quel utilisateur connecté. Ne dépublie rien automatiquement : le back-office affiche un badge "Signalements" sur `/moderation/videos` et une action listant les motifs, la dépublication elle-même réutilise l'action "Refuser" déjà existante.
 
-Testé via `tests/Feature/` (`php artisan test`) — 69/69 au dernier passage, vérifié aussi manuellement contre PostgreSQL (inscription créateur avec vrai upload multipart, upload vidéo/lecture, calcul de commission, réservation du solde, échange de messages créateur/modérateur, signalement d'une vidéo).
+Statistiques créateur (détail dans `app/Domain/Creator/README.md`) :
+- `GET /api/creator/stats` — vues/achats/revenus par vidéo du créateur connecté, totaux, et un historique de revenu sur 14 jours.
+- `POST /api/videos/{video}/view` — incrémente `videos.views_count`. Volontairement séparé de `GET /api/videos/{video}` (mis en cache côté web par Next.js) pour ne pas sous-compter les vues servies depuis le cache ; appelé uniquement côté client (web/mobile), jamais depuis un rendu serveur ou caché.
+
+Testé via `tests/Feature/` (`php artisan test`) — 76/76 au dernier passage, vérifié aussi manuellement contre PostgreSQL (inscription créateur avec vrai upload multipart, upload vidéo/lecture, calcul de commission, réservation du solde, échange de messages créateur/modérateur, signalement d'une vidéo, comptage de vues et statistiques). Le comptage de vues a été vérifié à la fois en dev (`next dev`) et en build de production (`next build && next start`) : React Strict Mode double-invoque l'effet côté web en dev (2 requêtes `/view` par visite, artefact connu et documenté de React, sans impact en production où une visite produit bien une seule requête).
 
 Créer un utilisateur modérateur de test :
 

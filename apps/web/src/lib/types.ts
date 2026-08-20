@@ -75,6 +75,20 @@ export type Message = {
   created_at: string;
 };
 
+export type CreatorVideoStats = {
+  id: number;
+  title: string;
+  views_count: number;
+  purchases_count: number;
+  revenue: number;
+};
+
+export type CreatorStats = {
+  videos: CreatorVideoStats[];
+  totals: { views: number; purchases: number; revenue: number };
+  timeseries: { date: string; revenue: number }[];
+};
+
 export type PaginatedResponse<T> = {
   data: T[];
   meta: {

@@ -44,6 +44,7 @@ class Video extends Model
      */
     protected $attributes = [
         'source_status' => 'not_started',
+        'views_count' => 0,
     ];
 
     protected function casts(): array
@@ -54,6 +55,7 @@ class Video extends Model
             'duration_seconds' => 'integer',
             'price' => 'integer',
             'source_status' => VideoSourceStatus::class,
+            'views_count' => 'integer',
         ];
     }
 

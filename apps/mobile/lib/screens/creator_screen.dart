@@ -7,6 +7,7 @@ import '../services/auth_controller.dart';
 import '../utils/formatting.dart';
 import '../widgets/balance_and_payouts.dart';
 import '../widgets/messaging.dart';
+import '../widgets/stats.dart';
 import '../widgets/video_upload_widget.dart';
 import 'register_creator_screen.dart';
 
@@ -87,6 +88,8 @@ class _CreatorScreenState extends State<CreatorScreen> {
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [
+              const Stats(),
+              const SizedBox(height: 24),
               const BalanceAndPayouts(),
               const SizedBox(height: 24),
               const Messaging(),

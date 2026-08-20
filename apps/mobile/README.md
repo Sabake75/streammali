@@ -44,6 +44,10 @@ Messagerie créateur ↔ modération (espace créateur) : `lib/widgets/messaging
 
 Signalement de vidéo (fiche vidéo) : `lib/widgets/report_section.dart`, même pattern que `purchase_section.dart` (lien repliable → formulaire de motif), `POST /api/videos/{id}/report`.
 
+Statistiques créateur (espace créateur) : `lib/widgets/stats.dart`, totaux (vues/achats/revenus), graphique en barres (`Container` avec hauteur dynamique, pas de librairie) du revenu sur 14 jours, tableau par vidéo, `GET /api/creator/stats` via `lib/models/creator_stats.dart`.
+
+Comptage de vues (fiche vidéo) : `_apiClient.recordVideoView(id)` appelé dans `initState()` de `video_detail_screen.dart`, best-effort (n'interrompt jamais l'affichage de la page en cas d'échec), `POST /api/videos/{id}/view`.
+
 `flutter analyze`, `flutter test` (couvre la validation du formulaire de connexion) et `flutter build web` passent tous sans erreur.
 
 ```

@@ -45,6 +45,10 @@ Messagerie créateur ↔ modération (`/creer`) : `src/components/creator/Messag
 
 Signalement de vidéo (fiche vidéo) : `src/components/ReportButton.tsx`, lien discret sous le bouton d'achat, formulaire de motif repliable, `POST /api/videos/{id}/report`.
 
+Statistiques créateur (`/creer`) : `src/components/creator/Stats.tsx`, totaux (vues/achats/revenus), graphique en barres (CSS pur, pas de librairie) du revenu sur 14 jours, tableau par vidéo, `GET /api/creator/stats`.
+
+Comptage de vues (fiche vidéo) : `src/components/RecordView.tsx`, composant client sans rendu qui déclenche `POST /api/videos/{id}/view` au montage. Volontairement séparé de `fetchVideo()` (`src/lib/api.ts`), qui utilise `next: { revalidate: 60 }` — un effet de bord placé dans un fetch mis en cache serait silencieusement sauté pour toute requête servie depuis le cache (partagé entre visiteurs). En dev (`next dev`), React Strict Mode double-invoque l'effet (2 requêtes `/view` par visite) — artefact connu de React, sans impact en production (`next build && next start` : une visite = une requête, vérifié).
+
 Pas encore fait : jaquettes via `next/image` (actuellement `<img>` brut le temps de choisir un hébergement d'images).
 
 ```

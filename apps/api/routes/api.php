@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Auth\RegisterCreatorController;
 use App\Http\Controllers\Api\Creator\MessageController;
 use App\Http\Controllers\Api\Creator\PayoutController;
+use App\Http\Controllers\Api\Creator\StatsController;
 use App\Http\Controllers\Api\Creator\VideoController as CreatorVideoController;
 use App\Http\Controllers\Api\Creator\VideoSourceController;
 use App\Http\Controllers\Api\OrangeMoneyWebhookController;
@@ -24,6 +25,7 @@ Route::match(['get', 'post'], '/webhooks/orange-money', OrangeMoneyWebhookContro
 
 Route::get('/videos', [VideoCatalogController::class, 'index'])->name('videos.index');
 Route::get('/videos/{video}', [VideoCatalogController::class, 'show'])->name('videos.show');
+Route::post('/videos/{video}/view', [VideoCatalogController::class, 'view'])->name('videos.view');
 
 Route::middleware(['auth:sanctum', 'account.active'])->group(function () {
     Route::get('/user', function (Request $request) {
@@ -49,5 +51,7 @@ Route::middleware(['auth:sanctum', 'account.active'])->group(function () {
 
         Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
         Route::post('/messages', [MessageController::class, 'store'])->name('messages.store');
+
+        Route::get('/stats', [StatsController::class, 'index'])->name('stats');
     });
 });
