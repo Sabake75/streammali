@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\LogoutController;
 use App\Http\Controllers\Api\Auth\RegisterController;
+use App\Http\Controllers\Api\Auth\RegisterCreatorController;
 use App\Http\Controllers\Api\Creator\PayoutController;
 use App\Http\Controllers\Api\Creator\VideoController as CreatorVideoController;
 use App\Http\Controllers\Api\Creator\VideoSourceController;
@@ -13,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [RegisterController::class, 'store'])->name('register');
+Route::post('/register/creator', [RegisterCreatorController::class, 'store'])->name('register.creator');
 Route::post('/login', [LoginController::class, 'store'])->name('login');
 
 Route::match(['get', 'post'], '/webhooks/orange-money', OrangeMoneyWebhookController::class)

@@ -44,7 +44,9 @@ Auth API (Viewer, par téléphone — cahier des charges §5.2, colonne `phone` 
 - `POST /api/login` — `{ phone, password }`, renvoie un token Sanctum.
 - `POST /api/logout` — authentifié, révoque le token courant.
 
-Le login Filament du modérateur (`/moderation/login`) continue d'utiliser `email`, inchangé — les deux colonnes coexistent sur `users`. Pas d'inscription Créateur (pièce d'identité) ni de vérification SMS/OTP du téléphone pour l'instant.
+Le login Filament du modérateur (`/moderation/login`) continue d'utiliser `email`, inchangé — les deux colonnes coexistent sur `users`. Pas de vérification SMS/OTP du téléphone pour l'instant.
+
+Inscription Créateur (cahier des charges §5.1, détail dans `app/Domain/Creator/README.md`) : `POST /api/register/creator` (`multipart/form-data` : `name`, `phone`, `password`, `identity_document`), stocke la pièce d'identité sur un disque **privé** (jamais servi publiquement), consultable uniquement par un modérateur connecté via `GET /moderation/creators/{id}/identity-document`.
 
 API catalogue et achat (publiques sauf mention) :
 - `GET /api/videos` — liste paginée des vidéos **validées uniquement**, filtres `category`/`creator_id`/`search`.
@@ -63,7 +65,7 @@ API créateur (authentifié, `role=creator` requis — 403 sinon) :
 
 Upload vidéo (détail dans `app/Domain/Video/README.md`) : intégration Cloudflare Stream — le fichier part directement du client vers Cloudflare (jamais proxié par l'API), le statut est interrogé côté serveur plutôt que via un webhook entrant. Config `CLOUDFLARE_STREAM_*` dans `.env`/`config/services.php`, credentials vides tant qu'il n'y a pas de compte. Une vidéo ne peut être validée par un modérateur que si son fichier est `ready`. L'URL de lecture n'est exposée dans `GET /api/videos/{id}` qu'aux acheteurs, une fois le fichier prêt.
 
-Pas encore fait : inscription Créateur (le cahier des charges exige une pièce d'identité — pas construit, comptes créateur créés manuellement pour l'instant), webhook Cloudflare (statut interrogé à la demande pour l'instant), aperçu gratuit avant achat.
+Pas encore fait : webhook Cloudflare (statut interrogé à la demande pour l'instant), aperçu gratuit avant achat, OCR/vérification automatisée de la pièce d'identité (vérification manuelle par le modérateur après consultation du document).
 
 Ledger commission/créateur et demandes de retrait (cahier des charges §6, détail dans `app/Domain/Payment/README.md`) :
 - `GET /api/creator/balance` — solde disponible du créateur connecté.
@@ -71,7 +73,7 @@ Ledger commission/créateur et demandes de retrait (cahier des charges §6, dét
 - `POST /api/creator/payouts` — `{ amount, destination_msisdn }`, rejette sous 10 000 FCFA ou au-dessus du solde disponible.
 - Back-office modérateur `/moderation/payouts` (Marquer payé / Rejeter) et `/moderation/ledger-entries` (lecture seule, historique des ventes/commissions par créateur).
 
-Testé via `tests/Feature/` (`php artisan test`) — 50/50 au dernier passage, vérifié aussi manuellement contre PostgreSQL (upload créateur, upload vidéo/lecture, calcul de commission, réservation du solde).
+Testé via `tests/Feature/` (`php artisan test`) — 56/56 au dernier passage, vérifié aussi manuellement contre PostgreSQL (inscription créateur avec vrai upload multipart, upload vidéo/lecture, calcul de commission, réservation du solde).
 
 Créer un utilisateur modérateur de test :
 

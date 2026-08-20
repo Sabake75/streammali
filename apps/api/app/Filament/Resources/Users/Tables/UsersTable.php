@@ -68,6 +68,13 @@ class UsersTable
                     ),
             ])
             ->recordActions([
+                Action::make('view_identity_document')
+                    ->label("Pièce d'identité")
+                    ->icon('heroicon-o-document-text')
+                    ->color('gray')
+                    ->visible(fn ($record) => $record->identity_document_path !== null)
+                    ->url(fn ($record) => route('creators.identity-document', $record))
+                    ->openUrlInNewTab(),
                 Action::make('suspend')
                     ->label('Suspendre')
                     ->icon('heroicon-o-pause-circle')

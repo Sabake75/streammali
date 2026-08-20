@@ -3,16 +3,21 @@
 Namespace `App\Domain\Creator`.
 
 Responsabilités (cahier des charges §5.1) :
+- Inscription avec pièce d'identité.
 - Upload de vidéos (titre, description, catégorie, jaquette, durée) et soumission à la modération.
 - Suivi de statut d'une vidéo (en attente / validé / refusé).
 - Fixation/confirmation du prix de vente (25 FCFA par défaut).
-- Statistiques (vues, achats, revenus) et demandes de retrait vers Mobile Money.
-- Gestion du catalogue personnel.
+- Demandes de retrait vers Mobile Money.
 
-## Sous-structure prévue
+## Sous-structure
 
-- `Models/` — modèles Eloquent propres au créateur (ex. profil créateur, demande de retrait).
-- `Actions/` — actions métier unitaires (ex. `SubmitVideoForModeration`, `RequestPayout`).
-- `Data/` — DTOs d'entrée/sortie des endpoints API.
+- `Actions/RegisterCreator.php` — crée un compte `role=creator` + stocke la pièce d'identité sur le disque privé `local` (`storage/app/private`, jamais servi publiquement — voir `config/filesystems.php`).
+- `Actions/UploadVideo.php` — crée une vidéo en statut `pending`.
 
-Rien n'est encore implémenté ici — dossier créé pour recevoir ce code au fur et à mesure des tickets.
+Inscription : `POST /api/register/creator` (`multipart/form-data` : `name`, `phone`, `password`, `identity_document` — jpg/jpeg/png/pdf, 10 Mo max). Renvoie un token Sanctum comme `/api/register`.
+
+La pièce d'identité n'est consultable que par un modérateur connecté, via `GET /moderation/creators/{user}/identity-document` (`routes/web.php`, guard session — même authentification que le panneau Filament). Bouton "Pièce d'identité" dans `/moderation/users` pour l'ouvrir. La colonne `users.identity_document_path` est masquée de toute sérialisation JSON (`#[Hidden]` sur `App\Models\User`).
+
+La vérification d'identité elle-même (`identity_verified_at`, action "Vérifier l'identité" dans `Domain\Moderation`) reste un geste manuel du modérateur après consultation du document — pas d'OCR ni de vérification automatisée.
+
+Testé dans `tests/Feature/CreatorRegistrationApiTest.php`, vérifié aussi contre PostgreSQL et le vrai disque (upload multipart réel, fichier confirmé privé).
