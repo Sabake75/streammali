@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../models/paginated_response.dart';
+import '../models/user.dart';
 import '../models/video.dart';
 
 class ApiException implements Exception {
@@ -12,6 +13,19 @@ class ApiException implements Exception {
 
   @override
   String toString() => message;
+}
+
+class AuthResult {
+  final String token;
+  final StoredUser user;
+
+  const AuthResult({required this.token, required this.user});
+}
+
+class PurchaseResult {
+  final String paymentUrl;
+
+  const PurchaseResult({required this.paymentUrl});
 }
 
 class ApiClient {
@@ -57,5 +71,77 @@ class ApiClient {
 
     final json = jsonDecode(response.body) as Map<String, dynamic>;
     return Video.fromJson(json['data'] as Map<String, dynamic>);
+  }
+
+  Future<AuthResult> register({
+    required String name,
+    required String phone,
+    required String password,
+  }) {
+    return _postAuth('/register', {'name': name, 'phone': phone, 'password': password});
+  }
+
+  Future<AuthResult> login({required String phone, required String password}) {
+    return _postAuth('/login', {'phone': phone, 'password': password});
+  }
+
+  Future<void> logout(String token) async {
+    await http
+        .post(Uri.parse('$baseUrl/logout'), headers: {'Authorization': 'Bearer $token'})
+        .catchError((_) => http.Response('', 0));
+  }
+
+  Future<PurchaseResult> purchaseVideo({
+    required int videoId,
+    required String payerMsisdn,
+    required String token,
+  }) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/videos/$videoId/purchase'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({'payer_msisdn': payerMsisdn}),
+    );
+
+    if (response.statusCode != 201) {
+      throw ApiException(_extractErrorMessage(response));
+    }
+
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    return PurchaseResult(paymentUrl: json['payment_url'] as String);
+  }
+
+  Future<AuthResult> _postAuth(String path, Map<String, dynamic> body) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl$path'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(body),
+    );
+
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      throw ApiException(_extractErrorMessage(response));
+    }
+
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    return AuthResult(
+      token: json['token'] as String,
+      user: StoredUser.fromJson(json['user'] as Map<String, dynamic>),
+    );
+  }
+
+  String _extractErrorMessage(http.Response response) {
+    try {
+      final json = jsonDecode(response.body) as Map<String, dynamic>;
+      final errors = json['errors'];
+      if (errors is Map) {
+        return errors.values.map((messages) => (messages as List).join(' ')).join(' ');
+      }
+      if (json['message'] is String) return json['message'] as String;
+    } catch (_) {
+      // response body wasn't JSON — fall through to the generic message below
+    }
+    return 'Une erreur est survenue (${response.statusCode}).';
   }
 }

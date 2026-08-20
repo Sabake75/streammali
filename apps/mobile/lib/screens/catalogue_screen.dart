@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../models/paginated_response.dart';
 import '../models/video.dart';
 import '../services/api_client.dart';
+import '../services/auth_controller.dart';
 import '../widgets/video_card.dart';
+import 'login_screen.dart';
 import 'video_detail_screen.dart';
 
 class CatalogueScreen extends StatefulWidget {
@@ -43,7 +45,47 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('StreamMali')),
+      appBar: AppBar(
+        title: const Text('StreamMali'),
+        actions: [
+          ListenableBuilder(
+            listenable: AuthController.instance,
+            builder: (context, _) {
+              final user = AuthController.instance.user;
+
+              if (user == null) {
+                return TextButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => const LoginScreen()),
+                    );
+                  },
+                  child: const Text('Connexion'),
+                );
+              }
+
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(user.name),
+                  IconButton(
+                    icon: const Icon(Icons.logout),
+                    tooltip: 'Déconnexion',
+                    onPressed: () async {
+                      final token = AuthController.instance.token;
+                      if (token != null) {
+                        await _apiClient.logout(token);
+                      }
+                      await AuthController.instance.clearSession();
+                    },
+                  ),
+                ],
+              );
+            },
+          ),
+          const SizedBox(width: 8),
+        ],
+      ),
       body: Column(
         children: [
           Padding(

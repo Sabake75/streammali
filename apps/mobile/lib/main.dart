@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
 import 'screens/catalogue_screen.dart';
+import 'services/auth_controller.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await AuthController.instance.loadFromStorage();
   runApp(const StreamMaliApp());
 }
 
