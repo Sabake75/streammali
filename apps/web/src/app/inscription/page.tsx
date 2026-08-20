@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { FormField } from "@/components/FormField";
+import { PhoneNumberField } from "@/components/PhoneNumberField";
 import { registerViewer } from "@/lib/api-client";
 import { setSession } from "@/lib/auth-client";
 
@@ -39,7 +40,7 @@ function RegisterForm() {
       <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-50">Inscription</h1>
       <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
         <FormField id="name" label="Nom" type="text" value={name} onChange={setName} />
-        <FormField id="phone" label="Téléphone" type="tel" value={phone} onChange={setPhone} />
+        <PhoneNumberField id="phone" value={phone} onChange={setPhone} />
         <FormField
           id="password"
           label="Mot de passe (8 caractères min.)"

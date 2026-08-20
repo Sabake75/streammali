@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { PhoneNumberField } from "@/components/PhoneNumberField";
 import { fetchBalance, fetchMyPayouts, requestPayout } from "@/lib/api-client";
 import { formatPrice } from "@/lib/format";
 import type { CreatorBalance, Payout } from "@/lib/types";
@@ -71,19 +72,12 @@ export function BalanceAndPayouts() {
             className="w-32 rounded border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
           />
         </div>
-        <div className="flex flex-col gap-1">
-          <label htmlFor="payout-destination" className="text-sm text-neutral-600 dark:text-neutral-400">
-            Numéro Mobile Money
-          </label>
-          <input
-            id="payout-destination"
-            type="tel"
-            required
-            value={destination}
-            onChange={(event) => setDestination(event.target.value)}
-            className="rounded border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
-          />
-        </div>
+        <PhoneNumberField
+          id="payout-destination"
+          label="Numéro Mobile Money"
+          value={destination}
+          onChange={setDestination}
+        />
         <button
           type="submit"
           disabled={submitting}

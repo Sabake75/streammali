@@ -37,6 +37,8 @@ Upload vidéo côté créateur (`/creer`, lien dans le header) :
 
 Vérifié en conditions réelles contre l'API (inscription créateur avec vrai upload multipart, création vidéo, liste "mes vidéos" — tout confirmé sur PostgreSQL) ; l'appel Cloudflare échoue comme attendu faute de vrai compte (même limitation que côté API).
 
+Champ téléphone (connexion, inscription, achat, retrait créateur) : `src/components/PhoneNumberField.tsx`, indicatif pays + chiffres seuls, longueur plafonnée par pays via `src/lib/phone.ts` (`libphonenumber-js` — tous les pays proposés, pas seulement le Mali, pour les Maliens de la diaspora).
+
 Pas encore fait : jaquettes via `next/image` (actuellement `<img>` brut le temps de choisir un hébergement d'images).
 
 ```

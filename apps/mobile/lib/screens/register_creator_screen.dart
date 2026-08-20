@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../services/api_client.dart';
 import '../services/auth_controller.dart';
+import '../widgets/phone_number_field.dart';
 import 'creator_screen.dart';
 
 class RegisterCreatorScreen extends StatefulWidget {
@@ -100,12 +101,7 @@ class _RegisterCreatorScreenState extends State<RegisterCreatorScreen> {
                 validator: (value) => (value == null || value.isEmpty) ? 'Champ requis' : null,
               ),
               const SizedBox(height: 12),
-              TextFormField(
-                controller: _phoneController,
-                decoration: const InputDecoration(labelText: 'Téléphone', border: OutlineInputBorder()),
-                keyboardType: TextInputType.phone,
-                validator: (value) => (value == null || value.isEmpty) ? 'Champ requis' : null,
-              ),
+              PhoneNumberField(controller: _phoneController),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _passwordController,

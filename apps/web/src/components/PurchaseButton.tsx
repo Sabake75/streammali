@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { PhoneNumberField } from "@/components/PhoneNumberField";
 import { purchaseVideo } from "@/lib/api-client";
 import { useAuthToken, useAuthUser } from "@/lib/use-auth";
 
@@ -38,14 +39,12 @@ export function PurchaseButton({ videoId }: { videoId: number }) {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-2">
-      <div className="flex flex-wrap items-center gap-2">
-        <input
-          type="tel"
-          required
+      <div className="flex flex-wrap items-end gap-2">
+        <PhoneNumberField
+          id="msisdn"
+          label="Numéro Orange Money"
           value={msisdn ?? user?.phone ?? ""}
-          onChange={(event) => setMsisdn(event.target.value)}
-          placeholder="Numéro Orange Money"
-          className="rounded border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+          onChange={setMsisdn}
         />
         <button
           type="submit"

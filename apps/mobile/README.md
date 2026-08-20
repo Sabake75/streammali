@@ -36,6 +36,8 @@ Upload vidéo côté créateur (`lib/screens/creator_screen.dart`, accessible vi
 
 Vérifié en conditions réelles contre l'API (création/liste vidéo confirmées sur PostgreSQL, en réutilisant la même approche que côté web).
 
+Champ téléphone (connexion, inscription, achat, retrait créateur) : `lib/widgets/phone_number_field.dart`, indicatif pays + chiffres seuls, longueur plafonnée par pays via `lib/utils/phone.dart` (`phone_numbers_parser` pour les longueurs par pays, `country_code_picker` pour la liste des noms de pays — tous les pays proposés, pas seulement le Mali).
+
 `flutter analyze`, `flutter test` (couvre la validation du formulaire de connexion) et `flutter build web` passent tous sans erreur.
 
 ```

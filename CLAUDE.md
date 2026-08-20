@@ -62,7 +62,7 @@ Référence complète : `CAHIER_DES_CHARGES_STREAMMALI.md`.
 **MVP fonctionnellement complet (2026-08-20)** — les trois profils ont un parcours de bout en bout sur les trois apps (API, web, mobile), testé en local à plusieurs reprises (dernier passage : 56/56 tests backend, `flutter analyze`/`test`/`build web` et `tsc`/`lint`/`build` propres). Détail par app dans `apps/{api,web,mobile}/README.md` et les `README.md` de chaque domaine métier (`apps/api/app/Domain/*/README.md`).
 
 Construit et vérifié :
-- **Inscription/auth** : Viewer par téléphone, Créateur avec pièce d'identité (stockage privé, consultable par un modérateur connecté). Token Bearer Sanctum partagé web/mobile.
+- **Inscription/auth** : Viewer par téléphone, Créateur avec pièce d'identité (stockage privé, consultable par un modérateur connecté). Token Bearer Sanctum partagé web/mobile. Tout champ téléphone (inscription, connexion, achat, retrait) est un indicatif pays + un champ chiffres seul, longueur plafonnée par pays via une bibliothèque de référence (`libphonenumber-js` côté web, `phone_numbers_parser` côté mobile) plutôt que des règles codées en dur — tous les pays sont proposés, pas seulement le Mali, pour les Maliens de la diaspora.
 - **Catalogue** : liste/filtres/recherche/pagination, fiche détail, SSR côté web.
 - **Upload vidéo** : métadonnées + fichier (Cloudflare Stream, flux direct upload), branché web + mobile.
 - **Modération** : file d'attente Filament, valider/refuser (motif obligatoire), validation bloquée tant que le fichier n'est pas prêt.

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { FormField } from "@/components/FormField";
+import { PhoneNumberField } from "@/components/PhoneNumberField";
 import { loginViewer } from "@/lib/api-client";
 import { setSession } from "@/lib/auth-client";
 
@@ -37,7 +38,7 @@ function LoginForm() {
     <>
       <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-50">Connexion</h1>
       <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
-        <FormField id="phone" label="Téléphone" type="tel" value={phone} onChange={setPhone} />
+        <PhoneNumberField id="phone" value={phone} onChange={setPhone} />
         <FormField id="password" label="Mot de passe" type="password" value={password} onChange={setPassword} />
         {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
         <button

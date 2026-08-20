@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../screens/login_screen.dart';
 import '../services/api_client.dart';
 import '../services/auth_controller.dart';
+import 'phone_number_field.dart';
 
 class PurchaseSection extends StatefulWidget {
   final int videoId;
@@ -84,14 +85,7 @@ class _PurchaseSectionState extends State<PurchaseSection> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextField(
-              controller: _msisdnController,
-              decoration: const InputDecoration(
-                labelText: 'Numéro Orange Money',
-                border: OutlineInputBorder(),
-              ),
-              keyboardType: TextInputType.phone,
-            ),
+            PhoneNumberField(controller: _msisdnController, label: 'Numéro Orange Money'),
             const SizedBox(height: 8),
             FilledButton(
               onPressed: _submitting ? null : _submit,

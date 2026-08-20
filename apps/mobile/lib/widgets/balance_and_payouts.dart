@@ -4,6 +4,7 @@ import '../models/payout.dart';
 import '../services/api_client.dart';
 import '../services/auth_controller.dart';
 import '../utils/formatting.dart';
+import 'phone_number_field.dart';
 
 class BalanceAndPayouts extends StatefulWidget {
   const BalanceAndPayouts({super.key});
@@ -98,25 +99,13 @@ class _BalanceAndPayoutsState extends State<BalanceAndPayouts> {
             else
               const Text('Chargement…'),
             const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _amountController,
-                    decoration: const InputDecoration(labelText: 'Montant (FCFA)', border: OutlineInputBorder()),
-                    keyboardType: TextInputType.number,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: TextField(
-                    controller: _destinationController,
-                    decoration: const InputDecoration(labelText: 'Numéro Mobile Money', border: OutlineInputBorder()),
-                    keyboardType: TextInputType.phone,
-                  ),
-                ),
-              ],
+            TextField(
+              controller: _amountController,
+              decoration: const InputDecoration(labelText: 'Montant (FCFA)', border: OutlineInputBorder()),
+              keyboardType: TextInputType.number,
             ),
+            const SizedBox(height: 8),
+            PhoneNumberField(controller: _destinationController, label: 'Numéro Mobile Money'),
             const SizedBox(height: 8),
             FilledButton(
               onPressed: _submitting ? null : _submit,
