@@ -4,6 +4,8 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Domain\Moderation\Enums\AccountStatus;
+use App\Domain\Payment\Models\LedgerEntry;
+use App\Domain\Payment\Models\Payout;
 use App\Domain\Video\Models\Video;
 use App\Enums\UserRole;
 use Database\Factories\UserFactory;
@@ -64,5 +66,15 @@ class User extends Authenticatable implements FilamentUser
     public function videos(): HasMany
     {
         return $this->hasMany(Video::class, 'creator_id');
+    }
+
+    public function ledgerEntries(): HasMany
+    {
+        return $this->hasMany(LedgerEntry::class, 'creator_id');
+    }
+
+    public function payouts(): HasMany
+    {
+        return $this->hasMany(Payout::class, 'creator_id');
     }
 }

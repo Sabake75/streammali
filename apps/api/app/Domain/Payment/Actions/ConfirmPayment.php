@@ -4,6 +4,7 @@ namespace App\Domain\Payment\Actions;
 
 use App\Domain\Payment\Contracts\PaymentGateway;
 use App\Domain\Payment\Enums\PaymentStatus;
+use App\Domain\Payment\Models\LedgerEntry;
 use App\Domain\Payment\Models\Payment;
 
 /**
@@ -33,6 +34,25 @@ class ConfirmPayment
             'confirmed_at' => now(),
         ]);
 
+        if ($status === PaymentStatus::Succeeded) {
+            $this->recordLedgerEntry($payment);
+        }
+
         return $payment->fresh();
+    }
+
+    private function recordLedgerEntry(Payment $payment): void
+    {
+        $commissionRate = config('platform.commission_rate');
+        $commission = (int) round($payment->amount * $commissionRate);
+
+        LedgerEntry::create([
+            'creator_id' => $payment->video->creator_id,
+            'payment_id' => $payment->id,
+            'type' => 'sale',
+            'gross_amount' => $payment->amount,
+            'commission_amount' => $commission,
+            'net_amount' => $payment->amount - $commission,
+        ]);
     }
 }

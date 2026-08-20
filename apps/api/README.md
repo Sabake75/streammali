@@ -63,7 +63,13 @@ API créateur (authentifié, `role=creator` requis — 403 sinon) :
 
 Pas encore fait : inscription Créateur (le cahier des charges exige une pièce d'identité — pas construit, comptes créateur créés manuellement pour l'instant), upload du fichier vidéo lui-même (`poster_path` est une simple URL texte, pas de stockage/CDN).
 
-Testé via `tests/Feature/` (`php artisan test`) — 29/29 au dernier passage, vérifié aussi manuellement contre PostgreSQL (upload créateur confirmé invisible du catalogue public tant que non validé).
+Ledger commission/créateur et demandes de retrait (cahier des charges §6, détail dans `app/Domain/Payment/README.md`) :
+- `GET /api/creator/balance` — solde disponible du créateur connecté.
+- `GET /api/creator/payouts` — historique de ses demandes de retrait.
+- `POST /api/creator/payouts` — `{ amount, destination_msisdn }`, rejette sous 10 000 FCFA ou au-dessus du solde disponible.
+- Back-office modérateur `/moderation/payouts` (Marquer payé / Rejeter) et `/moderation/ledger-entries` (lecture seule, historique des ventes/commissions par créateur).
+
+Testé via `tests/Feature/` (`php artisan test`) — 43/43 au dernier passage, vérifié aussi manuellement contre PostgreSQL (upload créateur, calcul de commission, réservation du solde).
 
 Créer un utilisateur modérateur de test :
 

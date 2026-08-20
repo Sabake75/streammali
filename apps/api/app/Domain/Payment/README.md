@@ -22,4 +22,11 @@ Webhook : `POST|GET /api/webhooks/orange-money` (`App\Http\Controllers\Api\Orang
 
 Testé (mock HTTP, aucun appel réseau réel vers Orange) dans `tests/Feature/OrangeMoneyPaymentTest.php`.
 
-Pas encore fait : `LedgerEntry`/`Payout` (répartition commission/créateur, demandes de retrait).
+**Ledger et retraits** (cahier des charges §6) :
+- `Models/LedgerEntry.php` — une écriture par vente réussie (créée automatiquement par `ConfirmPayment` quand un paiement passe à `succeeded`), avec la répartition `gross_amount` / `commission_amount` / `net_amount`. Taux de commission configurable (`config/platform.php`, `PLATFORM_COMMISSION_RATE`, défaut 25 % — indicatif, cahier des charges donne une fourchette 20-30 %).
+- `Actions/GetCreatorBalance.php` — solde disponible = somme des `net_amount` du créateur moins les retraits déjà `pending`/`paid` (empêche de demander deux fois le même solde).
+- `Actions/RequestPayout.php` — crée une demande de retrait, rejette si en dessous du minimum (`PLATFORM_MINIMUM_PAYOUT_AMOUNT`, 10 000 FCFA — valeur exacte du cahier des charges, pas indicative) ou au-dessus du solde disponible.
+- `Models/Payout.php` + `Enums/PayoutStatus.php` (`pending`/`paid`/`rejected`).
+- Pas d'intégration réelle de décaissement Mobile Money — le modérateur traite les demandes manuellement dans le back-office (`/moderation/payouts`), comme pour la modération vidéo.
+
+Testé dans `tests/Feature/PayoutApiTest.php`, vérifié aussi contre PostgreSQL (calcul de commission, réservation du solde).
