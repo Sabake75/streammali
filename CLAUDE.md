@@ -59,7 +59,7 @@ Référence complète : `CAHIER_DES_CHARGES_STREAMMALI.md`.
 
 ## État du projet
 
-- `apps/api` : scaffold Laravel initialisé et fonctionnel sur PostgreSQL (migrations par défaut exécutées). Structure de domaines métier créée (`app/Domain/{Creator,Viewer,Moderation,Payment,Video}`, dossiers vides avec README, pas encore de logique implémentée). Back-office modérateur Filament installé sur `/moderation`, accès restreint aux comptes `role = moderator` (voir `apps/api/README.md`), mais sans ressources métier pour l'instant (dashboard par défaut). Reste à faire : Filament Resources (file de modération, gestion des comptes), intégration Orange Money.
+- `apps/api` : scaffold Laravel initialisé et fonctionnel sur PostgreSQL (migrations par défaut exécutées). Structure de domaines métier créée (`app/Domain/{Creator,Viewer,Moderation,Payment,Video}`). Back-office modérateur Filament sur `/moderation`, accès restreint aux comptes `role = moderator`. Modèle `Video` + ressource Filament fonctionnels : file d'attente de modération avec actions Valider/Refuser (motif obligatoire), testés (`php artisan test`, 5/5 verts). Reste à faire : gestion des comptes (suspension/blocage), intégration Orange Money.
 - `apps/web` : scaffold Next.js initialisé (TypeScript, Tailwind, App Router), lint/build vérifiés.
 - `apps/mobile` : scaffold Flutter initialisé (`com.streammali`), `flutter analyze` sans erreur.
 - Les choix de stack ci-dessus restent indicatifs pour le reste et sont à valider au fur et à mesure du développement du MVP.
