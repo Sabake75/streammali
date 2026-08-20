@@ -35,4 +35,17 @@ return [
         ],
     ],
 
+    // À vérifier contre la doc Orange Developer Center Mali une fois les
+    // credentials marchand obtenus — voir App\Domain\Payment\Gateways\OrangeMoneyGateway.
+    'orange_money' => [
+        'base_url' => env('ORANGE_MONEY_BASE_URL', 'https://api.orange.com'),
+        'country' => env('ORANGE_MONEY_COUNTRY', 'ml'),
+        'client_id' => env('ORANGE_MONEY_CLIENT_ID'),
+        'client_secret' => env('ORANGE_MONEY_CLIENT_SECRET'),
+        'merchant_key' => env('ORANGE_MONEY_MERCHANT_KEY'),
+        'return_url' => env('ORANGE_MONEY_RETURN_URL'),
+        'cancel_url' => env('ORANGE_MONEY_CANCEL_URL'),
+        'notif_url' => env('ORANGE_MONEY_NOTIF_URL'),
+    ],
+
 ];
