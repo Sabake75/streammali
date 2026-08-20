@@ -21,7 +21,14 @@ Catalogue fonctionnel, consomme l'API `apps/api` en Server Components (SSR, pas 
 
 Vérifié manuellement de bout en bout (API Laravel + build prod Next.js lancés ensemble) : liste, filtre par catégorie, fiche détail, 404.
 
-Pas encore fait : bouton d'achat (désactivé pour l'instant — nécessite l'auth côté client, donc du CORS/Sanctum SPA à configurer côté API), jaquettes via `next/image` (actuellement `<img>` brut le temps de choisir un hébergement d'images).
+Auth + achat côté client (Bearer token Sanctum, pas de cookies/CSRF — voir `apps/api/README.md`) :
+- `src/app/connexion/page.tsx`, `src/app/inscription/page.tsx` — formulaires client, appellent `POST /api/login`/`/register`, stockent le token dans `localStorage` (`src/lib/auth-client.ts`).
+- `src/lib/use-auth.ts` — `useAuthToken`/`useAuthUser` via `useSyncExternalStore` (lit `localStorage` sans décalage d'hydratation SSR, se resynchronise entre onglets et après connexion/déconnexion dans le même onglet).
+- `src/components/AuthStatus.tsx` (header) et `src/components/PurchaseButton.tsx` (fiche vidéo) consomment ces hooks ; `PurchaseButton` appelle `POST /api/videos/{id}/purchase` et redirige vers `payment_url`.
+
+Vérifié en conditions réelles (requêtes cross-origin avec `Origin: http://localhost:3000` contre l'API) : le flux passe l'auth/CORS/validation de bout en bout ; l'échec final vient uniquement de l'absence de vrais credentials Orange Money côté API (déjà documenté), pas d'un problème CORS/Sanctum.
+
+Pas encore fait : jaquettes via `next/image` (actuellement `<img>` brut le temps de choisir un hébergement d'images).
 
 ```
 npm run dev     # dev server

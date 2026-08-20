@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { PurchaseButton } from "@/components/PurchaseButton";
 import { fetchVideo } from "@/lib/api";
 import { formatDuration, formatPrice } from "@/lib/format";
 
@@ -45,18 +46,11 @@ export default async function VideoDetailPage(props: PageProps<"/videos/[id]">) 
             <p className="text-neutral-700 dark:text-neutral-300">{video.description}</p>
           )}
 
-          <div className="mt-4 flex items-center gap-4">
+          <div className="mt-4 flex flex-wrap items-center gap-4">
             <span className="text-2xl font-bold text-neutral-900 dark:text-neutral-50">
               {formatPrice(video.price)}
             </span>
-            <button
-              type="button"
-              disabled
-              title="Connexion requise — bientôt disponible"
-              className="cursor-not-allowed rounded bg-neutral-300 px-5 py-2.5 text-sm font-medium text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400"
-            >
-              Acheter (bientôt)
-            </button>
+            <PurchaseButton videoId={video.id} />
           </div>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
+import { AuthStatus } from "@/components/AuthStatus";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -26,10 +27,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="flex min-h-full flex-col bg-white text-neutral-900 dark:bg-neutral-950 dark:text-neutral-50">
         <header className="border-b border-neutral-200 dark:border-neutral-800">
-          <div className="mx-auto flex max-w-6xl items-center px-4 py-4 sm:px-6 lg:px-8">
+          <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
             <Link href="/" className="text-lg font-bold tracking-tight">
               StreamMali
             </Link>
+            <AuthStatus />
           </div>
         </header>
         {children}
