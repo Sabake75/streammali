@@ -31,7 +31,7 @@ api/
 
 Scaffold Laravel initialisé (`composer create-project laravel/laravel`), `.env` configuré pour PostgreSQL (`DB_CONNECTION=pgsql`, base `streammali`).
 
-Les dossiers `Domain/*` et `Filament/` ci-dessus ne sont pas encore créés — seule la structure Laravel par défaut est en place pour l'instant.
+Les dossiers `Domain/{Creator,Viewer,Moderation,Payment,Video}` sont créés, chacun avec un README décrivant son rôle et sa sous-structure prévue (`Models/`, `Actions/`, `Data/`) — aucune classe métier n'y est encore implémentée. `Filament/` (back-office modérateur) reste à créer.
 
 Extension `pdo_pgsql`, serveur PostgreSQL, utilisateur/base `streammali` en place et migrations par défaut exécutées (`users`, `sessions`, `jobs`, `cache`, ...).
 
