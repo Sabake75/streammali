@@ -38,6 +38,8 @@ Vérifié en conditions réelles contre l'API (création/liste vidéo confirmée
 
 Champ téléphone (connexion, inscription, achat, retrait créateur) : `lib/widgets/phone_number_field.dart`, indicatif pays + chiffres seuls, longueur plafonnée par pays via `lib/utils/phone.dart` (`phone_numbers_parser` pour les longueurs par pays, `country_code_picker` pour la liste des noms de pays — tous les pays proposés, pas seulement le Mali).
 
+Mot de passe (connexion, inscription, inscription créateur) : `lib/widgets/pin_code_field.dart`, code à 4 chiffres uniquement (masqué, clavier numérique, plafonné à 4) — voir `apps/api/README.md` pour la justification et le throttling côté serveur.
+
 `flutter analyze`, `flutter test` (couvre la validation du formulaire de connexion) et `flutter build web` passent tous sans erreur.
 
 ```

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../services/api_client.dart';
 import '../services/auth_controller.dart';
 import '../widgets/phone_number_field.dart';
+import '../widgets/pin_code_field.dart';
 import 'register_creator_screen.dart';
 import 'video_detail_screen.dart';
 
@@ -87,16 +88,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const SizedBox(height: 12),
               PhoneNumberField(controller: _phoneController),
               const SizedBox(height: 12),
-              TextFormField(
-                controller: _passwordController,
-                decoration: const InputDecoration(
-                  labelText: 'Mot de passe (8 caractères min.)',
-                  border: OutlineInputBorder(),
-                ),
-                obscureText: true,
-                validator: (value) =>
-                    (value == null || value.length < 8) ? '8 caractères minimum' : null,
-              ),
+              PinCodeField(controller: _passwordController),
               if (_error != null) ...[
                 const SizedBox(height: 12),
                 Text(_error!, style: const TextStyle(color: Colors.red)),

@@ -18,7 +18,7 @@ class AuthApiTest extends TestCase
         $response = $this->postJson('/api/register', [
             'name' => 'Awa Traoré',
             'phone' => '+223 76 00 00 00',
-            'password' => 'password123',
+            'password' => '1234',
         ])->assertCreated();
 
         $response->assertJsonPath('user.name', 'Awa Traoré');
@@ -39,7 +39,7 @@ class AuthApiTest extends TestCase
         $this->postJson('/api/register', [
             'name' => 'Awa Traoré',
             'phone' => '+223 76 00 00 00',
-            'password' => 'password123',
+            'password' => '1234',
         ])->assertStatus(422);
     }
 
@@ -48,12 +48,12 @@ class AuthApiTest extends TestCase
         $this->postJson('/api/register', [
             'name' => 'Awa Traoré',
             'phone' => '+223 76 00 00 00',
-            'password' => 'password123',
+            'password' => '1234',
         ])->assertCreated();
 
         $response = $this->postJson('/api/login', [
             'phone' => '+223 76 00 00 00',
-            'password' => 'password123',
+            'password' => '1234',
         ])->assertOk();
 
         $this->assertNotEmpty($response->json('token'));
@@ -63,14 +63,45 @@ class AuthApiTest extends TestCase
     {
         User::factory()->create([
             'phone' => '+223 76 00 00 00',
-            'password' => 'password123',
+            'password' => '1234',
             'role' => UserRole::Viewer,
         ]);
 
         $this->postJson('/api/login', [
             'phone' => '+223 76 00 00 00',
-            'password' => 'wrong-password',
+            'password' => '9999',
         ])->assertStatus(422);
+    }
+
+    public function test_registration_requires_a_4_digit_password(): void
+    {
+        $this->postJson('/api/register', [
+            'name' => 'Awa Traoré',
+            'phone' => '+223 76 00 00 00',
+            'password' => '12345',
+        ])->assertStatus(422)
+            ->assertJsonValidationErrors(['password']);
+    }
+
+    public function test_login_is_throttled_after_too_many_attempts(): void
+    {
+        User::factory()->create([
+            'phone' => '+223 76 00 00 00',
+            'password' => '1234',
+            'role' => UserRole::Viewer,
+        ]);
+
+        for ($i = 0; $i < 5; $i++) {
+            $this->postJson('/api/login', [
+                'phone' => '+223 76 00 00 00',
+                'password' => '9999',
+            ])->assertStatus(422);
+        }
+
+        $this->postJson('/api/login', [
+            'phone' => '+223 76 00 00 00',
+            'password' => '9999',
+        ])->assertStatus(429);
     }
 
     public function test_an_authenticated_user_can_log_out(): void
@@ -90,7 +121,7 @@ class AuthApiTest extends TestCase
         $registerResponse = $this->postJson('/api/register', [
             'name' => 'Awa Traoré',
             'phone' => '+223 76 00 00 00',
-            'password' => 'password123',
+            'password' => '1234',
         ])->assertCreated();
 
         $token = $registerResponse->json('token');

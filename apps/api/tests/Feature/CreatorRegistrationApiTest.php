@@ -20,7 +20,7 @@ class CreatorRegistrationApiTest extends TestCase
         $response = $this->post('/api/register/creator', [
             'name' => 'Fatoumata Diarra',
             'phone' => '+223 65 11 22 33',
-            'password' => 'password123',
+            'password' => '1234',
             'identity_document' => UploadedFile::fake()->image('cni.jpg'),
         ])->assertCreated();
 
@@ -38,7 +38,7 @@ class CreatorRegistrationApiTest extends TestCase
         $this->postJson('/api/register/creator', [
             'name' => 'Fatoumata Diarra',
             'phone' => '+223 65 11 22 33',
-            'password' => 'password123',
+            'password' => '1234',
         ])->assertStatus(422)
             ->assertJsonValidationErrors(['identity_document']);
     }
@@ -50,7 +50,7 @@ class CreatorRegistrationApiTest extends TestCase
         $this->postJson('/api/register/creator', [
             'name' => 'Fatoumata Diarra',
             'phone' => '+223 65 11 22 33',
-            'password' => 'password123',
+            'password' => '1234',
             'identity_document' => UploadedFile::fake()->create('script.exe', 10),
         ])->assertStatus(422)
             ->assertJsonValidationErrors(['identity_document']);

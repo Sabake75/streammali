@@ -14,7 +14,7 @@ class RegisterController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'phone' => ['required', 'string', 'max:32', 'unique:users,phone'],
-            'password' => ['required', 'string', 'min:8'],
+            'password' => ['required', 'digits:4'],
         ]);
 
         $user = $registerViewer($validated['name'], $validated['phone'], $validated['password']);

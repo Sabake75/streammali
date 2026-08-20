@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FormField } from "@/components/FormField";
 import { PhoneNumberField } from "@/components/PhoneNumberField";
+import { PinCodeField } from "@/components/PinCodeField";
 import { registerCreator } from "@/lib/api-client";
 import { setSession } from "@/lib/auth-client";
 
@@ -50,13 +51,7 @@ export default function RegisterCreatorPage() {
       <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
         <FormField id="name" label="Nom" type="text" value={name} onChange={setName} />
         <PhoneNumberField id="phone" value={phone} onChange={setPhone} />
-        <FormField
-          id="password"
-          label="Mot de passe (8 caractères min.)"
-          type="password"
-          value={password}
-          onChange={setPassword}
-        />
+        <PinCodeField id="password" value={password} onChange={setPassword} />
         <div className="flex flex-col gap-1">
           <label htmlFor="identity_document" className="text-sm text-neutral-600 dark:text-neutral-400">
             Pièce d&apos;identité (JPG, PNG ou PDF)

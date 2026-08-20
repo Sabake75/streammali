@@ -6,7 +6,11 @@ use App\Domain\Payment\Contracts\PaymentGateway;
 use App\Domain\Payment\Gateways\OrangeMoneyGateway;
 use App\Domain\Video\Contracts\VideoStorageGateway;
 use App\Domain\Video\Gateways\CloudflareStreamGateway;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,6 +28,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // A 4-digit code has only 10 000 combinations, so login attempts must
+        // be throttled per phone+IP to keep brute-forcing impractical.
+        RateLimiter::for('login', function (Request $request) {
+            $key = Str::lower((string) $request->input('phone')).'|'.$request->ip();
+
+            return Limit::perMinute(5)->by($key);
+        });
     }
 }

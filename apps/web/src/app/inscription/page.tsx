@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { FormField } from "@/components/FormField";
 import { PhoneNumberField } from "@/components/PhoneNumberField";
+import { PinCodeField } from "@/components/PinCodeField";
 import { registerViewer } from "@/lib/api-client";
 import { setSession } from "@/lib/auth-client";
 
@@ -41,13 +42,7 @@ function RegisterForm() {
       <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
         <FormField id="name" label="Nom" type="text" value={name} onChange={setName} />
         <PhoneNumberField id="phone" value={phone} onChange={setPhone} />
-        <FormField
-          id="password"
-          label="Mot de passe (8 caractères min.)"
-          type="password"
-          value={password}
-          onChange={setPassword}
-        />
+        <PinCodeField id="password" value={password} onChange={setPassword} />
         {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
         <button
           type="submit"

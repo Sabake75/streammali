@@ -15,7 +15,7 @@ class LoginController extends Controller
     {
         $validated = $request->validate([
             'phone' => ['required', 'string'],
-            'password' => ['required', 'string'],
+            'password' => ['required', 'digits:4'],
         ]);
 
         $user = User::where('phone', $validated['phone'])->first();

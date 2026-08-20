@@ -39,13 +39,13 @@ class ModerationAccountManagementTest extends TestCase
         $viewer = User::factory()->create([
             'role' => UserRole::Viewer,
             'phone' => '+223 76 00 00 00',
-            'password' => 'password123',
+            'password' => '1234',
             'account_status' => AccountStatus::Suspended,
         ]);
 
         $this->postJson('/api/login', [
             'phone' => '+223 76 00 00 00',
-            'password' => 'password123',
+            'password' => '1234',
         ])->assertStatus(422);
     }
 

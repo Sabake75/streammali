@@ -46,6 +46,8 @@ Auth API (Viewer, par téléphone — cahier des charges §5.2, colonne `phone` 
 
 Le login Filament du modérateur (`/moderation/login`) continue d'utiliser `email`, inchangé — les deux colonnes coexistent sur `users`. Pas de vérification SMS/OTP du téléphone pour l'instant.
 
+`password` (Viewer et Créateur) est un code à **4 chiffres** (`digits:4`, validé sur `register`/`register/creator`/`login`), pas un mot de passe classique — le public visé n'est pas habitué au mot de passe. Toujours hashé (bcrypt, cast `hashed` sur `User::password`), jamais stocké en clair. Un code à 4 chiffres n'a que 10 000 combinaisons : `POST /api/login` est throttlé (`RateLimiter::for('login')` dans `AppServiceProvider`, 5 tentatives/minute par couple téléphone+IP) pour rendre le brute-force impraticable.
+
 Inscription Créateur (cahier des charges §5.1, détail dans `app/Domain/Creator/README.md`) : `POST /api/register/creator` (`multipart/form-data` : `name`, `phone`, `password`, `identity_document`), stocke la pièce d'identité sur un disque **privé** (jamais servi publiquement), consultable uniquement par un modérateur connecté via `GET /moderation/creators/{id}/identity-document`.
 
 API catalogue et achat (publiques sauf mention) :

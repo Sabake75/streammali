@@ -39,6 +39,8 @@ Vérifié en conditions réelles contre l'API (inscription créateur avec vrai u
 
 Champ téléphone (connexion, inscription, achat, retrait créateur) : `src/components/PhoneNumberField.tsx`, indicatif pays + chiffres seuls, longueur plafonnée par pays via `src/lib/phone.ts` (`libphonenumber-js` — tous les pays proposés, pas seulement le Mali, pour les Maliens de la diaspora).
 
+Mot de passe (connexion, inscription, inscription créateur) : `src/components/PinCodeField.tsx`, code à 4 chiffres uniquement (masqué, `inputMode="numeric"`, plafonné à 4), au lieu d'un mot de passe classique — voir `apps/api/README.md` pour la justification et le throttling côté serveur.
+
 Pas encore fait : jaquettes via `next/image` (actuellement `<img>` brut le temps de choisir un hébergement d'images).
 
 ```

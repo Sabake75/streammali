@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../services/api_client.dart';
 import '../services/auth_controller.dart';
 import '../widgets/phone_number_field.dart';
+import '../widgets/pin_code_field.dart';
 import 'creator_screen.dart';
 
 class RegisterCreatorScreen extends StatefulWidget {
@@ -103,16 +104,7 @@ class _RegisterCreatorScreenState extends State<RegisterCreatorScreen> {
               const SizedBox(height: 12),
               PhoneNumberField(controller: _phoneController),
               const SizedBox(height: 12),
-              TextFormField(
-                controller: _passwordController,
-                decoration: const InputDecoration(
-                  labelText: 'Mot de passe (8 caractères min.)',
-                  border: OutlineInputBorder(),
-                ),
-                obscureText: true,
-                validator: (value) =>
-                    (value == null || value.length < 8) ? '8 caractères minimum' : null,
-              ),
+              PinCodeField(controller: _passwordController),
               const SizedBox(height: 12),
               OutlinedButton.icon(
                 onPressed: _pickIdentityDocument,

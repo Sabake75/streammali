@@ -9,6 +9,7 @@ void main() {
     await tester.tap(find.text('Se connecter'));
     await tester.pump();
 
-    expect(find.text('Champ requis'), findsNWidgets(2));
+    expect(find.text('Champ requis'), findsOneWidget);
+    expect(find.text('Code à 4 chiffres requis'), findsOneWidget);
   });
 }
