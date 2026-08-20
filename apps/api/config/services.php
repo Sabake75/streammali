@@ -48,4 +48,12 @@ return [
         'notif_url' => env('ORANGE_MONEY_NOTIF_URL'),
     ],
 
+    // À vérifier contre la doc Cloudflare Stream une fois un compte
+    // disponible — voir App\Domain\Video\Gateways\CloudflareStreamGateway.
+    'cloudflare_stream' => [
+        'account_id' => env('CLOUDFLARE_STREAM_ACCOUNT_ID'),
+        'api_token' => env('CLOUDFLARE_STREAM_API_TOKEN'),
+        'max_duration_seconds' => (int) env('CLOUDFLARE_STREAM_MAX_DURATION_SECONDS', 7200),
+    ],
+
 ];

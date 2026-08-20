@@ -55,13 +55,15 @@ Gestion des comptes côté modérateur (cahier des charges §5.3) : ressource Fi
 
 CORS (`config/cors.php`) : `allowed_origins` piloté par `CORS_ALLOWED_ORIGINS` (défaut `http://localhost:3000`), `paths` couvre `api/*`. Auth client via **token Bearer Sanctum**, pas de cookies/CSRF — décision volontaire pour rester cohérent avec le mobile Flutter (qui devra utiliser le même flux token) plutôt que d'ajouter un second mécanisme d'auth (Sanctum SPA). Vérifié avec de vraies requêtes cross-origin (`Origin: http://localhost:3000`) : préflight OK, `Authorization` accepté, une origine non autorisée reçoit un `Access-Control-Allow-Origin` qui ne correspond pas à la sienne (bloqué côté navigateur).
 
-Pas encore fait : lecture en streaming de la vidéo achetée (pas de champ source vidéo/CDN sur le modèle `Video`).
-
 API créateur (authentifié, `role=creator` requis — 403 sinon) :
 - `POST /api/creator/videos` — `{ title, description?, category, poster_path?, duration_seconds?, price? }`, crée une vidéo en statut `pending` (`App\Domain\Creator\Actions\UploadVideo`). Prix par défaut 25 FCFA si omis.
-- `GET /api/creator/videos` — liste paginée des vidéos du créateur connecté, **tous statuts confondus** (contrairement au catalogue public), via `CreatorVideoResource` qui expose `status`/`rejection_reason`.
+- `GET /api/creator/videos` — liste paginée des vidéos du créateur connecté, **tous statuts confondus** (contrairement au catalogue public), via `CreatorVideoResource` qui expose `status`/`rejection_reason`/`source_status`.
+- `POST /api/creator/videos/{id}/source` — démarre l'upload du fichier (Cloudflare Stream, flux "direct creator upload"), renvoie `upload_url` ; 409 si déjà en cours/terminé.
+- `GET /api/creator/videos/{id}/source` — rafraîchit/consulte le statut de traitement (`processing`/`ready`/`failed`) et l'URL de lecture une fois prête.
 
-Pas encore fait : inscription Créateur (le cahier des charges exige une pièce d'identité — pas construit, comptes créateur créés manuellement pour l'instant), upload du fichier vidéo lui-même (`poster_path` est une simple URL texte, pas de stockage/CDN).
+Upload vidéo (détail dans `app/Domain/Video/README.md`) : intégration Cloudflare Stream — le fichier part directement du client vers Cloudflare (jamais proxié par l'API), le statut est interrogé côté serveur plutôt que via un webhook entrant. Config `CLOUDFLARE_STREAM_*` dans `.env`/`config/services.php`, credentials vides tant qu'il n'y a pas de compte. Une vidéo ne peut être validée par un modérateur que si son fichier est `ready`. L'URL de lecture n'est exposée dans `GET /api/videos/{id}` qu'aux acheteurs, une fois le fichier prêt.
+
+Pas encore fait : inscription Créateur (le cahier des charges exige une pièce d'identité — pas construit, comptes créateur créés manuellement pour l'instant), webhook Cloudflare (statut interrogé à la demande pour l'instant), aperçu gratuit avant achat.
 
 Ledger commission/créateur et demandes de retrait (cahier des charges §6, détail dans `app/Domain/Payment/README.md`) :
 - `GET /api/creator/balance` — solde disponible du créateur connecté.
@@ -69,7 +71,7 @@ Ledger commission/créateur et demandes de retrait (cahier des charges §6, dét
 - `POST /api/creator/payouts` — `{ amount, destination_msisdn }`, rejette sous 10 000 FCFA ou au-dessus du solde disponible.
 - Back-office modérateur `/moderation/payouts` (Marquer payé / Rejeter) et `/moderation/ledger-entries` (lecture seule, historique des ventes/commissions par créateur).
 
-Testé via `tests/Feature/` (`php artisan test`) — 43/43 au dernier passage, vérifié aussi manuellement contre PostgreSQL (upload créateur, calcul de commission, réservation du solde).
+Testé via `tests/Feature/` (`php artisan test`) — 50/50 au dernier passage, vérifié aussi manuellement contre PostgreSQL (upload créateur, upload vidéo/lecture, calcul de commission, réservation du solde).
 
 Créer un utilisateur modérateur de test :
 

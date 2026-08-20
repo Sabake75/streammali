@@ -5,6 +5,7 @@ namespace App\Domain\Video\Models;
 use App\Domain\Moderation\Enums\VideoStatus;
 use App\Domain\Payment\Models\Payment;
 use App\Domain\Video\Enums\VideoCategory;
+use App\Domain\Video\Enums\VideoSourceStatus;
 use App\Models\User;
 use Database\Factories\VideoFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -24,11 +25,25 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'price',
     'status',
     'rejection_reason',
+    'source_provider',
+    'provider_video_id',
+    'source_status',
+    'playback_url',
 ])]
 class Video extends Model
 {
     /** @use HasFactory<VideoFactory> */
     use HasFactory;
+
+    /**
+     * Eloquent doesn't hydrate DB column defaults into memory after
+     * create() — see the same fix on App\Models\User.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'source_status' => 'not_started',
+    ];
 
     protected function casts(): array
     {
@@ -37,6 +52,7 @@ class Video extends Model
             'status' => VideoStatus::class,
             'duration_seconds' => 'integer',
             'price' => 'integer',
+            'source_status' => VideoSourceStatus::class,
         ];
     }
 

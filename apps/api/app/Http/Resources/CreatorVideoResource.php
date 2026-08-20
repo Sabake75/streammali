@@ -28,6 +28,10 @@ class CreatorVideoResource extends JsonResource
                 'label' => $this->status->label(),
             ],
             'rejection_reason' => $this->rejection_reason,
+            'source_status' => [
+                'value' => $this->source_status->value,
+                'label' => $this->source_status->label(),
+            ],
             'created_at' => $this->created_at,
         ];
     }

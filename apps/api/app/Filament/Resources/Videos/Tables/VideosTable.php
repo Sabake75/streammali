@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Videos\Tables;
 
 use App\Domain\Moderation\Enums\VideoStatus;
 use App\Domain\Video\Enums\VideoCategory;
+use App\Domain\Video\Enums\VideoSourceStatus;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -39,6 +40,11 @@ class VideosTable
                     ->badge()
                     ->color(fn (VideoStatus $state) => $state->color())
                     ->formatStateUsing(fn (VideoStatus $state) => $state->label()),
+                TextColumn::make('source_status')
+                    ->label('Fichier vidéo')
+                    ->badge()
+                    ->color(fn (VideoSourceStatus $state) => $state->color())
+                    ->formatStateUsing(fn (VideoSourceStatus $state) => $state->label()),
                 TextColumn::make('created_at')
                     ->label('Soumis le')
                     ->dateTime()
@@ -59,6 +65,11 @@ class VideosTable
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
                     ->visible(fn ($record) => $record->status !== VideoStatus::Approved)
+                    // Rien à valider tant qu'il n'y a pas de fichier prêt à visionner.
+                    ->disabled(fn ($record) => $record->source_status !== VideoSourceStatus::Ready)
+                    ->tooltip(fn ($record) => $record->source_status !== VideoSourceStatus::Ready
+                        ? "Le fichier vidéo n'est pas encore prêt."
+                        : null)
                     ->requiresConfirmation()
                     ->action(fn ($record) => $record->update([
                         'status' => VideoStatus::Approved,
