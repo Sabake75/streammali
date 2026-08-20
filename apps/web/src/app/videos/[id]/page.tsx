@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PurchaseButton } from "@/components/PurchaseButton";
+import { ReportButton } from "@/components/ReportButton";
 import { fetchVideo } from "@/lib/api";
 import { formatDuration, formatPrice } from "@/lib/format";
 
@@ -51,6 +52,10 @@ export default async function VideoDetailPage(props: PageProps<"/videos/[id]">) 
               {formatPrice(video.price)}
             </span>
             <PurchaseButton videoId={video.id} />
+          </div>
+
+          <div className="mt-2">
+            <ReportButton videoId={video.id} />
           </div>
         </div>
       </div>

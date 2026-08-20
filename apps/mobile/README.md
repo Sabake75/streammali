@@ -42,6 +42,8 @@ Mot de passe (connexion, inscription, inscription créateur) : `lib/widgets/pin_
 
 Messagerie créateur ↔ modération (espace créateur) : `lib/widgets/messaging.dart`, style bulles de chat, `GET`/`POST /api/creator/messages` via `lib/models/message.dart`.
 
+Signalement de vidéo (fiche vidéo) : `lib/widgets/report_section.dart`, même pattern que `purchase_section.dart` (lien repliable → formulaire de motif), `POST /api/videos/{id}/report`.
+
 `flutter analyze`, `flutter test` (couvre la validation du formulaire de connexion) et `flutter build web` passent tous sans erreur.
 
 ```

@@ -2,16 +2,21 @@
 
 namespace App\Filament\Resources\Videos\Tables;
 
+use App\Domain\Moderation\Enums\ReportStatus;
 use App\Domain\Moderation\Enums\VideoStatus;
+use App\Domain\Moderation\Models\Report;
 use App\Domain\Video\Enums\VideoCategory;
 use App\Domain\Video\Enums\VideoSourceStatus;
+use App\Domain\Video\Models\Video;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Textarea;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 
 class VideosTable
@@ -49,6 +54,15 @@ class VideosTable
                     ->label('Soumis le')
                     ->dateTime()
                     ->sortable(),
+                TextColumn::make('pending_reports_count')
+                    ->label('Signalements')
+                    ->badge()
+                    ->color('danger')
+                    ->getStateUsing(function ($record) {
+                        $count = static::pendingReportsCount($record);
+
+                        return $count > 0 ? $count : null;
+                    }),
             ])
             ->defaultSort('created_at', 'asc')
             ->filters([
@@ -58,6 +72,12 @@ class VideosTable
                 SelectFilter::make('category')
                     ->label('Catégorie')
                     ->options(collect(VideoCategory::cases())->mapWithKeys(fn ($case) => [$case->value => $case->label()])),
+                TernaryFilter::make('reported')
+                    ->label('Signalée')
+                    ->queries(
+                        true: fn ($query) => $query->whereHas('reports', fn ($q) => $q->where('status', ReportStatus::Pending)),
+                        false: fn ($query) => $query->whereDoesntHave('reports', fn ($q) => $q->where('status', ReportStatus::Pending)),
+                    ),
             ])
             ->recordActions([
                 Action::make('approve')
@@ -89,6 +109,21 @@ class VideosTable
                         'status' => VideoStatus::Rejected,
                         'rejection_reason' => $data['rejection_reason'],
                     ])),
+                Action::make('reports')
+                    ->label('Signalements')
+                    ->icon('heroicon-o-flag')
+                    ->color('danger')
+                    ->visible(fn ($record) => static::pendingReportsCount($record) > 0)
+                    ->schema(fn ($record) => [
+                        TextEntry::make('reports_list')
+                            ->hiddenLabel()
+                            ->state(fn () => static::formatReports($record))
+                            ->html(),
+                    ])
+                    ->modalSubmitActionLabel('Marquer traités')
+                    ->action(fn ($record) => $record->reports()
+                        ->where('status', ReportStatus::Pending)
+                        ->update(['status' => ReportStatus::Dismissed])),
                 EditAction::make(),
             ])
             ->toolbarActions([
@@ -96,5 +131,25 @@ class VideosTable
                     DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    private static function pendingReportsCount(Video $video): int
+    {
+        return $video->reports()->where('status', ReportStatus::Pending)->count();
+    }
+
+    private static function formatReports(Video $video): string
+    {
+        $reports = $video->reports()->with('reporter')->where('status', ReportStatus::Pending)->oldest()->get();
+
+        return $reports
+            ->map(function (Report $report) {
+                $reporter = e($report->reporter->name);
+                $when = $report->created_at->format('d/m/Y H:i');
+                $reason = nl2br(e($report->reason));
+
+                return "<strong>{$reporter}</strong> <span style=\"color:#888\">({$when})</span><br>{$reason}";
+            })
+            ->implode('<hr style="margin:8px 0">');
     }
 }

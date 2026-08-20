@@ -116,6 +116,28 @@ class ApiClient {
     return PurchaseResult(paymentUrl: json['payment_url'] as String);
   }
 
+  Future<String> reportVideo({
+    required int videoId,
+    required String reason,
+    required String token,
+  }) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/videos/$videoId/report'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({'reason': reason}),
+    );
+
+    if (response.statusCode != 201) {
+      throw ApiException(_extractErrorMessage(response));
+    }
+
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    return json['message'] as String;
+  }
+
   Future<List<CreatorVideo>> fetchMyVideos(String token) async {
     final response = await http.get(
       Uri.parse('$baseUrl/creator/videos'),

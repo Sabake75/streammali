@@ -80,7 +80,9 @@ Messagerie créateur ↔ modération (cahier des charges §5.1, détail dans `ap
 - `POST /api/creator/messages` — `{ body }`, envoie un message.
 - Côté modérateur : action Filament "Messagerie" sur `/moderation/users` (ligne du créateur), affiche le fil et permet de répondre — pas de ressource/page dédiée, cohérent avec le style des autres actions de cette table (Suspendre/Bloquer...).
 
-Testé via `tests/Feature/` (`php artisan test`) — 63/63 au dernier passage, vérifié aussi manuellement contre PostgreSQL (inscription créateur avec vrai upload multipart, upload vidéo/lecture, calcul de commission, réservation du solde, échange de messages créateur/modérateur).
+Signalement de vidéo (cahier des charges §5.2/§5.3, détail dans `app/Domain/Moderation/README.md`) : `POST /api/videos/{video}/report` — `{ reason }`, n'importe quel utilisateur connecté. Ne dépublie rien automatiquement : le back-office affiche un badge "Signalements" sur `/moderation/videos` et une action listant les motifs, la dépublication elle-même réutilise l'action "Refuser" déjà existante.
+
+Testé via `tests/Feature/` (`php artisan test`) — 69/69 au dernier passage, vérifié aussi manuellement contre PostgreSQL (inscription créateur avec vrai upload multipart, upload vidéo/lecture, calcul de commission, réservation du solde, échange de messages créateur/modérateur, signalement d'une vidéo).
 
 Créer un utilisateur modérateur de test :
 

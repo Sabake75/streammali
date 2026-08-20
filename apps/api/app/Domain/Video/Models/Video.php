@@ -3,6 +3,7 @@
 namespace App\Domain\Video\Models;
 
 use App\Domain\Moderation\Enums\VideoStatus;
+use App\Domain\Moderation\Models\Report;
 use App\Domain\Payment\Models\Payment;
 use App\Domain\Video\Enums\VideoCategory;
 use App\Domain\Video\Enums\VideoSourceStatus;
@@ -69,6 +70,11 @@ class Video extends Model
     public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);
+    }
+
+    public function reports(): HasMany
+    {
+        return $this->hasMany(Report::class);
     }
 
     protected static function newFactory(): VideoFactory

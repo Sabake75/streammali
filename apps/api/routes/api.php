@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\Creator\VideoSourceController;
 use App\Http\Controllers\Api\OrangeMoneyWebhookController;
 use App\Http\Controllers\Api\VideoCatalogController;
 use App\Http\Controllers\Api\VideoPurchaseController;
+use App\Http\Controllers\Api\VideoReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -33,6 +34,8 @@ Route::middleware(['auth:sanctum', 'account.active'])->group(function () {
 
     Route::post('/videos/{video}/purchase', [VideoPurchaseController::class, 'store'])
         ->name('videos.purchase');
+    Route::post('/videos/{video}/report', [VideoReportController::class, 'store'])
+        ->name('videos.report');
 
     Route::prefix('creator')->name('creator.')->group(function () {
         Route::get('/videos', [CreatorVideoController::class, 'index'])->name('videos.index');

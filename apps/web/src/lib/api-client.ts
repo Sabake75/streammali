@@ -110,6 +110,10 @@ export async function requestPayout(input: {
   return postJson("/creator/payouts", input, { authenticated: true });
 }
 
+export async function reportVideo(videoId: number, reason: string): Promise<{ message: string }> {
+  return postJson(`/videos/${videoId}/report`, { reason }, { authenticated: true });
+}
+
 export async function fetchMyMessages(): Promise<{ data: Message[] }> {
   return getJson("/creator/messages");
 }

@@ -43,6 +43,8 @@ Mot de passe (connexion, inscription, inscription créateur) : `src/components/P
 
 Messagerie créateur ↔ modération (`/creer`) : `src/components/creator/Messaging.tsx`, style bulles de chat (message du créateur aligné à droite, réponses de la modération à gauche), `GET`/`POST /api/creator/messages`.
 
+Signalement de vidéo (fiche vidéo) : `src/components/ReportButton.tsx`, lien discret sous le bouton d'achat, formulaire de motif repliable, `POST /api/videos/{id}/report`.
+
 Pas encore fait : jaquettes via `next/image` (actuellement `<img>` brut le temps de choisir un hébergement d'images).
 
 ```

@@ -4,6 +4,7 @@ import '../models/video.dart';
 import '../services/api_client.dart';
 import '../utils/formatting.dart';
 import '../widgets/purchase_section.dart';
+import '../widgets/report_section.dart';
 
 class VideoDetailScreen extends StatefulWidget {
   final int videoId;
@@ -86,6 +87,8 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> {
                 ),
                 const SizedBox(height: 12),
                 PurchaseSection(videoId: video.id),
+                const SizedBox(height: 8),
+                ReportSection(videoId: video.id),
               ],
             ),
           );
