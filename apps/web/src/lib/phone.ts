@@ -1,23 +1,26 @@
 import {
-  getCountries,
   getCountryCallingCode,
   getExampleNumber,
   isValidPhoneNumber,
   type CountryCode as LibCountryCode,
 } from "libphonenumber-js";
 import examples from "libphonenumber-js/examples.mobile.json";
+import { FR_COUNTRY_NAMES } from "./phone-country-names";
 
 export type CountryCode = LibCountryCode;
 
-const DISPLAY_NAMES = new Intl.DisplayNames(["fr"], { type: "region" });
-
+// French country names are baked in ahead of time (generated from Node's ICU
+// data, see phone-country-names.ts) rather than resolved at runtime via
+// Intl.DisplayNames: Node and Chrome ship different ICU data (e.g. "Hong
+// Kong" vs "R.A.S. chinoise de Hong Kong"), so calling it separately during
+// SSR and client hydration produced different text — and therefore a
+// different sort order — causing a React hydration mismatch. Static data is
+// identical in both environments by construction.
 export function countryName(country: CountryCode): string {
-  return DISPLAY_NAMES.of(country) ?? country;
+  return FR_COUNTRY_NAMES[country] ?? country;
 }
 
-export const COUNTRIES: CountryCode[] = getCountries().sort((a, b) =>
-  countryName(a).localeCompare(countryName(b), "fr"),
-);
+export const COUNTRIES: CountryCode[] = Object.keys(FR_COUNTRY_NAMES) as CountryCode[];
 
 export const DEFAULT_COUNTRY: CountryCode = "ML";
 
