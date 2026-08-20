@@ -1,5 +1,12 @@
 import { getToken, type StoredUser } from "@/lib/auth-client";
-import type { CreatorVideo, PaginatedResponse, VideoCategoryValue } from "@/lib/types";
+import type {
+  CreatorBalance,
+  CreatorVideo,
+  PaginatedResponse,
+  Payout,
+  PayoutListResponse,
+  VideoCategoryValue,
+} from "@/lib/types";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api";
 
@@ -85,6 +92,21 @@ export async function fetchVideoSourceStatus(videoId: number): Promise<{
   playback_url: string | null;
 }> {
   return getJson(`/creator/videos/${videoId}/source`);
+}
+
+export async function fetchBalance(): Promise<CreatorBalance> {
+  return getJson("/creator/balance");
+}
+
+export async function fetchMyPayouts(): Promise<PayoutListResponse> {
+  return getJson("/creator/payouts");
+}
+
+export async function requestPayout(input: {
+  amount: number;
+  destination_msisdn: string;
+}): Promise<Payout> {
+  return postJson("/creator/payouts", input, { authenticated: true });
 }
 
 async function getJson<T>(path: string): Promise<T> {

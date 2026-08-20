@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 
 import '../models/creator_video.dart';
 import '../models/paginated_response.dart';
+import '../models/payout.dart';
 import '../models/user.dart';
 import '../models/video.dart';
 
@@ -190,6 +191,59 @@ class ApiClient {
 
     final json = jsonDecode(response.body) as Map<String, dynamic>;
     return CreatorVideoStatus.fromJson(json['source_status'] as Map<String, dynamic>);
+  }
+
+  Future<CreatorBalance> fetchBalance(String token) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/creator/balance'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+
+    if (response.statusCode != 200) {
+      throw ApiException(_extractErrorMessage(response));
+    }
+
+    return CreatorBalance.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+  }
+
+  Future<List<Payout>> fetchMyPayouts(String token) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/creator/payouts'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+
+    if (response.statusCode != 200) {
+      throw ApiException(_extractErrorMessage(response));
+    }
+
+    // /creator/payouts serializes a raw Laravel paginator (pagination
+    // fields at the root), unlike the other creator endpoints which nest
+    // them under a "meta" key — a known minor API inconsistency.
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    return (json['data'] as List)
+        .map((item) => Payout.fromJson(item as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<Payout> requestPayout({
+    required int amount,
+    required String destinationMsisdn,
+    required String token,
+  }) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/creator/payouts'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({'amount': amount, 'destination_msisdn': destinationMsisdn}),
+    );
+
+    if (response.statusCode != 201) {
+      throw ApiException(_extractErrorMessage(response));
+    }
+
+    return Payout.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
   }
 
   Future<AuthResult> registerCreator({

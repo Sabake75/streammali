@@ -61,7 +61,10 @@ class PayoutController extends Controller
             'id' => $payout->id,
             'amount' => $payout->amount,
             'destination_msisdn' => $payout->destination_msisdn,
-            'status' => $payout->status->value,
+            'status' => [
+                'value' => $payout->status->value,
+                'label' => $payout->status->label(),
+            ],
         ], 201);
     }
 

@@ -37,6 +37,33 @@ export type CreatorVideo = {
   created_at: string;
 };
 
+export type CreatorBalance = {
+  available_balance: number;
+  minimum_payout_amount: number;
+};
+
+export type PayoutStatusValue = "pending" | "paid" | "rejected";
+
+export type Payout = {
+  id: number;
+  amount: number;
+  destination_msisdn: string;
+  status: { value: PayoutStatusValue; label: string };
+  rejection_reason: string | null;
+  processed_at: string | null;
+  created_at: string;
+};
+
+// /api/creator/payouts serializes a raw Laravel paginator (pagination
+// fields at the root), unlike the Resource-based endpoints below that
+// nest them under `meta` — a known minor API inconsistency.
+export type PayoutListResponse = {
+  data: Payout[];
+  total: number;
+  current_page: number;
+  last_page: number;
+};
+
 export type PaginatedResponse<T> = {
   data: T[];
   meta: {

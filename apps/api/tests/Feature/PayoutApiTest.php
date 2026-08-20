@@ -78,7 +78,7 @@ class PayoutApiTest extends TestCase
             ])
             ->assertCreated();
 
-        $response->assertJsonPath('status', 'pending');
+        $response->assertJsonPath('status.value', 'pending');
 
         $this->assertDatabaseHas('payouts', [
             'creator_id' => $creator->id,
