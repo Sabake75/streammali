@@ -26,6 +26,16 @@ class LoginController extends Controller
             ]);
         }
 
+        if (! $user->isActive()) {
+            throw ValidationException::withMessages([
+                'phone' => [match ($user->account_status->value) {
+                    'suspended' => 'Votre compte est suspendu.',
+                    'blocked' => 'Votre compte est bloqué.',
+                    default => "Votre compte n'est pas actif.",
+                }],
+            ]);
+        }
+
         return response()->json([
             'user' => [
                 'id' => $user->id,
