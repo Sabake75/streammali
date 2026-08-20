@@ -28,6 +28,13 @@ Auth + achat côté client (Bearer token Sanctum, pas de cookies/CSRF — voir `
 
 Vérifié en conditions réelles (requêtes cross-origin avec `Origin: http://localhost:3000` contre l'API) : le flux passe l'auth/CORS/validation de bout en bout ; l'échec final vient uniquement de l'absence de vrais credentials Orange Money côté API (déjà documenté), pas d'un problème CORS/Sanctum.
 
+Upload vidéo côté créateur (`/creer`, lien dans le header) :
+- Réservé aux comptes `role=creator` (message d'accès refusé sinon — pas d'auto-inscription créateur, voir `apps/api/README.md`).
+- `src/components/creator/NewVideoForm.tsx` — crée la vidéo (métadonnées, `POST /api/creator/videos`).
+- `src/components/creator/VideoUploadWidget.tsx` — upload du fichier via **tus-js-client** contre l'`upload_url` Cloudflare Stream renvoyée par `POST /api/creator/videos/{id}/source` (protocole TUS "direct creator upload" — `uploadUrl` passé à tus-js-client, pas `endpoint`, puisque la ressource d'upload existe déjà côté Cloudflare). Barre de progression, puis sondage (`GET .../source`) toutes les 5s jusqu'à `ready`/`failed`.
+
+Vérifié en conditions réelles contre l'API (création vidéo + liste "mes vidéos" confirmées sur PostgreSQL) ; l'appel Cloudflare échoue comme attendu faute de vrai compte (même limitation que côté API).
+
 Pas encore fait : jaquettes via `next/image` (actuellement `<img>` brut le temps de choisir un hébergement d'images).
 
 ```

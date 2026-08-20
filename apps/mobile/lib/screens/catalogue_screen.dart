@@ -5,6 +5,7 @@ import '../models/video.dart';
 import '../services/api_client.dart';
 import '../services/auth_controller.dart';
 import '../widgets/video_card.dart';
+import 'creator_screen.dart';
 import 'login_screen.dart';
 import 'video_detail_screen.dart';
 
@@ -68,6 +69,15 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(user.name),
+                  IconButton(
+                    icon: const Icon(Icons.video_call_outlined),
+                    tooltip: 'Espace créateur',
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => const CreatorScreen()),
+                      );
+                    },
+                  ),
                   IconButton(
                     icon: const Icon(Icons.logout),
                     tooltip: 'Déconnexion',

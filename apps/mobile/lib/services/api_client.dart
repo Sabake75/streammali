@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import '../models/creator_video.dart';
 import '../models/paginated_response.dart';
 import '../models/user.dart';
 import '../models/video.dart';
@@ -111,6 +112,84 @@ class ApiClient {
 
     final json = jsonDecode(response.body) as Map<String, dynamic>;
     return PurchaseResult(paymentUrl: json['payment_url'] as String);
+  }
+
+  Future<List<CreatorVideo>> fetchMyVideos(String token) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/creator/videos'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+
+    if (response.statusCode != 200) {
+      throw ApiException(_extractErrorMessage(response));
+    }
+
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    return (json['data'] as List)
+        .map((item) => CreatorVideo.fromJson(item as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<CreatorVideo> createVideo({
+    required String token,
+    required String title,
+    String? description,
+    required String category,
+    int? price,
+    int? durationSeconds,
+  }) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/creator/videos'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({
+        'title': title,
+        if (description != null && description.isNotEmpty) 'description': description,
+        'category': category,
+        if (price != null) 'price': price,
+        if (durationSeconds != null) 'duration_seconds': durationSeconds,
+      }),
+    );
+
+    if (response.statusCode != 201) {
+      throw ApiException(_extractErrorMessage(response));
+    }
+
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    return CreatorVideo.fromJson(json['data'] as Map<String, dynamic>);
+  }
+
+  Future<String> createVideoUploadUrl({required int videoId, required String token}) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/creator/videos/$videoId/source'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+
+    if (response.statusCode != 201) {
+      throw ApiException(_extractErrorMessage(response));
+    }
+
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    return json['upload_url'] as String;
+  }
+
+  Future<CreatorVideoStatus> fetchVideoSourceStatus({
+    required int videoId,
+    required String token,
+  }) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/creator/videos/$videoId/source'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+
+    if (response.statusCode != 200) {
+      throw ApiException(_extractErrorMessage(response));
+    }
+
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    return CreatorVideoStatus.fromJson(json['source_status'] as Map<String, dynamic>);
   }
 
   Future<AuthResult> _postAuth(String path, Map<String, dynamic> body) async {

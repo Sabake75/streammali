@@ -27,6 +27,13 @@ Auth + achat, même flux token Bearer Sanctum que le web (`apps/web/src/lib/{aut
 
 Important : CORS ne s'applique qu'à Flutter **Web** (Android/iOS/desktop ne sont pas concernés). Pour tester sur Chrome, ajouter l'origine du serveur de dev Flutter (`flutter run -d chrome --web-port=...`) à `CORS_ALLOWED_ORIGINS` côté API.
 
+Upload vidéo côté créateur (`lib/screens/creator_screen.dart`, accessible via l'icône dans l'AppBar du catalogue) :
+- Réservé aux comptes `role=creator` (message sinon).
+- Formulaire de création (métadonnées) + liste "mes vidéos" avec statut de modération et de traitement.
+- `lib/widgets/video_upload_widget.dart` — sélection de fichier (`file_picker`) puis upload via **`tus_client_dart`** contre l'`upload_url` Cloudflare Stream. `TusMemoryStore` pré-rempli avec l'URL fournie par l'API pour que le client cible directement la ressource déjà créée côté Cloudflare (sans re-déclencher une création). Barre de progression, puis sondage périodique du statut jusqu'à `ready`/`failed`.
+
+Vérifié en conditions réelles contre l'API (création/liste vidéo confirmées sur PostgreSQL, en réutilisant la même approche que côté web).
+
 `flutter analyze`, `flutter test` (couvre la validation du formulaire de connexion) et `flutter build web` passent tous sans erreur.
 
 ```

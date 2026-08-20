@@ -21,6 +21,22 @@ export type VideoSummary = {
   created_at: string;
 };
 
+export type VideoSourceStatusValue = "not_started" | "processing" | "ready" | "failed";
+
+export type CreatorVideo = {
+  id: number;
+  title: string;
+  description: string | null;
+  category: VideoCategory;
+  poster_path: string | null;
+  duration_seconds: number | null;
+  price: number;
+  status: { value: "pending" | "approved" | "rejected"; label: string };
+  rejection_reason: string | null;
+  source_status: { value: VideoSourceStatusValue; label: string };
+  created_at: string;
+};
+
 export type PaginatedResponse<T> = {
   data: T[];
   meta: {
