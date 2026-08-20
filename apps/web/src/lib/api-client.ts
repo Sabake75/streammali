@@ -2,6 +2,7 @@ import { getToken, type StoredUser } from "@/lib/auth-client";
 import type {
   CreatorBalance,
   CreatorVideo,
+  Message,
   PaginatedResponse,
   Payout,
   PayoutListResponse,
@@ -107,6 +108,14 @@ export async function requestPayout(input: {
   destination_msisdn: string;
 }): Promise<Payout> {
   return postJson("/creator/payouts", input, { authenticated: true });
+}
+
+export async function fetchMyMessages(): Promise<{ data: Message[] }> {
+  return getJson("/creator/messages");
+}
+
+export async function sendMessage(body: string): Promise<Message> {
+  return postJson("/creator/messages", { body }, { authenticated: true });
 }
 
 async function getJson<T>(path: string): Promise<T> {

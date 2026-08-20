@@ -6,6 +6,7 @@ import '../services/api_client.dart';
 import '../services/auth_controller.dart';
 import '../utils/formatting.dart';
 import '../widgets/balance_and_payouts.dart';
+import '../widgets/messaging.dart';
 import '../widgets/video_upload_widget.dart';
 import 'register_creator_screen.dart';
 
@@ -87,6 +88,8 @@ class _CreatorScreenState extends State<CreatorScreen> {
             padding: const EdgeInsets.all(16),
             children: [
               const BalanceAndPayouts(),
+              const SizedBox(height: 24),
+              const Messaging(),
               const SizedBox(height: 24),
               _NewVideoForm(onCreated: _reload),
               const SizedBox(height: 24),

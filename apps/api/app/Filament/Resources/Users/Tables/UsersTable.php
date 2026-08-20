@@ -2,13 +2,17 @@
 
 namespace App\Filament\Resources\Users\Tables;
 
+use App\Domain\Moderation\Actions\SendMessage;
 use App\Domain\Moderation\Enums\AccountStatus;
+use App\Domain\Moderation\Models\Message;
 use App\Enums\UserRole;
+use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Textarea;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -114,6 +118,23 @@ class UsersTable
                         'account_status' => AccountStatus::Active,
                         'account_status_reason' => null,
                     ])),
+                Action::make('messagerie')
+                    ->label('Messagerie')
+                    ->icon('heroicon-o-chat-bubble-left-right')
+                    ->color('gray')
+                    ->visible(fn ($record) => $record->role === UserRole::Creator)
+                    ->schema(fn ($record) => [
+                        TextEntry::make('thread')
+                            ->hiddenLabel()
+                            ->state(fn () => static::formatThread($record))
+                            ->html(),
+                        Textarea::make('reply')
+                            ->label('Répondre')
+                            ->required()
+                            ->rows(3),
+                    ])
+                    ->modalSubmitActionLabel('Envoyer')
+                    ->action(fn ($record, array $data) => app(SendMessage::class)($record, auth()->user(), $data['reply'])),
                 Action::make('verify_identity')
                     ->label(fn ($record) => $record->identity_verified_at ? "Annuler la vérification" : "Vérifier l'identité")
                     ->icon('heroicon-o-identification')
@@ -128,5 +149,26 @@ class UsersTable
                     DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    private static function formatThread(User $creator): string
+    {
+        $messages = $creator->messages()->with('sender')->oldest()->get();
+
+        if ($messages->isEmpty()) {
+            return '<em>Aucun message pour l\'instant.</em>';
+        }
+
+        return $messages
+            ->map(function (Message $message) {
+                $author = $message->sender->role === UserRole::Moderator
+                    ? 'Modération'
+                    : e($message->sender->name);
+                $when = $message->created_at->format('d/m/Y H:i');
+                $body = nl2br(e($message->body));
+
+                return "<strong>{$author}</strong> <span style=\"color:#888\">({$when})</span><br>{$body}";
+            })
+            ->implode('<hr style="margin:8px 0">');
     }
 }

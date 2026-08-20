@@ -41,6 +41,8 @@ Champ téléphone (connexion, inscription, achat, retrait créateur) : `src/comp
 
 Mot de passe (connexion, inscription, inscription créateur) : `src/components/PinCodeField.tsx`, code à 4 chiffres uniquement (masqué, `inputMode="numeric"`, plafonné à 4), au lieu d'un mot de passe classique — voir `apps/api/README.md` pour la justification et le throttling côté serveur.
 
+Messagerie créateur ↔ modération (`/creer`) : `src/components/creator/Messaging.tsx`, style bulles de chat (message du créateur aligné à droite, réponses de la modération à gauche), `GET`/`POST /api/creator/messages`.
+
 Pas encore fait : jaquettes via `next/image` (actuellement `<img>` brut le temps de choisir un hébergement d'images).
 
 ```

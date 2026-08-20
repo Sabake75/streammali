@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../models/creator_video.dart';
+import '../models/message.dart';
 import '../models/paginated_response.dart';
 import '../models/payout.dart';
 import '../models/user.dart';
@@ -244,6 +245,39 @@ class ApiClient {
     }
 
     return Payout.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+  }
+
+  Future<List<Message>> fetchMyMessages(String token) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/creator/messages'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+
+    if (response.statusCode != 200) {
+      throw ApiException(_extractErrorMessage(response));
+    }
+
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    return (json['data'] as List)
+        .map((item) => Message.fromJson(item as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<Message> sendMessage({required String body, required String token}) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/creator/messages'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({'body': body}),
+    );
+
+    if (response.statusCode != 201) {
+      throw ApiException(_extractErrorMessage(response));
+    }
+
+    return Message.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
   }
 
   Future<AuthResult> registerCreator({

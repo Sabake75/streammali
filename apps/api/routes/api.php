@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\LogoutController;
 use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Auth\RegisterCreatorController;
+use App\Http\Controllers\Api\Creator\MessageController;
 use App\Http\Controllers\Api\Creator\PayoutController;
 use App\Http\Controllers\Api\Creator\VideoController as CreatorVideoController;
 use App\Http\Controllers\Api\Creator\VideoSourceController;
@@ -42,5 +43,8 @@ Route::middleware(['auth:sanctum', 'account.active'])->group(function () {
         Route::get('/balance', [PayoutController::class, 'balance'])->name('balance');
         Route::get('/payouts', [PayoutController::class, 'index'])->name('payouts.index');
         Route::post('/payouts', [PayoutController::class, 'store'])->name('payouts.store');
+
+        Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
+        Route::post('/messages', [MessageController::class, 'store'])->name('messages.store');
     });
 });

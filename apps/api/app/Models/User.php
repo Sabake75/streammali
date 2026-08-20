@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Domain\Moderation\Enums\AccountStatus;
+use App\Domain\Moderation\Models\Message;
 use App\Domain\Payment\Models\LedgerEntry;
 use App\Domain\Payment\Models\Payout;
 use App\Domain\Video\Models\Video;
@@ -76,5 +77,14 @@ class User extends Authenticatable implements FilamentUser
     public function payouts(): HasMany
     {
         return $this->hasMany(Payout::class, 'creator_id');
+    }
+
+    /**
+     * This creator's conversation with the moderation team — not messages
+     * they merely sent, since a moderator's replies also belong to it.
+     */
+    public function messages(): HasMany
+    {
+        return $this->hasMany(Message::class, 'creator_id');
     }
 }

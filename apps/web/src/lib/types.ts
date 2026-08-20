@@ -64,6 +64,17 @@ export type PayoutListResponse = {
   last_page: number;
 };
 
+export type Message = {
+  id: number;
+  body: string;
+  sender: {
+    id: number;
+    name: string;
+    role: "creator" | "viewer" | "moderator";
+  };
+  created_at: string;
+};
+
 export type PaginatedResponse<T> = {
   data: T[];
   meta: {

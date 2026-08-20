@@ -75,7 +75,12 @@ Ledger commission/créateur et demandes de retrait (cahier des charges §6, dét
 - `POST /api/creator/payouts` — `{ amount, destination_msisdn }`, rejette sous 10 000 FCFA ou au-dessus du solde disponible.
 - Back-office modérateur `/moderation/payouts` (Marquer payé / Rejeter) et `/moderation/ledger-entries` (lecture seule, historique des ventes/commissions par créateur).
 
-Testé via `tests/Feature/` (`php artisan test`) — 56/56 au dernier passage, vérifié aussi manuellement contre PostgreSQL (inscription créateur avec vrai upload multipart, upload vidéo/lecture, calcul de commission, réservation du solde).
+Messagerie créateur ↔ modération (cahier des charges §5.1, détail dans `app/Domain/Moderation/README.md`) : fil unique par créateur, pas de sujets séparés.
+- `GET /api/creator/messages` — l'historique complet du créateur connecté (ses messages + les réponses de n'importe quel modérateur), chronologique.
+- `POST /api/creator/messages` — `{ body }`, envoie un message.
+- Côté modérateur : action Filament "Messagerie" sur `/moderation/users` (ligne du créateur), affiche le fil et permet de répondre — pas de ressource/page dédiée, cohérent avec le style des autres actions de cette table (Suspendre/Bloquer...).
+
+Testé via `tests/Feature/` (`php artisan test`) — 63/63 au dernier passage, vérifié aussi manuellement contre PostgreSQL (inscription créateur avec vrai upload multipart, upload vidéo/lecture, calcul de commission, réservation du solde, échange de messages créateur/modérateur).
 
 Créer un utilisateur modérateur de test :
 

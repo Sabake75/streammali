@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { BalanceAndPayouts } from "@/components/creator/BalanceAndPayouts";
+import { Messaging } from "@/components/creator/Messaging";
 import { NewVideoForm } from "@/components/creator/NewVideoForm";
 import { VideoUploadWidget } from "@/components/creator/VideoUploadWidget";
 import { fetchMyVideos } from "@/lib/api-client";
@@ -58,6 +59,10 @@ export default function CreatorPage() {
 
       <div className="mt-6">
         <BalanceAndPayouts />
+      </div>
+
+      <div className="mt-6">
+        <Messaging />
       </div>
 
       <div className="mt-6">

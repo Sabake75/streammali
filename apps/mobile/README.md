@@ -40,6 +40,8 @@ Champ téléphone (connexion, inscription, achat, retrait créateur) : `lib/widg
 
 Mot de passe (connexion, inscription, inscription créateur) : `lib/widgets/pin_code_field.dart`, code à 4 chiffres uniquement (masqué, clavier numérique, plafonné à 4) — voir `apps/api/README.md` pour la justification et le throttling côté serveur.
 
+Messagerie créateur ↔ modération (espace créateur) : `lib/widgets/messaging.dart`, style bulles de chat, `GET`/`POST /api/creator/messages` via `lib/models/message.dart`.
+
 `flutter analyze`, `flutter test` (couvre la validation du formulaire de connexion) et `flutter build web` passent tous sans erreur.
 
 ```

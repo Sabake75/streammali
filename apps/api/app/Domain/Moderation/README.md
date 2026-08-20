@@ -7,12 +7,13 @@ Responsabilités (cahier des charges §5.3) :
 - Validation ou refus d'une vidéo (motif obligatoire en cas de refus).
 - Dépublication d'une vidéo en ligne en cas de signalement.
 - Gestion des comptes (suspension, blocage, vérification d'identité).
+- Messagerie créateur ↔ modération.
 - Statistiques globales et rapports exportables.
 
-## Sous-structure prévue
+## Structure
 
-- `Models/` — modèles Eloquent propres à la modération (ex. décision de modération, signalement).
-- `Actions/` — actions métier unitaires (ex. `ApproveVideo`, `RejectVideo`, `SuspendAccount`).
-- `Data/` — DTOs d'entrée/sortie des endpoints API.
+- `Enums/VideoStatus.php`, `Enums/AccountStatus.php` — statuts consommés par `Video`/`User` (`App\Domain\Video\Models\Video`, `App\Models\User`) et par le back-office Filament (`app/Filament/Resources/{Videos,Users}`), qui portent la logique de validation/refus/suspension directement dans leurs actions de table plutôt que via des Actions dédiées ici.
+- `Models/Message.php` — un message dans la conversation d'un créateur avec la modération (`creator_id` = à qui appartient le fil, `sender_id` = qui a écrit — le créateur ou n'importe quel modérateur). Fil unique par créateur, pas de sujets/tickets séparés.
+- `Actions/SendMessage.php` — crée un message ; utilisé à la fois par `Api\Creator\MessageController` (côté créateur) et par l'action Filament "Messagerie" sur `UsersTable` (côté modérateur, répond au créateur sélectionné).
 
-Rien n'est encore implémenté ici — dossier créé pour recevoir ce code au fur et à mesure des tickets. Le back-office Filament (`app/Filament`) consommera ces actions plutôt que de dupliquer la logique.
+Pas encore fait : dépublication suite à signalement, statistiques/rapports exportables (aucun signalement viewer n'existe encore côté catalogue).
