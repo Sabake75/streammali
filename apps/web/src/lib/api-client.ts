@@ -16,6 +16,30 @@ export async function registerViewer(input: {
   return postJson("/register", input);
 }
 
+export async function registerCreator(input: {
+  name: string;
+  phone: string;
+  password: string;
+  identityDocument: File;
+}): Promise<AuthResponse> {
+  const formData = new FormData();
+  formData.set("name", input.name);
+  formData.set("phone", input.phone);
+  formData.set("password", input.password);
+  formData.set("identity_document", input.identityDocument);
+
+  const response = await fetch(`${API_BASE_URL}/register/creator`, {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error(await extractErrorMessage(response));
+  }
+
+  return response.json();
+}
+
 export async function loginViewer(input: { phone: string; password: string }): Promise<AuthResponse> {
   return postJson("/login", input);
 }

@@ -192,6 +192,32 @@ class ApiClient {
     return CreatorVideoStatus.fromJson(json['source_status'] as Map<String, dynamic>);
   }
 
+  Future<AuthResult> registerCreator({
+    required String name,
+    required String phone,
+    required String password,
+    required String identityDocumentPath,
+  }) async {
+    final request = http.MultipartRequest('POST', Uri.parse('$baseUrl/register/creator'))
+      ..fields['name'] = name
+      ..fields['phone'] = phone
+      ..fields['password'] = password
+      ..files.add(await http.MultipartFile.fromPath('identity_document', identityDocumentPath));
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      throw ApiException(_extractErrorMessage(response));
+    }
+
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    return AuthResult(
+      token: json['token'] as String,
+      user: StoredUser.fromJson(json['user'] as Map<String, dynamic>),
+    );
+  }
+
   Future<AuthResult> _postAuth(String path, Map<String, dynamic> body) async {
     final response = await http.post(
       Uri.parse('$baseUrl$path'),

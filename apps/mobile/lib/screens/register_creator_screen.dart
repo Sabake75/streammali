@@ -1,26 +1,26 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 import '../services/api_client.dart';
 import '../services/auth_controller.dart';
-import 'register_creator_screen.dart';
-import 'video_detail_screen.dart';
+import 'creator_screen.dart';
 
-class RegisterScreen extends StatefulWidget {
-  final int? redirectVideoId;
-
-  const RegisterScreen({super.key, this.redirectVideoId});
+class RegisterCreatorScreen extends StatefulWidget {
+  const RegisterCreatorScreen({super.key});
 
   @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
+  State<RegisterCreatorScreen> createState() => _RegisterCreatorScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class _RegisterCreatorScreenState extends State<RegisterCreatorScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _apiClient = ApiClient();
 
+  String? _identityDocumentPath;
+  String? _identityDocumentName;
   bool _submitting = false;
   String? _error;
 
@@ -32,8 +32,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
+  Future<void> _pickIdentityDocument() async {
+    final result = await FilePicker.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf'],
+    );
+    final path = result?.files.single.path;
+    if (path == null) return;
+
+    setState(() {
+      _identityDocumentPath = path;
+      _identityDocumentName = result!.files.single.name;
+    });
+  }
+
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
+
+    if (_identityDocumentPath == null) {
+      setState(() => _error = "La pièce d'identité est requise.");
+      return;
+    }
 
     setState(() {
       _submitting = true;
@@ -41,14 +60,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
     });
 
     try {
-      final result = await _apiClient.register(
+      final result = await _apiClient.registerCreator(
         name: _nameController.text,
         phone: _phoneController.text,
         password: _passwordController.text,
+        identityDocumentPath: _identityDocumentPath!,
       );
       await AuthController.instance.setSession(result.token, result.user);
       if (!mounted) return;
-      _goBack();
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const CreatorScreen()),
+      );
     } catch (error) {
       setState(() {
         _error = error.toString();
@@ -57,20 +79,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
-  void _goBack() {
-    if (widget.redirectVideoId != null) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => VideoDetailScreen(videoId: widget.redirectVideoId!)),
-      );
-    } else {
-      Navigator.of(context).pop();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Inscription')),
+      appBar: AppBar(title: const Text('Inscription créateur')),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -78,6 +90,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              const Text(
+                "Une pièce d'identité est requise pour publier des vidéos sur StreamMali.",
+              ),
+              const SizedBox(height: 16),
               TextFormField(
                 controller: _nameController,
                 decoration: const InputDecoration(labelText: 'Nom', border: OutlineInputBorder()),
@@ -101,6 +117,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 validator: (value) =>
                     (value == null || value.length < 8) ? '8 caractères minimum' : null,
               ),
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: _pickIdentityDocument,
+                icon: const Icon(Icons.badge_outlined),
+                label: Text(_identityDocumentName ?? "Choisir la pièce d'identité"),
+              ),
               if (_error != null) ...[
                 const SizedBox(height: 12),
                 Text(_error!, style: const TextStyle(color: Colors.red)),
@@ -108,22 +130,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const SizedBox(height: 20),
               FilledButton(
                 onPressed: _submitting ? null : _submit,
-                child: Text(_submitting ? 'Création…' : 'Créer mon compte'),
+                child: Text(_submitting ? 'Création…' : 'Créer mon compte créateur'),
               ),
               const SizedBox(height: 8),
               TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
+                onPressed: () => Navigator.of(context).pop(),
                 child: const Text('Déjà un compte ? Se connecter'),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => const RegisterCreatorScreen()),
-                  );
-                },
-                child: const Text('Tu es créateur ? Inscription créateur'),
               ),
             ],
           ),

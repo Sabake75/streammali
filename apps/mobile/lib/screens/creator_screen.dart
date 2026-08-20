@@ -6,6 +6,7 @@ import '../services/api_client.dart';
 import '../services/auth_controller.dart';
 import '../utils/formatting.dart';
 import '../widgets/video_upload_widget.dart';
+import 'register_creator_screen.dart';
 
 class CreatorScreen extends StatefulWidget {
   const CreatorScreen({super.key});
@@ -56,7 +57,29 @@ class _CreatorScreenState extends State<CreatorScreen> {
           }
 
           if (user.role != 'creator') {
-            return const Center(child: Text('Cet espace est réservé aux comptes créateur.'));
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      'Cet espace est réservé aux comptes créateur.',
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 12),
+                    OutlinedButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => const RegisterCreatorScreen()),
+                        );
+                      },
+                      child: const Text('Créer un compte créateur'),
+                    ),
+                  ],
+                ),
+              ),
+            );
           }
 
           return ListView(

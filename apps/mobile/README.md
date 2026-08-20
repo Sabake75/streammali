@@ -27,8 +27,10 @@ Auth + achat, même flux token Bearer Sanctum que le web (`apps/web/src/lib/{aut
 
 Important : CORS ne s'applique qu'à Flutter **Web** (Android/iOS/desktop ne sont pas concernés). Pour tester sur Chrome, ajouter l'origine du serveur de dev Flutter (`flutter run -d chrome --web-port=...`) à `CORS_ALLOWED_ORIGINS` côté API.
 
+Inscription créateur (`lib/screens/register_creator_screen.dart`, liée depuis l'inscription standard et depuis l'espace créateur) : formulaire avec sélection de pièce d'identité (`file_picker`, jpg/jpeg/png/pdf) puis upload multipart (`http.MultipartRequest`) vers `POST /api/register/creator`.
+
 Upload vidéo côté créateur (`lib/screens/creator_screen.dart`, accessible via l'icône dans l'AppBar du catalogue) :
-- Réservé aux comptes `role=creator` (message sinon).
+- Réservé aux comptes `role=creator` (bouton vers l'inscription créateur sinon).
 - Formulaire de création (métadonnées) + liste "mes vidéos" avec statut de modération et de traitement.
 - `lib/widgets/video_upload_widget.dart` — sélection de fichier (`file_picker`) puis upload via **`tus_client_dart`** contre l'`upload_url` Cloudflare Stream. `TusMemoryStore` pré-rempli avec l'URL fournie par l'API pour que le client cible directement la ressource déjà créée côté Cloudflare (sans re-déclencher une création). Barre de progression, puis sondage périodique du statut jusqu'à `ready`/`failed`.
 

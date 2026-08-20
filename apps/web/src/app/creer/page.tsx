@@ -30,13 +30,25 @@ export default function CreatorPage() {
         <Link href="/connexion?next=/creer" className="underline">
           Connecte-toi
         </Link>{" "}
-        pour accéder à l&apos;espace créateur.
+        ou{" "}
+        <Link href="/inscription-createur" className="underline">
+          crée un compte créateur
+        </Link>{" "}
+        pour accéder à cet espace.
       </CenteredMessage>
     );
   }
 
   if (user.role !== "creator") {
-    return <CenteredMessage>Cet espace est réservé aux comptes créateur.</CenteredMessage>;
+    return (
+      <CenteredMessage>
+        Cet espace est réservé aux comptes créateur.{" "}
+        <Link href="/inscription-createur" className="underline">
+          En créer un
+        </Link>{" "}
+        (pièce d&apos;identité requise).
+      </CenteredMessage>
+    );
   }
 
   return (
