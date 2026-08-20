@@ -39,14 +39,21 @@ Table `videos` + modèle `App\Domain\Video\Models\Video` (catégorie `VideoCateg
 
 Table `payments` + modèle `App\Domain\Payment\Models\Payment`, intégration Orange Money (`App\Domain\Payment\Gateways\OrangeMoneyGateway`) — voir `app/Domain/Payment/README.md` pour le détail. Config dans `.env`/`config/services.php` (`ORANGE_MONEY_*`, credentials vides tant qu'il n'y a pas de compte marchand). Webhook : `/api/webhooks/orange-money`.
 
+Auth API (Viewer, par téléphone — cahier des charges §5.2, colonne `phone` ajoutée à `users`, `email` devenu optionnel) :
+- `POST /api/register` — `{ name, phone, password }`, crée un compte `role=viewer` (`App\Domain\Viewer\Actions\RegisterViewer`) et renvoie un token Sanctum.
+- `POST /api/login` — `{ phone, password }`, renvoie un token Sanctum.
+- `POST /api/logout` — authentifié, révoque le token courant.
+
+Le login Filament du modérateur (`/moderation/login`) continue d'utiliser `email`, inchangé — les deux colonnes coexistent sur `users`. Pas d'inscription Créateur (pièce d'identité) ni de vérification SMS/OTP du téléphone pour l'instant.
+
 API catalogue et achat (publiques sauf mention) :
 - `GET /api/videos` — liste paginée des vidéos **validées uniquement**, filtres `category`/`creator_id`/`search`.
 - `GET /api/videos/{id}` — fiche vidéo (404 si pas encore validée).
 - `POST /api/videos/{id}/purchase` — authentifié (`auth:sanctum`), body `{ payer_msisdn }`, démarre un paiement Orange Money et renvoie `payment_url` ; 404 si vidéo non validée, 409 si déjà achetée.
 
-Pas encore fait : endpoint de connexion/inscription (donc pas de moyen de récupérer un token Sanctum côté client pour l'instant — les tests utilisent `actingAs`), lecture en streaming de la vidéo achetée (pas de champ source vidéo/CDN sur le modèle `Video`).
+Pas encore fait : lecture en streaming de la vidéo achetée (pas de champ source vidéo/CDN sur le modèle `Video`).
 
-Testé via `tests/Feature/` (`php artisan test`) — 18/18 au dernier passage, y compris le flux Orange Money en HTTP mocké (aucun appel réseau réel).
+Testé via `tests/Feature/` (`php artisan test`) — 24/24 au dernier passage, y compris le flux complet inscription → connexion → achat, vérifié aussi manuellement contre PostgreSQL (pas seulement en sqlite de test).
 
 Créer un utilisateur modérateur de test :
 

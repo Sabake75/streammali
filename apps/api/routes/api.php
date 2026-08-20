@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\Auth\LoginController;
+use App\Http\Controllers\Api\Auth\LogoutController;
+use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\OrangeMoneyWebhookController;
 use App\Http\Controllers\Api\VideoCatalogController;
 use App\Http\Controllers\Api\VideoPurchaseController;
@@ -9,6 +12,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
+
+Route::post('/register', [RegisterController::class, 'store'])->name('register');
+Route::post('/login', [LoginController::class, 'store'])->name('login');
+Route::post('/logout', [LogoutController::class, 'store'])->middleware('auth:sanctum')->name('logout');
 
 Route::match(['get', 'post'], '/webhooks/orange-money', OrangeMoneyWebhookController::class)
     ->name('webhooks.orange-money');
