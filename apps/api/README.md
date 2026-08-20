@@ -53,7 +53,13 @@ API catalogue et achat (publiques sauf mention) :
 
 Pas encore fait : lecture en streaming de la vidéo achetée (pas de champ source vidéo/CDN sur le modèle `Video`).
 
-Testé via `tests/Feature/` (`php artisan test`) — 24/24 au dernier passage, y compris le flux complet inscription → connexion → achat, vérifié aussi manuellement contre PostgreSQL (pas seulement en sqlite de test).
+API créateur (authentifié, `role=creator` requis — 403 sinon) :
+- `POST /api/creator/videos` — `{ title, description?, category, poster_path?, duration_seconds?, price? }`, crée une vidéo en statut `pending` (`App\Domain\Creator\Actions\UploadVideo`). Prix par défaut 25 FCFA si omis.
+- `GET /api/creator/videos` — liste paginée des vidéos du créateur connecté, **tous statuts confondus** (contrairement au catalogue public), via `CreatorVideoResource` qui expose `status`/`rejection_reason`.
+
+Pas encore fait : inscription Créateur (le cahier des charges exige une pièce d'identité — pas construit, comptes créateur créés manuellement pour l'instant), upload du fichier vidéo lui-même (`poster_path` est une simple URL texte, pas de stockage/CDN).
+
+Testé via `tests/Feature/` (`php artisan test`) — 29/29 au dernier passage, vérifié aussi manuellement contre PostgreSQL (upload créateur confirmé invisible du catalogue public tant que non validé).
 
 Créer un utilisateur modérateur de test :
 

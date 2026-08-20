@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\LogoutController;
 use App\Http\Controllers\Api\Auth\RegisterController;
+use App\Http\Controllers\Api\Creator\VideoController as CreatorVideoController;
 use App\Http\Controllers\Api\OrangeMoneyWebhookController;
 use App\Http\Controllers\Api\VideoCatalogController;
 use App\Http\Controllers\Api\VideoPurchaseController;
@@ -25,3 +26,8 @@ Route::get('/videos/{video}', [VideoCatalogController::class, 'show'])->name('vi
 Route::post('/videos/{video}/purchase', [VideoPurchaseController::class, 'store'])
     ->middleware('auth:sanctum')
     ->name('videos.purchase');
+
+Route::middleware('auth:sanctum')->prefix('creator')->name('creator.')->group(function () {
+    Route::get('/videos', [CreatorVideoController::class, 'index'])->name('videos.index');
+    Route::post('/videos', [CreatorVideoController::class, 'store'])->name('videos.store');
+});
