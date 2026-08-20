@@ -39,7 +39,14 @@ Table `videos` + modèle `App\Domain\Video\Models\Video` (catégorie `VideoCateg
 
 Table `payments` + modèle `App\Domain\Payment\Models\Payment`, intégration Orange Money (`App\Domain\Payment\Gateways\OrangeMoneyGateway`) — voir `app/Domain/Payment/README.md` pour le détail. Config dans `.env`/`config/services.php` (`ORANGE_MONEY_*`, credentials vides tant qu'il n'y a pas de compte marchand). Webhook : `/api/webhooks/orange-money`.
 
-Testé via `tests/Feature/` (`php artisan test`) — 9/9 au dernier passage, y compris le flux Orange Money en HTTP mocké (aucun appel réseau réel).
+API catalogue et achat (publiques sauf mention) :
+- `GET /api/videos` — liste paginée des vidéos **validées uniquement**, filtres `category`/`creator_id`/`search`.
+- `GET /api/videos/{id}` — fiche vidéo (404 si pas encore validée).
+- `POST /api/videos/{id}/purchase` — authentifié (`auth:sanctum`), body `{ payer_msisdn }`, démarre un paiement Orange Money et renvoie `payment_url` ; 404 si vidéo non validée, 409 si déjà achetée.
+
+Pas encore fait : endpoint de connexion/inscription (donc pas de moyen de récupérer un token Sanctum côté client pour l'instant — les tests utilisent `actingAs`), lecture en streaming de la vidéo achetée (pas de champ source vidéo/CDN sur le modèle `Video`).
+
+Testé via `tests/Feature/` (`php artisan test`) — 18/18 au dernier passage, y compris le flux Orange Money en HTTP mocké (aucun appel réseau réel).
 
 Créer un utilisateur modérateur de test :
 

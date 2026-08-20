@@ -2,14 +2,17 @@
 
 namespace App\Domain\Video\Models;
 
-use App\Domain\Video\Enums\VideoCategory;
 use App\Domain\Moderation\Enums\VideoStatus;
+use App\Domain\Payment\Models\Payment;
+use App\Domain\Video\Enums\VideoCategory;
 use App\Models\User;
 use Database\Factories\VideoFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable([
     'creator_id',
@@ -40,6 +43,16 @@ class Video extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'creator_id');
+    }
+
+    public function scopeApproved(Builder $query): Builder
+    {
+        return $query->where('status', VideoStatus::Approved);
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
     }
 
     protected static function newFactory(): VideoFactory
