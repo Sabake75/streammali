@@ -1,6 +1,9 @@
 import type { PaginatedResponse, VideoSummary } from "@/lib/types";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api";
+// Appels SSR (server components) : peuvent avoir besoin d'une URL différente de celle du
+// navigateur (ex. nom de service Docker), d'où API_INTERNAL_URL en priorité sur NEXT_PUBLIC_API_URL.
+const API_BASE_URL =
+  process.env.API_INTERNAL_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api";
 
 export const VIDEO_CATEGORIES: { value: string; label: string }[] = [
   { value: "film", label: "Film" },
