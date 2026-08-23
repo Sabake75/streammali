@@ -6,6 +6,8 @@ import { Suspense, useState } from "react";
 import { FormField } from "@/components/FormField";
 import { PhoneNumberField } from "@/components/PhoneNumberField";
 import { PinCodeField } from "@/components/PinCodeField";
+import { TermsModal } from "@/components/legal/TermsModal";
+import { ViewerTermsContent } from "@/components/legal/ViewerTermsContent";
 import { registerViewer } from "@/lib/api-client";
 import { setSession } from "@/lib/auth-client";
 
@@ -18,6 +20,7 @@ function RegisterForm() {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [termsModalOpen, setTermsModalOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -57,13 +60,13 @@ function RegisterForm() {
           />
           <span>
             J&apos;ai lu et j&apos;accepte les{" "}
-            <Link
-              href="/cgu-spectateur"
-              target="_blank"
-              className="font-medium text-orange-600 hover:underline dark:text-orange-400"
+            <button
+              type="button"
+              onClick={() => setTermsModalOpen(true)}
+              className="font-medium text-orange-600 underline hover:no-underline dark:text-orange-400"
             >
               CGU
-            </Link>
+            </button>
           </span>
         </label>
         {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
@@ -86,6 +89,18 @@ function RegisterForm() {
           Inscription créateur
         </Link>
       </p>
+
+      <TermsModal
+        open={termsModalOpen}
+        title="Conditions générales d'utilisation — Spectateur"
+        onClose={() => setTermsModalOpen(false)}
+        onAccept={() => {
+          setTermsAccepted(true);
+          setTermsModalOpen(false);
+        }}
+      >
+        <ViewerTermsContent />
+      </TermsModal>
     </div>
   );
 }

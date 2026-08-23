@@ -1,0 +1,161 @@
+import { TermsSection } from "./TermsSection";
+
+export function CreatorTermsContent() {
+  return (
+    <div className="flex flex-col gap-8">
+      <TermsSection title="Objet">
+        <p>
+          Ces Conditions Générales d&apos;Utilisation (CGU) s&apos;appliquent à toute personne qui
+          s&apos;inscrit sur StreamMali en tant que <strong>créateur</strong> : réalisateur,
+          artiste, humoriste ou tout producteur de contenu qui souhaite publier des vidéos (films,
+          clips, sketchs, web-séries) sur la plateforme et être payé lorsqu&apos;un spectateur les
+          regarde.
+        </p>
+        <p>En créant un compte créateur, tu acceptes les règles décrites ci-dessous.</p>
+      </TermsSection>
+
+      <TermsSection title="Inscription créateur">
+        <p>Pour t&apos;inscrire comme créateur, tu dois fournir :</p>
+        <ul className="list-disc pl-5">
+          <li>ton numéro de téléphone,</li>
+          <li>un code à 4 chiffres qui te servira de mot de passe,</li>
+          <li>une pièce d&apos;identité, pour vérifier que tu es bien la personne que tu déclares être.</li>
+        </ul>
+        <p>
+          Les informations que tu donnes doivent être exactes. Si StreamMali a un doute sur ton
+          identité, ton compte peut être bloqué le temps de vérifier.
+        </p>
+      </TermsSection>
+
+      <TermsSection title="Propriété et droits sur les contenus">
+        <p>
+          Chaque vidéo que tu publies doit t&apos;appartenir, ou tu dois avoir l&apos;autorisation
+          de son auteur pour la mettre en ligne et la vendre.
+        </p>
+        <p>
+          En soumettant une vidéo, tu déclares sur l&apos;honneur que tu as bien ce droit. Si une
+          vidéo est en réalité volée, copiée ou publiée sans autorisation,{" "}
+          <strong>tu es seul responsable</strong> : StreamMali peut la retirer immédiatement et
+          bloquer ton compte.
+        </p>
+      </TermsSection>
+
+      <TermsSection title="Soumission et modération">
+        <p>Aucune vidéo n&apos;est visible du public tant qu&apos;elle n&apos;a pas été validée par la modération.</p>
+        <p>Après ta soumission :</p>
+        <ul className="list-disc pl-5">
+          <li>un modérateur regarde la vidéo,</li>
+          <li>
+            il la <strong>valide</strong> (elle devient visible dans le catalogue) ou la{" "}
+            <strong>refuse</strong> (avec un motif expliqué),
+          </li>
+          <li>si elle est refusée, tu peux corriger le problème et la soumettre à nouveau.</li>
+        </ul>
+      </TermsSection>
+
+      <TermsSection title="Prix de vente">
+        <p>
+          Le prix par défaut d&apos;une vidéo est de <strong>100 FCFA</strong>. Ce n&apos;est
+          qu&apos;un point de départ : tu peux le confirmer tel quel ou l&apos;ajuster
+          toi-même pour chaque vidéo, dans la limite de ce que StreamMali autorise.
+        </p>
+      </TermsSection>
+
+      <TermsSection title="Répartition des revenus">
+        <p>C&apos;est la règle la plus importante à retenir :</p>
+        <p className="font-semibold text-neutral-900 dark:text-neutral-50">
+          Sur chaque vente, StreamMali garde 25 % et tu reçois 75 % — quel que soit le prix que tu
+          as fixé pour la vidéo.
+        </p>
+        <p>Exemple concret avec le prix par défaut de 100 FCFA :</p>
+        <div className="overflow-x-auto rounded-lg border border-neutral-200 dark:border-neutral-800">
+          <table className="w-full text-left text-sm">
+            <tbody>
+              <tr className="border-b border-neutral-200 dark:border-neutral-800">
+                <td className="px-4 py-2">Prix payé par le spectateur</td>
+                <td className="px-4 py-2 font-medium">100 FCFA</td>
+              </tr>
+              <tr className="border-b border-neutral-200 dark:border-neutral-800">
+                <td className="px-4 py-2">Ta part (créateur)</td>
+                <td className="px-4 py-2 font-bold text-orange-700 dark:text-orange-400">75 FCFA</td>
+              </tr>
+              <tr>
+                <td className="px-4 py-2">Part StreamMali (commission)</td>
+                <td className="px-4 py-2 font-medium">25 FCFA</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          Si tu fixes un prix différent pour une vidéo, la même règle s&apos;applique : tu gardes
+          toujours 75 % du prix que tu as choisi.
+        </p>
+      </TermsSection>
+
+      <TermsSection title="Reversement de tes revenus">
+        <p>Tes gains s&apos;accumulent sur ton solde StreamMali. Pour les récupérer :</p>
+        <ul className="list-disc pl-5">
+          <li>tu fais une <strong>demande de retrait</strong> vers ton compte Mobile Money,</li>
+          <li>le montant minimum pour retirer est de <strong>10 000 FCFA</strong>,</li>
+          <li>les demandes sont traitées <strong>chaque semaine</strong>,</li>
+          <li>
+            les frais prélevés par les opérateurs Mobile Money sont{" "}
+            <strong>pris en charge par StreamMali</strong> — tu ne payes aucun frais caché.
+          </li>
+        </ul>
+      </TermsSection>
+
+      <TermsSection title="Dépublication et suspension">
+        <p>StreamMali peut :</p>
+        <ul className="list-disc pl-5">
+          <li>
+            <strong>dépublier une vidéo</strong> si elle est signalée à juste titre (contenu
+            illicite, volé, ou qui ne respecte pas ces CGU),
+          </li>
+          <li>
+            <strong>suspendre ton compte</strong> en cas de fraude, de contenu illégal, ou si tu
+            publies plusieurs fois des vidéos qui ne t&apos;appartiennent pas.
+          </li>
+        </ul>
+      </TermsSection>
+
+      <TermsSection title="Résiliation">
+        <p>
+          Tu peux demander la fermeture de ton compte créateur à tout moment. Les vidéos déjà
+          achetées par des spectateurs restent accessibles à ces spectateurs, même après la
+          fermeture de ton compte.
+        </p>
+      </TermsSection>
+
+      <TermsSection title="Données personnelles">
+        <p>
+          StreamMali collecte ton numéro de téléphone, ton nom et ta pièce d&apos;identité. Ces
+          informations servent uniquement à :
+        </p>
+        <ul className="list-disc pl-5">
+          <li>gérer ton compte,</li>
+          <li>vérifier ton identité,</li>
+          <li>te reverser tes revenus.</li>
+        </ul>
+        <p>Ces données ne sont jamais revendues à des tiers.</p>
+      </TermsSection>
+
+      <TermsSection title="Modification des CGU">
+        <p>
+          StreamMali peut faire évoluer ces CGU. La version qui s&apos;applique est toujours celle
+          publiée sur la plateforme au moment où tu l&apos;utilises.
+        </p>
+      </TermsSection>
+
+      <TermsSection title="Droit applicable">
+        <p>
+          Ces CGU sont soumises au droit malien. Pour toute question, contacte-nous à{" "}
+          <a href="mailto:support@streammali.com" className="text-orange-600 hover:underline dark:text-orange-400">
+            support@streammali.com
+          </a>
+          .
+        </p>
+      </TermsSection>
+    </div>
+  );
+}

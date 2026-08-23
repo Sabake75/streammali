@@ -6,6 +6,8 @@ import { useState } from "react";
 import { FormField } from "@/components/FormField";
 import { PhoneNumberField } from "@/components/PhoneNumberField";
 import { PinCodeField } from "@/components/PinCodeField";
+import { CreatorTermsContent } from "@/components/legal/CreatorTermsContent";
+import { TermsModal } from "@/components/legal/TermsModal";
 import { registerCreator } from "@/lib/api-client";
 import { setSession } from "@/lib/auth-client";
 
@@ -17,6 +19,7 @@ export default function RegisterCreatorPage() {
   const [password, setPassword] = useState("");
   const [identityDocument, setIdentityDocument] = useState<File | null>(null);
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [termsModalOpen, setTermsModalOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -86,13 +89,13 @@ export default function RegisterCreatorPage() {
             />
             <span>
               J&apos;ai lu et j&apos;accepte les{" "}
-              <Link
-                href="/cgu-createur"
-                target="_blank"
-                className="font-medium text-orange-600 hover:underline dark:text-orange-400"
+              <button
+                type="button"
+                onClick={() => setTermsModalOpen(true)}
+                className="font-medium text-orange-600 underline hover:no-underline dark:text-orange-400"
               >
                 CGU créateur
-              </Link>{" "}
+              </button>{" "}
               (dont la répartition des revenus : 75 % pour moi, 25 % pour StreamMali)
             </span>
           </label>
@@ -113,6 +116,18 @@ export default function RegisterCreatorPage() {
             Se connecter
           </Link>
         </p>
+
+        <TermsModal
+          open={termsModalOpen}
+          title="Conditions générales d'utilisation — Créateur"
+          onClose={() => setTermsModalOpen(false)}
+          onAccept={() => {
+            setTermsAccepted(true);
+            setTermsModalOpen(false);
+          }}
+        >
+          <CreatorTermsContent />
+        </TermsModal>
       </div>
     </main>
   );
