@@ -226,6 +226,17 @@ class ApiClient {
     return (json['data'] as List).map((e) => Video.fromJson(e as Map<String, dynamic>)).toList();
   }
 
+  Future<List<Video>> fetchFeaturedVideos() async {
+    final response = await http.get(Uri.parse('$baseUrl/videos/featured'));
+
+    if (response.statusCode != 200) {
+      throw ApiException('Impossible de charger les vidéos en vedette (${response.statusCode}).');
+    }
+
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    return (json['data'] as List).map((e) => Video.fromJson(e as Map<String, dynamic>)).toList();
+  }
+
   Future<List<CreatorVideo>> fetchMyVideos(String token) async {
     final response = await http.get(
       Uri.parse('$baseUrl/creator/videos'),

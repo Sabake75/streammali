@@ -13,6 +13,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
@@ -48,6 +49,10 @@ class VideosTable
                     ->badge()
                     ->color(fn (VideoSourceStatus $state) => $state->color())
                     ->formatStateUsing(fn (VideoSourceStatus $state) => $state->label()),
+                IconColumn::make('featured_at')
+                    ->label('En vedette')
+                    ->boolean()
+                    ->getStateUsing(fn ($record) => $record->featured_at !== null),
                 TextColumn::make('created_at')
                     ->label('Soumis le')
                     ->dateTime()
@@ -106,6 +111,14 @@ class VideosTable
                     ->action(fn ($record, array $data) => $record->update([
                         'status' => VideoStatus::Rejected,
                         'rejection_reason' => $data['rejection_reason'],
+                    ])),
+                Action::make('toggle_featured')
+                    ->label(fn ($record) => $record->featured_at ? 'Retirer de la mise en avant' : 'Mettre en avant')
+                    ->icon('heroicon-o-star')
+                    ->color('gray')
+                    ->visible(fn ($record) => $record->status === VideoStatus::Approved)
+                    ->action(fn ($record) => $record->update([
+                        'featured_at' => $record->featured_at ? null : now(),
                     ])),
                 Action::make('reports')
                     ->label('Signalements')

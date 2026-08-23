@@ -27,6 +27,7 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
   List<VideoCategory> _categories = [];
   List<Video>? _recommended;
   bool _recommendedRequested = false;
+  List<Video>? _featured;
 
   @override
   void initState() {
@@ -34,6 +35,9 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
     _future = _apiClient.fetchVideos();
     _apiClient.fetchCategories().then((categories) {
       if (mounted) setState(() => _categories = categories);
+    }).catchError((_) {});
+    _apiClient.fetchFeaturedVideos().then((videos) {
+      if (mounted) setState(() => _featured = videos);
     }).catchError((_) {});
     AuthController.instance.addListener(_maybeLoadRecommended);
     _maybeLoadRecommended();
@@ -116,6 +120,41 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
       ),
       body: Column(
         children: [
+          if (_featured != null && _featured!.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('En vedette', style: Theme.of(context).textTheme.titleMedium),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    height: 220,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: _featured!.length,
+                      separatorBuilder: (context, index) => const SizedBox(width: 12),
+                      itemBuilder: (context, index) {
+                        final video = _featured![index];
+                        return SizedBox(
+                          width: 160,
+                          child: VideoCard(
+                            video: video,
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => VideoDetailScreen(videoId: video.id),
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
           Padding(
             padding: const EdgeInsets.all(12),
             child: Column(

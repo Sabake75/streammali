@@ -43,6 +43,19 @@ export async function fetchVideos(
   return response.json();
 }
 
+export async function fetchFeaturedVideos(): Promise<VideoSummary[]> {
+  const response = await fetch(`${API_BASE_URL}/videos/featured`, {
+    next: { revalidate: 60 },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Impossible de charger les vidéos en vedette (${response.status})`);
+  }
+
+  const json: { data: VideoSummary[] } = await response.json();
+  return json.data;
+}
+
 export async function fetchVideo(id: string): Promise<VideoSummary | null> {
   const response = await fetch(`${API_BASE_URL}/videos/${id}`, {
     next: { revalidate: 60 },

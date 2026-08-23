@@ -57,6 +57,8 @@ Notation/commentaires (`src/components/Reviews.tsx`, fiche vidéo) : formulaire 
 
 Favoris/recommandations : `src/components/FavoriteButton.tsx` (fiche vidéo, `POST /api/videos/{id}/favorite`) — masqué si non connecté (pas de cookie de session, l'auth n'existe que côté client via le token en `localStorage`, donc impossible à savoir côté serveur). `src/components/RecommendedVideos.tsx` (accueil, "Recommandé pour vous") — pour la même raison, composant client qui ne s'affiche/ne fetch que si un token est présent, `GET /api/videos/recommended`. "Vidéos similaires" (même catégorie, fiche vidéo) — server-side, réutilise `fetchVideos()` existant plutôt qu'un nouvel endpoint.
 
+Mise en avant (accueil, section "En vedette") : `fetchFeaturedVideos()` (`src/lib/api.ts`, SSR, `GET /api/videos/featured`) — contrairement à "Recommandé pour vous", public et donc server-rendable directement, pas besoin d'un composant client.
+
 Pas encore fait : jaquettes via `next/image` (actuellement `<img>` brut le temps de choisir un hébergement d'images).
 
 ```

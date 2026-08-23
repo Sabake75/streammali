@@ -28,6 +28,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'price',
     'status',
     'rejection_reason',
+    'featured_at',
     'source_provider',
     'provider_video_id',
     'source_status',
@@ -57,6 +58,7 @@ class Video extends Model
             'status' => VideoStatus::class,
             'duration_seconds' => 'integer',
             'price' => 'integer',
+            'featured_at' => 'datetime',
             'source_status' => VideoSourceStatus::class,
             'views_count' => 'integer',
         ];
@@ -75,6 +77,11 @@ class Video extends Model
     public function scopeApproved(Builder $query): Builder
     {
         return $query->where('status', VideoStatus::Approved);
+    }
+
+    public function scopeFeatured(Builder $query): Builder
+    {
+        return $query->whereNotNull('featured_at')->orderByDesc('featured_at');
     }
 
     public function payments(): HasMany

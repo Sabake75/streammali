@@ -37,6 +37,20 @@ class VideoCatalogController extends Controller
         return VideoResource::collection($videos);
     }
 
+    public function featured(): AnonymousResourceCollection
+    {
+        $videos = Video::query()
+            ->approved()
+            ->featured()
+            ->with(['creator', 'category'])
+            ->withAvg('reviews', 'rating')
+            ->withCount('reviews')
+            ->limit(12)
+            ->get();
+
+        return VideoResource::collection($videos);
+    }
+
     public function show(Video $video): VideoResource
     {
         abort_unless($video->status === VideoStatus::Approved, 404);

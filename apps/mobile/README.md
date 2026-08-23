@@ -56,6 +56,8 @@ Notation/commentaires (`lib/widgets/review_section.dart`, fiche vidéo) : formul
 
 Favoris/recommandations : `lib/widgets/favorite_button.dart` (fiche vidéo, masqué si non connecté, `POST /api/videos/{id}/favorite`). "Recommandé pour vous" (`catalogue_screen.dart`, rangée horizontale) et "Vidéos similaires" (`video_detail_screen.dart`, même catégorie) réutilisent `VideoCard`.
 
+Mise en avant (`catalogue_screen.dart`, rangée "En vedette") : `fetchFeaturedVideos()`, public, chargée directement dans `initState()` (pas besoin d'attendre l'auth contrairement à "Recommandé pour vous").
+
 `flutter analyze`, `flutter test` (couvre la validation du formulaire de connexion) et `flutter build web` passent tous sans erreur.
 
 ```

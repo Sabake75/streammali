@@ -1,4 +1,4 @@
-import { fetchCategories, fetchVideos } from "@/lib/api";
+import { fetchCategories, fetchFeaturedVideos, fetchVideos } from "@/lib/api";
 import { CatalogueFilters } from "@/components/CatalogueFilters";
 import { Pagination } from "@/components/Pagination";
 import { RecommendedVideos } from "@/components/RecommendedVideos";
@@ -10,9 +10,10 @@ export default async function CataloguePage(props: PageProps<"/">) {
   const search = typeof searchParams.search === "string" ? searchParams.search : undefined;
   const page = typeof searchParams.page === "string" ? Number(searchParams.page) || 1 : 1;
 
-  const [catalogue, categories] = await Promise.all([
+  const [catalogue, categories, featured] = await Promise.all([
     fetchVideos({ category, search, page }),
     fetchCategories(),
+    fetchFeaturedVideos(),
   ]);
 
   return (
@@ -23,6 +24,19 @@ export default async function CataloguePage(props: PageProps<"/">) {
       <p className="mt-1 text-neutral-500 dark:text-neutral-400">
         Films, clips et sketchs de créateurs maliens, 25 FCFA la vidéo.
       </p>
+
+      {featured.length > 0 && (
+        <section className="mt-8">
+          <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-50">
+            En vedette
+          </h2>
+          <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {featured.map((video) => (
+              <VideoCard key={video.id} video={video} />
+            ))}
+          </div>
+        </section>
+      )}
 
       <div className="mt-6">
         <CatalogueFilters categories={categories} defaultCategory={category} defaultSearch={search} />

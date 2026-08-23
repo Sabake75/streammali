@@ -33,9 +33,10 @@ Route::post('/webhooks/cloudflare-stream', CloudflareStreamWebhookController::cl
 Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
 
 Route::get('/videos', [VideoCatalogController::class, 'index'])->name('videos.index');
-// Must come before /videos/{video} — otherwise "recommended" is captured
-// by the {video} wildcard and fails route-model binding.
+// Must come before /videos/{video} — otherwise "recommended"/"featured" is
+// captured by the {video} wildcard and fails route-model binding.
 Route::get('/videos/recommended', [VideoRecommendationController::class, 'index'])->name('videos.recommended');
+Route::get('/videos/featured', [VideoCatalogController::class, 'featured'])->name('videos.featured');
 Route::get('/videos/{video}', [VideoCatalogController::class, 'show'])->name('videos.show');
 Route::post('/videos/{video}/view', [VideoCatalogController::class, 'view'])->name('videos.view');
 Route::get('/videos/{video}/reviews', [VideoReviewController::class, 'index'])->name('videos.reviews.index');

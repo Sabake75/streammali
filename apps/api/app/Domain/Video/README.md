@@ -30,4 +30,6 @@ Catégories : anciennement un enum PHP figé (`film`/`clip`/`sketch`/`series`), 
 
 Testé (mock HTTP, aucun appel réseau réel vers Cloudflare) dans `tests/Feature/VideoUploadApiTest.php` et `tests/Feature/CloudflareStreamWebhookTest.php`, vérifié aussi contre PostgreSQL (migrations catégories et aperçu).
 
-Pas encore fait : notation/commentaires, favoris/recommandations, mise en avant.
+Mise en avant : `videos.featured_at` (nullable) + `Video::scopeFeatured()` (triée par date de mise en avant la plus récente). Bascule via l'action Filament "Mettre en avant"/"Retirer" sur `VideosTable` (visible seulement pour une vidéo déjà validée — même pattern que `verify_identity` sur `UsersTable`). `GET /api/videos/featured`, public.
+
+Toutes les fonctionnalités non prioritaires du cahier des charges sont maintenant faites (aperçu gratuit, notation/commentaires — `Domain\Review` —, favoris/recommandations — `Domain\Viewer` —, mise en avant). Il ne reste que le passage en production (voir `CLAUDE.md` à la racine).

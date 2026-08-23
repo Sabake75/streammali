@@ -59,7 +59,7 @@ Référence complète : `CAHIER_DES_CHARGES_STREAMMALI.md`.
 
 ## État du projet
 
-**MVP fonctionnellement complet (2026-08-20)** — les trois profils ont un parcours de bout en bout sur les trois apps (API, web, mobile), testé en local à plusieurs reprises (dernier passage : 76/76 tests backend, `flutter analyze`/`test`/`build web` et `tsc`/`lint`/`build` propres). Détail par app dans `apps/{api,web,mobile}/README.md` et les `README.md` de chaque domaine métier (`apps/api/app/Domain/*/README.md`).
+**MVP fonctionnellement complet (2026-08-20), toutes les fonctionnalités du cahier des charges construites (2026-08-23)** — les trois profils ont un parcours de bout en bout sur les trois apps (API, web, mobile), y compris l'intégralité des fonctionnalités listées comme non prioritaires à l'origine (aperçu gratuit, notation/commentaires, favoris/recommandations, mise en avant). Testé en local à plusieurs reprises (dernier passage : 99/99 tests backend — SQLite et PostgreSQL réel —, `flutter analyze`/`test`/`build web`/`build apk` et `tsc`/`lint`/`build` propres, CI GitHub Actions verte). Détail par app dans `apps/{api,web,mobile}/README.md` et les `README.md` de chaque domaine métier (`apps/api/app/Domain/*/README.md`).
 
 Construit et vérifié :
 - **Inscription/auth** : Viewer par téléphone, Créateur avec pièce d'identité (stockage privé, consultable par un modérateur connecté). Token Bearer Sanctum partagé web/mobile. Tout champ téléphone (inscription, connexion, achat, retrait) est un indicatif pays + un champ chiffres seul, longueur plafonnée par pays via une bibliothèque de référence (`libphonenumber-js` côté web, `phone_numbers_parser` côté mobile) plutôt que des règles codées en dur — tous les pays sont proposés, pas seulement le Mali, pour les Maliens de la diaspora. Le mot de passe est un **code à 4 chiffres** (public peu habitué au mot de passe), toujours hashé (bcrypt) ; `POST /api/login` est limité à 5 tentatives/minute par téléphone+IP pour compenser le faible espace de combinaisons (10 000).
@@ -89,8 +89,9 @@ Webhook Cloudflare Stream (`CloudflareStreamWebhookController`) : ne fait pas co
 
 **Favoris/recommandations** (`App\Domain\Viewer`) : favoris = bascule simple (`ToggleFavorite`) + bibliothèque (`GET /api/favorites`). Recommandations volontairement non-ML (`GetRecommendedVideos`) : catégories déjà achetées/favorites par l'utilisateur, hors vidéos déjà possédées, triées par popularité — invités (ou sans historique) reçoivent juste les plus vues. Web/mobile : "Recommandé pour vous" (accueil, uniquement si connecté — l'auth n'existe que côté client via un token, donc invisible côté serveur) et "Vidéos similaires" (fiche vidéo, même catégorie, toujours visible, réutilise le catalogue existant plutôt qu'un nouvel endpoint).
 
-**Prochaine étape — passage en production :**
-1. Obtenir un compte marchand Orange Money Mali (Orange Developer Center) et un compte Cloudflare Stream ; confirmer le contrat API exact de chacun et ajuster `OrangeMoneyGateway`/`CloudflareStreamGateway` si besoin. Puis lier le repo à Render/Vercel (`infra/DEPLOY.md`) et enregistrer l'URL du webhook Cloudflare une fois l'API déployée.
-2. Fonctionnalité cahier des charges non prioritaire restante pour le MVP : mise en avant sur la page d'accueil par le modérateur.
+**Mise en avant** : `videos.featured_at`, bascule via l'action Filament "Mettre en avant"/"Retirer" sur `/moderation/videos` (vidéo déjà validée uniquement). `GET /api/videos/featured` (public, contrairement à "recommandé" — donc directement server-renderable côté web, pas besoin d'attendre l'auth côté client). Section "En vedette" en haut de l'accueil (web + mobile).
+
+**Prochaine étape — passage en production, seul chantier restant :**
+Obtenir un compte marchand Orange Money Mali (Orange Developer Center) et un compte Cloudflare Stream ; confirmer le contrat API exact de chacun et ajuster `OrangeMoneyGateway`/`CloudflareStreamGateway` si besoin (c'est le principal risque avant mise en production — voir plus haut). Puis lier le repo à Render/Vercel (`infra/DEPLOY.md`) et enregistrer l'URL du webhook Cloudflare une fois l'API déployée.
 
 Les choix de stack (Laravel/PostgreSQL, Next.js, Flutter, Orange Money direct, Cloudflare Stream) sont ceux effectivement implémentés, plus indicatifs à ce stade.
