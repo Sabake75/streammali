@@ -6,7 +6,7 @@ Responsabilités (cahier des charges §5.1) :
 - Inscription avec pièce d'identité.
 - Upload de vidéos (titre, description, catégorie, jaquette, durée) et soumission à la modération.
 - Suivi de statut d'une vidéo (en attente / validé / refusé).
-- Fixation/confirmation du prix de vente (25 FCFA par défaut).
+- Fixation/confirmation du prix de vente (100 FCFA par défaut).
 - Demandes de retrait vers Mobile Money.
 - Statistiques par vidéo (vues, achats, revenus) et évolution du revenu.
 

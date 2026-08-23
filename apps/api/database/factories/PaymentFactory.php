@@ -25,7 +25,7 @@ class PaymentFactory extends Factory
         return [
             'buyer_id' => User::factory()->state(['role' => UserRole::Viewer]),
             'video_id' => Video::factory(),
-            'amount' => 25,
+            'amount' => 100,
             'provider' => 'orange_money',
             'payer_msisdn' => fake()->numerify('+223 7# ## ## ##'),
             'order_reference' => (string) Str::uuid(),

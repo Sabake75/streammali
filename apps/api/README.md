@@ -60,7 +60,7 @@ Gestion des comptes côté modérateur (cahier des charges §5.3) : ressource Fi
 CORS (`config/cors.php`) : `allowed_origins` piloté par `CORS_ALLOWED_ORIGINS` (défaut `http://localhost:3000`), `paths` couvre `api/*`. Auth client via **token Bearer Sanctum**, pas de cookies/CSRF — décision volontaire pour rester cohérent avec le mobile Flutter (qui devra utiliser le même flux token) plutôt que d'ajouter un second mécanisme d'auth (Sanctum SPA). Vérifié avec de vraies requêtes cross-origin (`Origin: http://localhost:3000`) : préflight OK, `Authorization` accepté, une origine non autorisée reçoit un `Access-Control-Allow-Origin` qui ne correspond pas à la sienne (bloqué côté navigateur).
 
 API créateur (authentifié, `role=creator` requis — 403 sinon) :
-- `POST /api/creator/videos` — `{ title, description?, category, poster_path?, duration_seconds?, price? }`, crée une vidéo en statut `pending` (`App\Domain\Creator\Actions\UploadVideo`). Prix par défaut 25 FCFA si omis.
+- `POST /api/creator/videos` — `{ title, description?, category, poster_path?, duration_seconds?, price? }`, crée une vidéo en statut `pending` (`App\Domain\Creator\Actions\UploadVideo`). Prix par défaut 100 FCFA si omis.
 - `GET /api/creator/videos` — liste paginée des vidéos du créateur connecté, **tous statuts confondus** (contrairement au catalogue public), via `CreatorVideoResource` qui expose `status`/`rejection_reason`/`source_status`.
 - `POST /api/creator/videos/{id}/source` — démarre l'upload du fichier (Cloudflare Stream, flux "direct creator upload"), renvoie `upload_url` ; 409 si déjà en cours/terminé.
 - `GET /api/creator/videos/{id}/source` — rafraîchit/consulte le statut de traitement (`processing`/`ready`/`failed`) et l'URL de lecture une fois prête.

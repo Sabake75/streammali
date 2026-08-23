@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "StreamMali",
-  description: "Films, clips et web-séries de créateurs maliens, 25 FCFA la vidéo.",
+  description: "Films, clips et web-séries de créateurs maliens, 100 FCFA la vidéo.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -56,7 +56,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               </span>
               StreamMali
             </span>
-            <span>Films, clips et web-séries de créateurs maliens · 25 FCFA la vidéo · Paiement Orange Money</span>
+            <span>Films, clips et web-séries de créateurs maliens · 100 FCFA la vidéo · Paiement Orange Money</span>
           </div>
         </footer>
       </body>

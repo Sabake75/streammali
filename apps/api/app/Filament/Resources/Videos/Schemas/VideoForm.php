@@ -44,7 +44,7 @@ class VideoForm
                 TextInput::make('price')
                     ->label('Prix (FCFA)')
                     ->numeric()
-                    ->default(25)
+                    ->default(100)
                     ->required(),
                 Select::make('status')
                     ->label('Statut de modération')

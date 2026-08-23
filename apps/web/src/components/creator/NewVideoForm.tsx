@@ -19,7 +19,7 @@ export function NewVideoForm({ onCreated }: { onCreated: () => void }) {
   const [description, setDescription] = useState("");
   const [categories, setCategories] = useState<VideoCategory[]>([]);
   const [category, setCategory] = useState<VideoCategoryValue>("");
-  const [price, setPrice] = useState("25");
+  const [price, setPrice] = useState("100");
   const [file, setFile] = useState<File | null>(null);
   const [phase, setPhase] = useState<Phase>("form");
   const [progress, setProgress] = useState(0);
@@ -95,7 +95,7 @@ export function NewVideoForm({ onCreated }: { onCreated: () => void }) {
     setPhase("form");
     setTitle("");
     setDescription("");
-    setPrice("25");
+    setPrice("100");
     setFile(null);
     setProgress(0);
     videoIdRef.current = null;

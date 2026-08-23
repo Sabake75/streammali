@@ -25,7 +25,7 @@ class UploadVideo
             'category_id' => $categoryId,
             'poster_path' => $data['poster_path'] ?? null,
             'duration_seconds' => $data['duration_seconds'] ?? null,
-            'price' => $data['price'] ?? 25,
+            'price' => $data['price'] ?? 100,
             'status' => VideoStatus::Pending,
         ]);
     }

@@ -171,7 +171,7 @@ class _NewVideoFormState extends State<_NewVideoForm> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
-  final _priceController = TextEditingController(text: '25');
+  final _priceController = TextEditingController(text: '100');
   final ApiClient _apiClient = ApiClient();
 
   String _category = '';
@@ -288,7 +288,7 @@ class _NewVideoFormState extends State<_NewVideoForm> {
       _phase = _NewVideoPhase.form;
       _titleController.clear();
       _descriptionController.clear();
-      _priceController.text = '25';
+      _priceController.text = '100';
       _filePath = null;
       _progress = 0;
       _videoId = null;

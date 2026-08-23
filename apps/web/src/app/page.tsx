@@ -26,11 +26,11 @@ export default async function CataloguePage(props: PageProps<"/">) {
             Le cinéma malien, à portée de Mobile Money.
           </h1>
           <p className="mt-3 max-w-xl text-orange-50">
-            Films, clips et sketchs de créateurs maliens, 25 FCFA la vidéo. Paiement Orange Money, accès immédiat.
+            Films, clips et sketchs de créateurs maliens, 100 FCFA la vidéo. Paiement Orange Money, accès immédiat.
           </p>
           <div className="mt-6 flex flex-wrap gap-2 text-sm font-medium">
             <span className="flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 backdrop-blur">
-              <WalletIcon /> 25 FCFA la vidéo
+              <WalletIcon /> 100 FCFA la vidéo
             </span>
             <span className="flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 backdrop-blur">
               <PhoneIcon /> Orange Money

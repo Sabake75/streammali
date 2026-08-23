@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('category');
             $table->string('poster_path')->nullable();
             $table->unsignedInteger('duration_seconds')->nullable();
-            $table->unsignedInteger('price')->default(25);
+            $table->unsignedInteger('price')->default(100);
             $table->string('status')->default('pending');
             $table->text('rejection_reason')->nullable();
             $table->timestamps();

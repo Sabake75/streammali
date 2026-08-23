@@ -3,7 +3,7 @@
 Namespace `App\Domain\Payment`.
 
 Responsabilités (cahier des charges §6-7, décision projet : MVP Orange Money uniquement) :
-- Création et suivi des paiements à l'achat (25 FCFA/vidéo) via Orange Money.
+- Création et suivi des paiements à l'achat (100 FCFA/vidéo) via Orange Money.
 - Traitement idempotent des webhooks de confirmation.
 - Ledger : répartition commission plateforme / solde créateur.
 - Demandes de retrait créateur (Mobile Money), minimum 10 000 FCFA.

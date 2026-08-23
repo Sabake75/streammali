@@ -11,7 +11,7 @@ Référence complète : `CAHIER_DES_CHARGES_STREAMMALI.md`.
 **Créateur** — producteur de contenu.
 - Inscription avec pièce d'identité, upload de vidéos (titre, description, catégorie, jaquette, durée).
 - Soumission à la modération avant publication ; suivi de statut (en attente / validé / refusé + motif).
-- Fixation/confirmation du prix (25 FCFA par défaut).
+- Fixation/confirmation du prix (100 FCFA par défaut).
 - Dashboard : vues, achats, revenus, évolution dans le temps.
 - Demande de retrait vers Mobile Money ou compte bancaire.
 - Gestion du catalogue personnel, messagerie avec la modération.
@@ -19,7 +19,7 @@ Référence complète : `CAHIER_DES_CHARGES_STREAMMALI.md`.
 **Viewer (fan)** — utilisateur final.
 - Inscription simple (téléphone, nom, prénom).
 - Catalogue avec recherche/filtres (catégorie, créateur, popularité), aperçu gratuit avant achat.
-- Achat à l'unité (25 FCFA, Mobile Money), accès illimité en streaming à la vidéo achetée.
+- Achat à l'unité (100 FCFA, Mobile Money), accès illimité en streaming à la vidéo achetée.
 - Historique d'achats, bibliothèque personnelle, favoris, recommandations, notation/commentaires.
 - Support / signalement de problème.
 
@@ -32,7 +32,7 @@ Référence complète : `CAHIER_DES_CHARGES_STREAMMALI.md`.
 
 ## Modèle économique
 
-- Vente à l'acte (pay-per-view), pas d'abonnement : **25 FCFA par vidéo**.
+- Vente à l'acte (pay-per-view), pas d'abonnement : **100 FCFA par vidéo**.
 - Commission plateforme : **20 à 30 %** (à définir) sur chaque vente, pour couvrir hébergement/paiement/fonctionnement.
 - Reversement au créateur : solde restant, **périodicité hebdomadaire**, vers Mobile Money.
 - Frais des opérateurs Mobile Money à la charge de la plateforme.

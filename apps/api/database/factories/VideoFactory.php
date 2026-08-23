@@ -26,7 +26,7 @@ class VideoFactory extends Factory
             'description' => fake()->paragraph(),
             'category_id' => Category::inRandomOrder()->value('id'),
             'duration_seconds' => fake()->numberBetween(60, 7200),
-            'price' => 25,
+            'price' => 100,
             'status' => VideoStatus::Pending,
         ];
     }

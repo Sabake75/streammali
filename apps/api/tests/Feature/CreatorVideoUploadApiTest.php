@@ -47,7 +47,7 @@ class CreatorVideoUploadApiTest extends TestCase
 
         $response->assertJsonPath('data.title', 'Sotigui le film');
         $response->assertJsonPath('data.status.value', 'pending');
-        $response->assertJsonPath('data.price', 25);
+        $response->assertJsonPath('data.price', 100);
 
         $this->assertDatabaseHas('videos', [
             'creator_id' => $creator->id,
