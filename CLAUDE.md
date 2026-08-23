@@ -75,10 +75,14 @@ Construit et vérifié :
 
 Deux intégrations tierces (`App\Domain\Payment\Gateways\OrangeMoneyGateway`, `App\Domain\Video\Gateways\CloudflareStreamGateway`) sont écrites contre la documentation publique de chaque fournisseur mais **jamais vérifiées avec de vrais credentials** — c'est le principal risque avant mise en production.
 
+CI GitHub Actions (`.github/workflows/ci.yml`) : PHPUnit, lint+tsc+build web, flutter analyze+test, plus build d'un APK release (artefact CI, pas de publication store) à chaque push sur `master`.
+
+Hébergement/CD choisi et préparé (jamais déployé en conditions réelles — pas de compte Render/Vercel lié) : `apps/api/Dockerfile.prod` (FrankenPHP, build vérifié en local avec une vraie base Postgres) + `render.yaml` (Blueprint API + PostgreSQL managé) + Vercel pour le web ; voir `infra/DEPLOY.md`. Stockage des pièces d'identité créateur basculé sur `FILESYSTEM_DISK` (S3/R2 en prod plutôt que le disque local du conteneur, éphémère).
+
+Webhook Cloudflare Stream (`CloudflareStreamWebhookController`) : ne fait pas confiance au payload entrant, redéclenche juste `RefreshVideoSourceStatus` qui revérifie l'état réel auprès de Cloudflare — même logique que le webhook Orange Money.
+
 **Prochaine étape — passage en production :**
-1. Obtenir un compte marchand Orange Money Mali (Orange Developer Center) et un compte Cloudflare Stream ; confirmer le contrat API exact de chacun et ajuster `OrangeMoneyGateway`/`CloudflareStreamGateway` si besoin.
-2. Choisir un hébergement (API Laravel + PostgreSQL + Redis, build Next.js, stores mobiles) et un pipeline de déploiement — rien n'est configuré à ce stade (pas de CI/CD, pas d'environnement de staging).
-3. Webhook Cloudflare (actuellement le statut n'est interrogé qu'à la demande, pas poussé).
-4. Fonctionnalités cahier des charges non prioritaires pour le MVP : aperçu gratuit avant achat, notation/commentaires, favoris/recommandations, gestion des catégories/mise en avant par le modérateur.
+1. Obtenir un compte marchand Orange Money Mali (Orange Developer Center) et un compte Cloudflare Stream ; confirmer le contrat API exact de chacun et ajuster `OrangeMoneyGateway`/`CloudflareStreamGateway` si besoin. Puis lier le repo à Render/Vercel (`infra/DEPLOY.md`) et enregistrer l'URL du webhook Cloudflare une fois l'API déployée.
+2. Fonctionnalités cahier des charges non prioritaires pour le MVP : aperçu gratuit avant achat, notation/commentaires, favoris/recommandations, gestion des catégories/mise en avant par le modérateur.
 
 Les choix de stack (Laravel/PostgreSQL, Next.js, Flutter, Orange Money direct, Cloudflare Stream) sont ceux effectivement implémentés, plus indicatifs à ce stade.
