@@ -42,6 +42,13 @@ class ApiClient {
     defaultValue: 'http://localhost:8000/api',
   );
 
+  /// The CGU pages (terms of service) live on the web app, not natively in
+  /// this app — same override caveat as [baseUrl] on the Android emulator.
+  static const String webBaseUrl = String.fromEnvironment(
+    'WEB_BASE_URL',
+    defaultValue: 'http://localhost:3000',
+  );
+
   Future<PaginatedResponse<Video>> fetchVideos({
     String? category,
     String? search,
@@ -106,8 +113,14 @@ class ApiClient {
     required String name,
     required String phone,
     required String password,
+    required bool termsAccepted,
   }) {
-    return _postAuth('/register', {'name': name, 'phone': phone, 'password': password});
+    return _postAuth('/register', {
+      'name': name,
+      'phone': phone,
+      'password': password,
+      'terms_accepted': termsAccepted,
+    });
   }
 
   Future<AuthResult> login({required String phone, required String password}) {
@@ -483,11 +496,13 @@ class ApiClient {
     required String phone,
     required String password,
     required String identityDocumentPath,
+    required bool termsAccepted,
   }) async {
     final request = http.MultipartRequest('POST', Uri.parse('$baseUrl/register/creator'))
       ..fields['name'] = name
       ..fields['phone'] = phone
       ..fields['password'] = password
+      ..fields['terms_accepted'] = termsAccepted.toString()
       ..files.add(await http.MultipartFile.fromPath('identity_document', identityDocumentPath));
 
     final streamedResponse = await request.send();

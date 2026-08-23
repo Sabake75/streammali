@@ -4,6 +4,7 @@ import '../services/api_client.dart';
 import '../services/auth_controller.dart';
 import '../widgets/phone_number_field.dart';
 import '../widgets/pin_code_field.dart';
+import '../widgets/terms_checkbox.dart';
 import 'register_creator_screen.dart';
 import 'video_detail_screen.dart';
 
@@ -23,6 +24,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _passwordController = TextEditingController();
   final _apiClient = ApiClient();
 
+  bool _termsAccepted = false;
   bool _submitting = false;
   String? _error;
 
@@ -37,6 +39,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
+    if (!_termsAccepted) {
+      setState(() => _error = "Merci d'accepter les CGU pour continuer.");
+      return;
+    }
+
     setState(() {
       _submitting = true;
       _error = null;
@@ -47,6 +54,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         name: _nameController.text,
         phone: _phoneController.text,
         password: _passwordController.text,
+        termsAccepted: _termsAccepted,
       );
       await AuthController.instance.setSession(result.token, result.user);
       if (!mounted) return;
@@ -89,6 +97,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
               PhoneNumberField(controller: _phoneController),
               const SizedBox(height: 12),
               PinCodeField(controller: _passwordController),
+              const SizedBox(height: 4),
+              TermsCheckbox(
+                value: _termsAccepted,
+                onChanged: (value) => setState(() => _termsAccepted = value),
+                termsUrl: '${ApiClient.webBaseUrl}/cgu-spectateur',
+              ),
               if (_error != null) ...[
                 const SizedBox(height: 12),
                 Text(_error!, style: const TextStyle(color: Colors.red)),

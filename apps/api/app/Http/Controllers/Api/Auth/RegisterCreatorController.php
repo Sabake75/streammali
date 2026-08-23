@@ -16,6 +16,7 @@ class RegisterCreatorController extends Controller
             'phone' => ['required', 'string', 'max:32', 'unique:users,phone'],
             'password' => ['required', 'digits:4'],
             'identity_document' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:10240'],
+            'terms_accepted' => ['required', 'accepted'],
         ]);
 
         $user = $registerCreator(

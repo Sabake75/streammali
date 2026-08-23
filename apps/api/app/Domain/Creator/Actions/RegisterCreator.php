@@ -24,6 +24,9 @@ class RegisterCreator
             'password' => $password,
             'role' => UserRole::Creator,
             'identity_document_path' => $path,
+            // Only reached once the controller's `accepted` validation rule
+            // has passed, so acceptance is implicit at this point.
+            'terms_accepted_at' => now(),
         ]);
     }
 }

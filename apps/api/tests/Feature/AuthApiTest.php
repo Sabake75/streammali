@@ -19,6 +19,7 @@ class AuthApiTest extends TestCase
             'name' => 'Awa Traoré',
             'phone' => '+223 76 00 00 00',
             'password' => '1234',
+            'terms_accepted' => true,
         ])->assertCreated();
 
         $response->assertJsonPath('user.name', 'Awa Traoré');
@@ -40,6 +41,7 @@ class AuthApiTest extends TestCase
             'name' => 'Awa Traoré',
             'phone' => '+223 76 00 00 00',
             'password' => '1234',
+            'terms_accepted' => true,
         ])->assertStatus(422);
     }
 
@@ -49,6 +51,7 @@ class AuthApiTest extends TestCase
             'name' => 'Awa Traoré',
             'phone' => '+223 76 00 00 00',
             'password' => '1234',
+            'terms_accepted' => true,
         ])->assertCreated();
 
         $response = $this->postJson('/api/login', [
@@ -79,8 +82,19 @@ class AuthApiTest extends TestCase
             'name' => 'Awa Traoré',
             'phone' => '+223 76 00 00 00',
             'password' => '12345',
+            'terms_accepted' => true,
         ])->assertStatus(422)
             ->assertJsonValidationErrors(['password']);
+    }
+
+    public function test_registration_requires_accepting_the_terms(): void
+    {
+        $this->postJson('/api/register', [
+            'name' => 'Awa Traoré',
+            'phone' => '+223 76 00 00 00',
+            'password' => '1234',
+        ])->assertStatus(422)
+            ->assertJsonValidationErrors(['terms_accepted']);
     }
 
     public function test_login_is_throttled_after_too_many_attempts(): void
@@ -122,6 +136,7 @@ class AuthApiTest extends TestCase
             'name' => 'Awa Traoré',
             'phone' => '+223 76 00 00 00',
             'password' => '1234',
+            'terms_accepted' => true,
         ])->assertCreated();
 
         $token = $registerResponse->json('token');

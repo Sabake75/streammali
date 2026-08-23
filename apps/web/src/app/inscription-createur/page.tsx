@@ -16,6 +16,7 @@ export default function RegisterCreatorPage() {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [identityDocument, setIdentityDocument] = useState<File | null>(null);
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -30,7 +31,13 @@ export default function RegisterCreatorPage() {
     setError(null);
 
     try {
-      const { token, user } = await registerCreator({ name, phone, password, identityDocument });
+      const { token, user } = await registerCreator({
+        name,
+        phone,
+        password,
+        identityDocument,
+        terms_accepted: termsAccepted,
+      });
       setSession(token, user);
       router.push("/creer");
       router.refresh();
@@ -69,6 +76,26 @@ export default function RegisterCreatorPage() {
               className="block w-full text-sm text-neutral-500 file:mr-3 file:rounded-lg file:border-0 file:bg-orange-50 file:px-3 file:py-2 file:text-sm file:font-medium file:text-orange-700 hover:file:bg-orange-100 dark:text-neutral-400 dark:file:bg-orange-950/50 dark:file:text-orange-300"
             />
           </div>
+          <label className="flex items-start gap-2 text-sm text-neutral-600 dark:text-neutral-400">
+            <input
+              type="checkbox"
+              required
+              checked={termsAccepted}
+              onChange={(event) => setTermsAccepted(event.target.checked)}
+              className="mt-0.5 h-4 w-4 shrink-0 accent-orange-600"
+            />
+            <span>
+              J&apos;ai lu et j&apos;accepte les{" "}
+              <Link
+                href="/cgu-createur"
+                target="_blank"
+                className="font-medium text-orange-600 hover:underline dark:text-orange-400"
+              >
+                CGU créateur
+              </Link>{" "}
+              (dont la répartition des revenus : 75 % pour moi, 25 % pour StreamMali)
+            </span>
+          </label>
           {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
           <button type="submit" disabled={submitting} className="btn-primary">
             {submitting ? "Création…" : "Créer mon compte créateur"}

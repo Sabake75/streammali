@@ -22,6 +22,7 @@ class CreatorRegistrationApiTest extends TestCase
             'phone' => '+223 65 11 22 33',
             'password' => '1234',
             'identity_document' => UploadedFile::fake()->image('cni.jpg'),
+            'terms_accepted' => true,
         ])->assertCreated();
 
         $response->assertJsonPath('user.role', 'creator');
@@ -39,8 +40,22 @@ class CreatorRegistrationApiTest extends TestCase
             'name' => 'Fatoumata Diarra',
             'phone' => '+223 65 11 22 33',
             'password' => '1234',
+            'terms_accepted' => true,
         ])->assertStatus(422)
             ->assertJsonValidationErrors(['identity_document']);
+    }
+
+    public function test_registration_requires_accepting_the_terms(): void
+    {
+        Storage::fake('local');
+
+        $this->post('/api/register/creator', [
+            'name' => 'Fatoumata Diarra',
+            'phone' => '+223 65 11 22 33',
+            'password' => '1234',
+            'identity_document' => UploadedFile::fake()->image('cni.jpg'),
+        ])->assertStatus(422)
+            ->assertJsonValidationErrors(['terms_accepted']);
     }
 
     public function test_registration_rejects_a_disallowed_file_type(): void

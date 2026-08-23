@@ -24,6 +24,7 @@ export async function registerViewer(input: {
   name: string;
   phone: string;
   password: string;
+  terms_accepted: boolean;
 }): Promise<AuthResponse> {
   return postJson("/register", input);
 }
@@ -33,12 +34,14 @@ export async function registerCreator(input: {
   phone: string;
   password: string;
   identityDocument: File;
+  terms_accepted: boolean;
 }): Promise<AuthResponse> {
   const formData = new FormData();
   formData.set("name", input.name);
   formData.set("phone", input.phone);
   formData.set("password", input.password);
   formData.set("identity_document", input.identityDocument);
+  formData.set("terms_accepted", input.terms_accepted ? "1" : "0");
 
   const response = await fetch(`${API_BASE_URL}/register/creator`, {
     method: "POST",

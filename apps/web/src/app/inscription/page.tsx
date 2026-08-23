@@ -17,6 +17,7 @@ function RegisterForm() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -26,7 +27,7 @@ function RegisterForm() {
     setError(null);
 
     try {
-      const { token, user } = await registerViewer({ name, phone, password });
+      const { token, user } = await registerViewer({ name, phone, password, terms_accepted: termsAccepted });
       setSession(token, user);
       router.push(next);
       router.refresh();
@@ -46,6 +47,25 @@ function RegisterForm() {
         <FormField id="name" label="Nom" type="text" value={name} onChange={setName} />
         <PhoneNumberField id="phone" value={phone} onChange={setPhone} />
         <PinCodeField id="password" value={password} onChange={setPassword} />
+        <label className="flex items-start gap-2 text-sm text-neutral-600 dark:text-neutral-400">
+          <input
+            type="checkbox"
+            required
+            checked={termsAccepted}
+            onChange={(event) => setTermsAccepted(event.target.checked)}
+            className="mt-0.5 h-4 w-4 shrink-0 accent-orange-600"
+          />
+          <span>
+            J&apos;ai lu et j&apos;accepte les{" "}
+            <Link
+              href="/cgu-spectateur"
+              target="_blank"
+              className="font-medium text-orange-600 hover:underline dark:text-orange-400"
+            >
+              CGU
+            </Link>
+          </span>
+        </label>
         {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
         <button type="submit" disabled={submitting} className="btn-primary">
           {submitting ? "Création…" : "Créer mon compte"}

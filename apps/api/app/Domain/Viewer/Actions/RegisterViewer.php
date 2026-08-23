@@ -14,6 +14,9 @@ class RegisterViewer
             'phone' => $phone,
             'password' => $password,
             'role' => UserRole::Viewer,
+            // Only reached once the controller's `accepted` validation rule
+            // has passed, so acceptance is implicit at this point.
+            'terms_accepted_at' => now(),
         ]);
     }
 }

@@ -20,7 +20,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-#[Fillable(['name', 'email', 'phone', 'password', 'role', 'account_status', 'account_status_reason', 'identity_verified_at', 'identity_document_path'])]
+#[Fillable(['name', 'email', 'phone', 'password', 'role', 'account_status', 'account_status_reason', 'identity_verified_at', 'identity_document_path', 'terms_accepted_at'])]
 #[Hidden(['password', 'remember_token', 'identity_document_path'])]
 class User extends Authenticatable implements FilamentUser
 {
@@ -51,6 +51,7 @@ class User extends Authenticatable implements FilamentUser
             'role' => UserRole::class,
             'account_status' => AccountStatus::class,
             'identity_verified_at' => 'datetime',
+            'terms_accepted_at' => 'datetime',
         ];
     }
 

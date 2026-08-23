@@ -5,6 +5,7 @@ import '../services/api_client.dart';
 import '../services/auth_controller.dart';
 import '../widgets/phone_number_field.dart';
 import '../widgets/pin_code_field.dart';
+import '../widgets/terms_checkbox.dart';
 import 'creator_screen.dart';
 
 class RegisterCreatorScreen extends StatefulWidget {
@@ -23,6 +24,7 @@ class _RegisterCreatorScreenState extends State<RegisterCreatorScreen> {
 
   String? _identityDocumentPath;
   String? _identityDocumentName;
+  bool _termsAccepted = false;
   bool _submitting = false;
   String? _error;
 
@@ -56,6 +58,11 @@ class _RegisterCreatorScreenState extends State<RegisterCreatorScreen> {
       return;
     }
 
+    if (!_termsAccepted) {
+      setState(() => _error = "Merci d'accepter les CGU pour continuer.");
+      return;
+    }
+
     setState(() {
       _submitting = true;
       _error = null;
@@ -67,6 +74,7 @@ class _RegisterCreatorScreenState extends State<RegisterCreatorScreen> {
         phone: _phoneController.text,
         password: _passwordController.text,
         identityDocumentPath: _identityDocumentPath!,
+        termsAccepted: _termsAccepted,
       );
       await AuthController.instance.setSession(result.token, result.user);
       if (!mounted) return;
@@ -110,6 +118,14 @@ class _RegisterCreatorScreenState extends State<RegisterCreatorScreen> {
                 onPressed: _pickIdentityDocument,
                 icon: const Icon(Icons.badge_outlined),
                 label: Text(_identityDocumentName ?? "Choisir la pièce d'identité"),
+              ),
+              const SizedBox(height: 4),
+              TermsCheckbox(
+                value: _termsAccepted,
+                onChanged: (value) => setState(() => _termsAccepted = value),
+                termsUrl: '${ApiClient.webBaseUrl}/cgu-createur',
+                linkLabel: 'CGU créateur',
+                trailingNote: '(dont la répartition des revenus : 75 % pour moi, 25 % pour StreamMali)',
               ),
               if (_error != null) ...[
                 const SizedBox(height: 12),

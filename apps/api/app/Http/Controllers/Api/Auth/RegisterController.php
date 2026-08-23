@@ -15,6 +15,7 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'phone' => ['required', 'string', 'max:32', 'unique:users,phone'],
             'password' => ['required', 'digits:4'],
+            'terms_accepted' => ['required', 'accepted'],
         ]);
 
         $user = $registerViewer($validated['name'], $validated['phone'], $validated['password']);
