@@ -1,0 +1,30 @@
+FROM dunglas/frankenphp:php8.3
+
+RUN install-php-extensions pdo_pgsql pgsql gd zip intl \
+    && echo "opcache.enable=1" > "$PHP_INI_DIR/conf.d/opcache-enable.ini"
+
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+WORKDIR /app
+
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist --no-interaction
+
+COPY . .
+
+# .dockerignore excludes these (shared with the dev Dockerfile, which never
+# copies app code at all) so they don't exist in the build context — Laravel
+# requires the directories themselves to exist even though their contents
+# are runtime-only and deliberately excluded.
+RUN mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache/data storage/logs
+
+RUN composer dump-autoload --optimize --no-dev
+
+COPY docker/entrypoint.prod.sh /usr/local/bin/entrypoint.prod.sh
+RUN chmod +x /usr/local/bin/entrypoint.prod.sh \
+    && chown -R www-data:www-data storage bootstrap/cache
+
+EXPOSE 80
+
+ENTRYPOINT ["entrypoint.prod.sh"]
+CMD ["frankenphp", "php-server", "--root", "public/", "--listen", ":80"]

@@ -84,3 +84,19 @@ jobs:
 
       - name: Run tests
         run: flutter test
+
+      # Manual-testing/distribution artifact only — not a Play Store release
+      # (needs a paid developer account + real signing, out of scope for
+      # now). Falls back to the debug signing config already configured in
+      # android/app/build.gradle.kts, so no keystore secret is needed here.
+      - name: Build release APK
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        run: flutter build apk --release
+
+      - name: Upload APK artifact
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        uses: actions/upload-artifact@v4
+        with:
+          name: streammali-mobile-apk
+          path: apps/mobile/build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 30

@@ -15,4 +15,4 @@ docker compose -f infra/docker-compose.yml up --build
 
 Le code source de `apps/api` et `apps/web` est monté en bind mount (hot reload). `vendor/` est partagé avec l'hôte ; `node_modules/` reste dans un volume Docker nommé pour éviter les binaires natifs (ex. lightningcss de Tailwind v4) compilés pour la mauvaise plateforme.
 
-Réservé au développement local — pas d'image de production, pas de configuration de déploiement à ce stade (voir `CLAUDE.md` à la racine, section « Prochaine étape »).
+Réservé au développement local. Pour le déploiement en production (Render + Vercel), voir `infra/DEPLOY.md`.
