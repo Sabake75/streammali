@@ -35,6 +35,7 @@ class VideoResource extends JsonResource
                 'name' => $this->creator->name,
             ],
             'purchased' => $this->when($user !== null, $purchased),
+            'favorited' => $this->when($user !== null, fn () => $this->resource->isFavoritedBy($user)),
             // Only unlocked once bought and actually ready to stream —
             // "déverrouillage immédiat" from the cahier des charges.
             'playback_url' => $this->when(

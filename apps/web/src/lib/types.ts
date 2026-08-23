@@ -19,6 +19,7 @@ export type VideoSummary = {
     name: string;
   };
   purchased?: boolean;
+  favorited?: boolean;
   playback_url?: string | null;
   preview_playback_url: string | null;
   average_rating: number | null;

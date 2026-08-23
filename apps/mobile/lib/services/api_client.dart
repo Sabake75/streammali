@@ -201,6 +201,31 @@ class ApiClient {
     return Review.fromJson(json['data'] as Map<String, dynamic>);
   }
 
+  Future<bool> toggleFavorite({required int videoId, required String token}) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/videos/$videoId/favorite'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+
+    if (response.statusCode != 200) {
+      throw ApiException(_extractErrorMessage(response));
+    }
+
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    return json['favorited'] as bool;
+  }
+
+  Future<List<Video>> fetchRecommendedVideos() async {
+    final response = await http.get(Uri.parse('$baseUrl/videos/recommended'));
+
+    if (response.statusCode != 200) {
+      throw ApiException('Impossible de charger les recommandations (${response.statusCode}).');
+    }
+
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    return (json['data'] as List).map((e) => Video.fromJson(e as Map<String, dynamic>)).toList();
+  }
+
   Future<List<CreatorVideo>> fetchMyVideos(String token) async {
     final response = await http.get(
       Uri.parse('$baseUrl/creator/videos'),

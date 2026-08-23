@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 
+import '../models/paginated_response.dart';
 import '../models/video.dart';
 import '../services/api_client.dart';
 import '../utils/formatting.dart';
+import '../widgets/favorite_button.dart';
 import '../widgets/purchase_section.dart';
 import '../widgets/report_section.dart';
 import '../widgets/review_section.dart';
+import '../widgets/video_card.dart';
 import '../widgets/video_player_widget.dart';
 
 class VideoDetailScreen extends StatefulWidget {
@@ -20,11 +23,17 @@ class VideoDetailScreen extends StatefulWidget {
 class _VideoDetailScreenState extends State<VideoDetailScreen> {
   final ApiClient _apiClient = ApiClient();
   late Future<Video?> _future;
+  Future<PaginatedResponse<Video>>? _similarFuture;
 
   @override
   void initState() {
     super.initState();
-    _future = _apiClient.fetchVideo(widget.videoId);
+    _future = _apiClient.fetchVideo(widget.videoId).then((video) {
+      if (video != null) {
+        _similarFuture = _apiClient.fetchVideos(category: video.category.value);
+      }
+      return video;
+    });
     _apiClient.recordVideoView(widget.videoId);
   }
 
@@ -107,9 +116,57 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> {
                 const SizedBox(height: 12),
                 PurchaseSection(videoId: video.id),
                 const SizedBox(height: 8),
+                FavoriteButton(videoId: video.id, initialFavorited: video.favorited ?? false),
+                const SizedBox(height: 8),
                 ReportSection(videoId: video.id),
                 const SizedBox(height: 20),
                 ReviewSection(videoId: video.id, purchased: video.purchased ?? false),
+                const SizedBox(height: 20),
+                if (_similarFuture != null)
+                  FutureBuilder<PaginatedResponse<Video>>(
+                    future: _similarFuture,
+                    builder: (context, similarSnapshot) {
+                      final similar = similarSnapshot.data?.data
+                          .where((v) => v.id != video.id)
+                          .take(6)
+                          .toList();
+
+                      if (similar == null || similar.isEmpty) return const SizedBox.shrink();
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Vidéos similaires', style: Theme.of(context).textTheme.titleMedium),
+                          const SizedBox(height: 8),
+                          SizedBox(
+                            height: 220,
+                            child: ListView.separated(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: similar.length,
+                              separatorBuilder: (context, index) => const SizedBox(width: 12),
+                              itemBuilder: (context, index) {
+                                final similarVideo = similar[index];
+                                return SizedBox(
+                                  width: 160,
+                                  child: VideoCard(
+                                    video: similarVideo,
+                                    onTap: () {
+                                      Navigator.of(context).pushReplacement(
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              VideoDetailScreen(videoId: similarVideo.id),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
               ],
             ),
           );

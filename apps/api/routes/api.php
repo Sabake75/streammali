@@ -13,7 +13,9 @@ use App\Http\Controllers\Api\Creator\VideoController as CreatorVideoController;
 use App\Http\Controllers\Api\Creator\VideoSourceController;
 use App\Http\Controllers\Api\OrangeMoneyWebhookController;
 use App\Http\Controllers\Api\VideoCatalogController;
+use App\Http\Controllers\Api\VideoFavoriteController;
 use App\Http\Controllers\Api\VideoPurchaseController;
+use App\Http\Controllers\Api\VideoRecommendationController;
 use App\Http\Controllers\Api\VideoReportController;
 use App\Http\Controllers\Api\VideoReviewController;
 use Illuminate\Http\Request;
@@ -31,6 +33,9 @@ Route::post('/webhooks/cloudflare-stream', CloudflareStreamWebhookController::cl
 Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
 
 Route::get('/videos', [VideoCatalogController::class, 'index'])->name('videos.index');
+// Must come before /videos/{video} — otherwise "recommended" is captured
+// by the {video} wildcard and fails route-model binding.
+Route::get('/videos/recommended', [VideoRecommendationController::class, 'index'])->name('videos.recommended');
 Route::get('/videos/{video}', [VideoCatalogController::class, 'show'])->name('videos.show');
 Route::post('/videos/{video}/view', [VideoCatalogController::class, 'view'])->name('videos.view');
 Route::get('/videos/{video}/reviews', [VideoReviewController::class, 'index'])->name('videos.reviews.index');
@@ -48,6 +53,10 @@ Route::middleware(['auth:sanctum', 'account.active'])->group(function () {
         ->name('videos.report');
     Route::post('/videos/{video}/reviews', [VideoReviewController::class, 'store'])
         ->name('videos.reviews.store');
+    Route::post('/videos/{video}/favorite', [VideoFavoriteController::class, 'store'])
+        ->name('videos.favorite');
+
+    Route::get('/favorites', [VideoFavoriteController::class, 'index'])->name('favorites.index');
 
     Route::prefix('creator')->name('creator.')->group(function () {
         Route::get('/videos', [CreatorVideoController::class, 'index'])->name('videos.index');

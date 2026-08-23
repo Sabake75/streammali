@@ -1,6 +1,7 @@
 import { fetchCategories, fetchVideos } from "@/lib/api";
 import { CatalogueFilters } from "@/components/CatalogueFilters";
 import { Pagination } from "@/components/Pagination";
+import { RecommendedVideos } from "@/components/RecommendedVideos";
 import { VideoCard } from "@/components/VideoCard";
 
 export default async function CataloguePage(props: PageProps<"/">) {
@@ -44,6 +45,8 @@ export default async function CataloguePage(props: PageProps<"/">) {
         lastPage={catalogue.meta.last_page}
         searchParams={{ category, search }}
       />
+
+      <RecommendedVideos />
     </main>
   );
 }

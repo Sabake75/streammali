@@ -54,6 +54,8 @@ Lecteur vidéo (`lib/widgets/video_player_widget.dart`, fiche vidéo) : premier 
 
 Notation/commentaires (`lib/widgets/review_section.dart`, fiche vidéo) : formulaire (étoiles + commentaire optionnel) visible uniquement si `video.purchased`, `POST /api/videos/{id}/reviews` ; liste des avis publique, `GET /api/videos/{id}/reviews`, rechargée après soumission.
 
+Favoris/recommandations : `lib/widgets/favorite_button.dart` (fiche vidéo, masqué si non connecté, `POST /api/videos/{id}/favorite`). "Recommandé pour vous" (`catalogue_screen.dart`, rangée horizontale) et "Vidéos similaires" (`video_detail_screen.dart`, même catégorie) réutilisent `VideoCard`.
+
 `flutter analyze`, `flutter test` (couvre la validation du formulaire de connexion) et `flutter build web` passent tous sans erreur.
 
 ```

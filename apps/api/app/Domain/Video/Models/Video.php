@@ -8,6 +8,7 @@ use App\Domain\Payment\Enums\PaymentStatus;
 use App\Domain\Payment\Models\Payment;
 use App\Domain\Review\Models\Review;
 use App\Domain\Video\Enums\VideoSourceStatus;
+use App\Domain\Viewer\Models\Favorite;
 use App\Models\User;
 use Database\Factories\VideoFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -91,6 +92,11 @@ class Video extends Model
         return $this->hasMany(Review::class);
     }
 
+    public function favorites(): HasMany
+    {
+        return $this->hasMany(Favorite::class);
+    }
+
     /**
      * Promoted from Http\Resources\VideoResource so review-gating (must
      * have bought the video to review it) can reuse the exact same check.
@@ -101,6 +107,11 @@ class Video extends Model
             ->where('buyer_id', $user->id)
             ->where('status', PaymentStatus::Succeeded)
             ->exists();
+    }
+
+    public function isFavoritedBy(User $user): bool
+    {
+        return $this->favorites()->where('user_id', $user->id)->exists();
     }
 
     protected static function newFactory(): VideoFactory

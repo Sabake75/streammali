@@ -36,6 +36,7 @@ class Video {
   final int price;
   final VideoCreator creator;
   final bool? purchased;
+  final bool? favorited;
   final String? playbackUrl;
   final String? previewPlaybackUrl;
   final double? averageRating;
@@ -52,6 +53,7 @@ class Video {
     required this.price,
     required this.creator,
     this.purchased,
+    this.favorited,
     this.playbackUrl,
     this.previewPlaybackUrl,
     this.averageRating,
@@ -70,6 +72,7 @@ class Video {
       price: json['price'] as int,
       creator: VideoCreator.fromJson(json['creator'] as Map<String, dynamic>),
       purchased: json['purchased'] as bool?,
+      favorited: json['favorited'] as bool?,
       playbackUrl: json['playback_url'] as String?,
       previewPlaybackUrl: json['preview_playback_url'] as String?,
       averageRating: (json['average_rating'] as num?)?.toDouble(),

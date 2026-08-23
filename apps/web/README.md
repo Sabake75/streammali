@@ -55,6 +55,8 @@ Lecteur vidéo (`src/components/VideoPlayer.tsx`, fiche vidéo) : premier lecteu
 
 Notation/commentaires (`src/components/Reviews.tsx`, fiche vidéo) : formulaire (étoiles + commentaire optionnel) visible uniquement si `video.purchased`, `POST /api/videos/{id}/reviews` ; liste des avis publique, `GET /api/videos/{id}/reviews`, rechargée après soumission. Composant autonome, se charge lui-même côté client (même pattern que `Messaging.tsx`) plutôt que de recevoir les données du serveur.
 
+Favoris/recommandations : `src/components/FavoriteButton.tsx` (fiche vidéo, `POST /api/videos/{id}/favorite`) — masqué si non connecté (pas de cookie de session, l'auth n'existe que côté client via le token en `localStorage`, donc impossible à savoir côté serveur). `src/components/RecommendedVideos.tsx` (accueil, "Recommandé pour vous") — pour la même raison, composant client qui ne s'affiche/ne fetch que si un token est présent, `GET /api/videos/recommended`. "Vidéos similaires" (même catégorie, fiche vidéo) — server-side, réutilise `fetchVideos()` existant plutôt qu'un nouvel endpoint.
+
 Pas encore fait : jaquettes via `next/image` (actuellement `<img>` brut le temps de choisir un hébergement d'images).
 
 ```

@@ -25,6 +25,8 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
   int _page = 1;
   late Future<PaginatedResponse<Video>> _future;
   List<VideoCategory> _categories = [];
+  List<Video>? _recommended;
+  bool _recommendedRequested = false;
 
   @override
   void initState() {
@@ -33,6 +35,15 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
     _apiClient.fetchCategories().then((categories) {
       if (mounted) setState(() => _categories = categories);
     }).catchError((_) {});
+    AuthController.instance.addListener(_maybeLoadRecommended);
+    _maybeLoadRecommended();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    AuthController.instance.removeListener(_maybeLoadRecommended);
+    super.dispose();
   }
 
   void _reload() {
@@ -41,10 +52,13 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
     });
   }
 
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
+  void _maybeLoadRecommended() {
+    if (_recommendedRequested || !AuthController.instance.isAuthenticated) return;
+    _recommendedRequested = true;
+
+    _apiClient.fetchRecommendedVideos().then((videos) {
+      if (mounted) setState(() => _recommended = videos);
+    }).catchError((_) {});
   }
 
   @override
@@ -151,6 +165,42 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
               ],
             ),
           ),
+          if (_recommended != null && _recommended!.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Recommandé pour vous', style: Theme.of(context).textTheme.titleMedium),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    height: 220,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: _recommended!.length,
+                      separatorBuilder: (context, index) => const SizedBox(width: 12),
+                      itemBuilder: (context, index) {
+                        final video = _recommended![index];
+                        return SizedBox(
+                          width: 160,
+                          child: VideoCard(
+                            video: video,
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => VideoDetailScreen(videoId: video.id),
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                ],
+              ),
+            ),
           Expanded(
             child: FutureBuilder<PaginatedResponse<Video>>(
               future: _future,

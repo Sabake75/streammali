@@ -87,8 +87,10 @@ Webhook Cloudflare Stream (`CloudflareStreamWebhookController`) : ne fait pas co
 
 **Notation/commentaires** (`App\Domain\Review`) : réservé aux viewers ayant acheté la vidéo (`Video::isPurchasedBy()`, promu depuis `VideoResource` pour être réutilisable). Un avis par utilisateur/vidéo, resoumettre remplace l'existant. `average_rating`/`reviews_count` exposés sur le catalogue et la fiche vidéo (web + mobile). Pas de modération des avis (pas dans le cahier des charges).
 
+**Favoris/recommandations** (`App\Domain\Viewer`) : favoris = bascule simple (`ToggleFavorite`) + bibliothèque (`GET /api/favorites`). Recommandations volontairement non-ML (`GetRecommendedVideos`) : catégories déjà achetées/favorites par l'utilisateur, hors vidéos déjà possédées, triées par popularité — invités (ou sans historique) reçoivent juste les plus vues. Web/mobile : "Recommandé pour vous" (accueil, uniquement si connecté — l'auth n'existe que côté client via un token, donc invisible côté serveur) et "Vidéos similaires" (fiche vidéo, même catégorie, toujours visible, réutilise le catalogue existant plutôt qu'un nouvel endpoint).
+
 **Prochaine étape — passage en production :**
 1. Obtenir un compte marchand Orange Money Mali (Orange Developer Center) et un compte Cloudflare Stream ; confirmer le contrat API exact de chacun et ajuster `OrangeMoneyGateway`/`CloudflareStreamGateway` si besoin. Puis lier le repo à Render/Vercel (`infra/DEPLOY.md`) et enregistrer l'URL du webhook Cloudflare une fois l'API déployée.
-2. Fonctionnalités cahier des charges non prioritaires restantes pour le MVP : favoris/recommandations, mise en avant sur la page d'accueil par le modérateur.
+2. Fonctionnalité cahier des charges non prioritaire restante pour le MVP : mise en avant sur la page d'accueil par le modérateur.
 
 Les choix de stack (Laravel/PostgreSQL, Next.js, Flutter, Orange Money direct, Cloudflare Stream) sont ceux effectivement implémentés, plus indicatifs à ce stade.

@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { FavoriteButton } from "@/components/FavoriteButton";
 import { PurchaseButton } from "@/components/PurchaseButton";
 import { RecordView } from "@/components/RecordView";
 import { ReportButton } from "@/components/ReportButton";
 import { Reviews } from "@/components/Reviews";
+import { VideoCard } from "@/components/VideoCard";
 import { VideoPlayer } from "@/components/VideoPlayer";
-import { fetchVideo } from "@/lib/api";
+import { fetchVideo, fetchVideos } from "@/lib/api";
 import { formatDuration, formatPrice } from "@/lib/format";
 
 export default async function VideoDetailPage(props: PageProps<"/videos/[id]">) {
@@ -18,6 +20,9 @@ export default async function VideoDetailPage(props: PageProps<"/videos/[id]">) 
 
   const canWatchFull = Boolean(video.purchased && video.playback_url);
   const canWatchPreview = !canWatchFull && Boolean(video.preview_playback_url);
+
+  const similar = await fetchVideos({ category: video.category.value });
+  const similarVideos = similar.data.filter((v) => v.id !== video.id).slice(0, 6);
 
   return (
     <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
@@ -75,6 +80,7 @@ export default async function VideoDetailPage(props: PageProps<"/videos/[id]">) 
             {formatPrice(video.price)}
           </span>
           <PurchaseButton videoId={video.id} />
+          <FavoriteButton videoId={video.id} initialFavorited={Boolean(video.favorited)} />
         </div>
 
         <div className="mt-2">
@@ -83,6 +89,19 @@ export default async function VideoDetailPage(props: PageProps<"/videos/[id]">) 
       </div>
 
       <Reviews videoId={video.id} purchased={Boolean(video.purchased)} />
+
+      {similarVideos.length > 0 && (
+        <section className="mt-10">
+          <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-50">
+            Vidéos similaires
+          </h2>
+          <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {similarVideos.map((similarVideo) => (
+              <VideoCard key={similarVideo.id} video={similarVideo} />
+            ))}
+          </div>
+        </section>
+      )}
     </main>
   );
 }

@@ -10,6 +10,7 @@ import type {
   Review,
   VideoCategory,
   VideoCategoryValue,
+  VideoSummary,
 } from "@/lib/types";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api";
@@ -85,6 +86,15 @@ export async function purchaseVideo(
 
 export async function fetchMyVideos(): Promise<PaginatedResponse<CreatorVideo>> {
   return getJson("/creator/videos");
+}
+
+export async function favoriteVideo(videoId: number): Promise<{ favorited: boolean }> {
+  return postJson(`/videos/${videoId}/favorite`, {}, { authenticated: true });
+}
+
+export async function fetchRecommendedVideos(): Promise<VideoSummary[]> {
+  const { data } = await getJson<{ data: VideoSummary[] }>("/videos/recommended");
+  return data;
 }
 
 export async function fetchCategories(): Promise<VideoCategory[]> {
