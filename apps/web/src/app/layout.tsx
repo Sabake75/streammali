@@ -27,9 +27,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="flex min-h-full flex-col bg-[var(--background)] text-[var(--foreground)]">
         <header className="sticky top-0 z-20 border-b border-orange-100 bg-[var(--background)]/85 backdrop-blur dark:border-orange-950/60">
-          <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-            <div className="flex items-center gap-6">
-              <Link href="/" className="flex items-center gap-2 text-lg font-bold tracking-tight">
+          <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-4 sm:px-6 lg:px-8">
+            <div className="flex items-center gap-4 sm:gap-6">
+              <Link href="/" className="flex shrink-0 items-center gap-2 text-lg font-bold tracking-tight">
                 <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-orange-500 to-emerald-600 text-base text-white">
                   ▶
                 </span>
@@ -39,7 +39,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               </Link>
               <Link
                 href="/creer"
-                className="text-sm font-medium text-neutral-600 transition hover:text-orange-600 dark:text-neutral-400 dark:hover:text-orange-400"
+                className="shrink-0 text-sm font-medium text-neutral-600 transition hover:text-orange-600 dark:text-neutral-400 dark:hover:text-orange-400"
               >
                 Espace créateur
               </Link>

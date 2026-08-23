@@ -43,7 +43,7 @@ export function BalanceAndPayouts() {
   }
 
   return (
-    <div className="rounded-xl border border-neutral-200 p-4 shadow-sm dark:border-neutral-800">
+    <div className="flex h-full flex-col rounded-xl border border-neutral-200 p-4 shadow-sm dark:border-neutral-800">
       <h2 className="flex items-center gap-2 font-semibold text-neutral-900 dark:text-neutral-50">
         <span className="h-4 w-1 rounded-full bg-orange-600" />
         Solde et retraits

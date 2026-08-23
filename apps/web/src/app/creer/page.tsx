@@ -9,8 +9,16 @@ import { Stats } from "@/components/creator/Stats";
 import { VideoUploadWidget } from "@/components/creator/VideoUploadWidget";
 import { fetchMyVideos } from "@/lib/api-client";
 import { useAuthUser } from "@/lib/use-auth";
-import { formatDuration, formatPrice } from "@/lib/format";
+import { categoryStyle, formatDuration, formatPrice } from "@/lib/format";
 import type { CreatorVideo } from "@/lib/types";
+
+const SECTIONS = [
+  { id: "stats", label: "Statistiques" },
+  { id: "solde", label: "Solde & retraits" },
+  { id: "messagerie", label: "Messagerie" },
+  { id: "nouvelle-video", label: "Nouvelle vidéo" },
+  { id: "mes-videos", label: "Mes vidéos" },
+];
 
 export default function CreatorPage() {
   const user = useAuthUser();
@@ -55,62 +63,96 @@ export default function CreatorPage() {
   }
 
   return (
-    <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
-      <h1 className="flex items-center gap-2 text-3xl font-bold text-neutral-900 dark:text-neutral-50">
-        <span className="h-7 w-2 rounded-full bg-orange-600" />
-        Espace créateur
-      </h1>
+    <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="flex items-center gap-2 text-3xl font-bold text-neutral-900 dark:text-neutral-50">
+            <span className="h-7 w-2 rounded-full bg-orange-600" />
+            Espace créateur
+          </h1>
+          <p className="mt-1 ml-4 text-neutral-500 dark:text-neutral-400">
+            Statistiques, solde, vidéos et échanges avec la modération, au même endroit.
+          </p>
+        </div>
+        <a href="#nouvelle-video" className="btn-primary">
+          + Nouvelle vidéo
+        </a>
+      </div>
 
-      <div className="mt-6">
+      <nav className="mt-6 flex flex-wrap gap-2 border-b border-neutral-200 pb-4 dark:border-neutral-800">
+        {SECTIONS.map((section) => (
+          <a
+            key={section.id}
+            href={`#${section.id}`}
+            className="rounded-full border border-neutral-200 px-3 py-1 text-sm font-medium text-neutral-600 transition hover:border-orange-300 hover:text-orange-600 dark:border-neutral-800 dark:text-neutral-400 dark:hover:border-orange-800 dark:hover:text-orange-400"
+          >
+            {section.label}
+          </a>
+        ))}
+      </nav>
+
+      <div id="stats" className="mt-8 scroll-mt-24">
         <Stats />
       </div>
 
-      <div className="mt-6">
-        <BalanceAndPayouts />
+      <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div id="solde" className="scroll-mt-24">
+          <BalanceAndPayouts />
+        </div>
+        <div id="messagerie" className="scroll-mt-24">
+          <Messaging />
+        </div>
       </div>
 
-      <div className="mt-6">
-        <Messaging />
-      </div>
-
-      <div className="mt-6">
+      <div id="nouvelle-video" className="mt-8 scroll-mt-24">
         <NewVideoForm onCreated={reload} />
       </div>
 
-      <h2 className="mt-10 text-xl font-semibold text-neutral-900 dark:text-neutral-50">Mes vidéos</h2>
+      <section id="mes-videos" className="mt-10 scroll-mt-24">
+        <h2 className="flex items-center gap-2 text-xl font-semibold text-neutral-900 dark:text-neutral-50">
+          <span className="h-5 w-1.5 rounded-full bg-orange-600" />
+          Mes vidéos
+          {videos && videos.length > 0 && (
+            <span className="text-sm font-normal text-neutral-500 dark:text-neutral-400">({videos.length})</span>
+          )}
+        </h2>
 
-      {loadError && <p className="mt-4 text-sm text-red-600 dark:text-red-400">{loadError}</p>}
-      {videos === null && !loadError && <p className="mt-4 text-neutral-500">Chargement…</p>}
-      {videos?.length === 0 && <p className="mt-4 text-neutral-500">Aucune vidéo pour l&apos;instant.</p>}
+        {loadError && <p className="mt-4 text-sm text-red-600 dark:text-red-400">{loadError}</p>}
+        {videos === null && !loadError && <p className="mt-4 text-neutral-500">Chargement…</p>}
+        {videos?.length === 0 && <p className="mt-4 text-neutral-500">Aucune vidéo pour l&apos;instant.</p>}
 
-      <div className="mt-4 flex flex-col gap-4">
-        {videos?.map((video) => (
-          <div
-            key={video.id}
-            className="flex flex-col gap-3 rounded-xl border border-neutral-200 p-4 shadow-sm dark:border-neutral-800"
-          >
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div>
-                <p className="font-semibold text-neutral-900 dark:text-neutral-50">{video.title}</p>
-                <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                  {video.category.label} · {formatDuration(video.duration_seconds)} · {formatPrice(video.price)}
-                </p>
-              </div>
-              <div className="flex gap-2">
+        <div className="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-2">
+          {videos?.map((video) => (
+            <div
+              key={video.id}
+              className="flex flex-col gap-3 rounded-xl border border-neutral-200 p-4 shadow-sm dark:border-neutral-800"
+            >
+              <div className="flex flex-wrap items-start justify-between gap-2">
+                <div className="flex flex-col gap-1.5">
+                  <span
+                    className={`w-fit rounded-full px-2.5 py-0.5 text-xs font-semibold tracking-wide ${categoryStyle(video.category.value).badge}`}
+                  >
+                    {video.category.label}
+                  </span>
+                  <p className="font-semibold text-neutral-900 dark:text-neutral-50">{video.title}</p>
+                  <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                    {formatDuration(video.duration_seconds)} · {formatPrice(video.price)}
+                  </p>
+                </div>
                 <StatusBadge label={video.status.label} tone={video.status.value} />
               </div>
+              {video.status.value === "rejected" && video.rejection_reason && (
+                <p className="text-sm text-red-600 dark:text-red-400">Motif du refus : {video.rejection_reason}</p>
+              )}
+              <VideoUploadWidget
+                videoId={video.id}
+                initialStatus={video.source_status.value}
+                onStatusChange={reload}
+              />
             </div>
-            {video.status.value === "rejected" && video.rejection_reason && (
-              <p className="text-sm text-red-600 dark:text-red-400">Motif du refus : {video.rejection_reason}</p>
-            )}
-            <VideoUploadWidget
-              videoId={video.id}
-              initialStatus={video.source_status.value}
-              onStatusChange={reload}
-            />
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      </section>
     </main>
   );
 }
