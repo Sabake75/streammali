@@ -65,6 +65,19 @@ class ApiClient {
     return PaginatedResponse.fromJson(json, Video.fromJson);
   }
 
+  Future<List<VideoCategory>> fetchCategories() async {
+    final response = await http.get(Uri.parse('$baseUrl/categories'));
+
+    if (response.statusCode != 200) {
+      throw ApiException('Impossible de charger les catégories (${response.statusCode}).');
+    }
+
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    return (json['data'] as List)
+        .map((entry) => VideoCategory.fromJson(entry as Map<String, dynamic>))
+        .toList();
+  }
+
   Future<Video?> fetchVideo(int id) async {
     final response = await http.get(Uri.parse('$baseUrl/videos/$id'));
 

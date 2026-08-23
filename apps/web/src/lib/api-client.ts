@@ -7,6 +7,7 @@ import type {
   PaginatedResponse,
   Payout,
   PayoutListResponse,
+  VideoCategory,
   VideoCategoryValue,
 } from "@/lib/types";
 
@@ -83,6 +84,17 @@ export async function purchaseVideo(
 
 export async function fetchMyVideos(): Promise<PaginatedResponse<CreatorVideo>> {
   return getJson("/creator/videos");
+}
+
+export async function fetchCategories(): Promise<VideoCategory[]> {
+  const response = await fetch(`${API_BASE_URL}/categories`);
+
+  if (!response.ok) {
+    throw new Error(await extractErrorMessage(response));
+  }
+
+  const json: { data: VideoCategory[] } = await response.json();
+  return json.data;
 }
 
 export async function createVideo(input: {

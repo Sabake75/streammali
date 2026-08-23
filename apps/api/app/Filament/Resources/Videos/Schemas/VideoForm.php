@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Videos\Schemas;
 
 use App\Domain\Moderation\Enums\VideoStatus;
-use App\Domain\Video\Enums\VideoCategory;
 use App\Enums\UserRole;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -33,9 +32,9 @@ class VideoForm
                 Textarea::make('description')
                     ->label('Description')
                     ->columnSpanFull(),
-                Select::make('category')
+                Select::make('category_id')
                     ->label('Catégorie')
-                    ->options(collect(VideoCategory::cases())->mapWithKeys(fn ($case) => [$case->value => $case->label()]))
+                    ->relationship(name: 'category', titleAttribute: 'label')
                     ->required(),
                 TextInput::make('poster_path')
                     ->label('URL de la jaquette'),

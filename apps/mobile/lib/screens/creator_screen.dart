@@ -169,9 +169,23 @@ class _NewVideoFormState extends State<_NewVideoForm> {
   final _priceController = TextEditingController(text: '25');
   final ApiClient _apiClient = ApiClient();
 
-  String _category = videoCategories.first.value;
+  String _category = '';
+  List<VideoCategory> _categories = [];
   bool _submitting = false;
   String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _apiClient.fetchCategories().then((categories) {
+      if (mounted) {
+        setState(() {
+          _categories = categories;
+          if (_category.isEmpty && categories.isNotEmpty) _category = categories.first.value;
+        });
+      }
+    }).catchError((_) {});
+  }
 
   @override
   void dispose() {
@@ -236,9 +250,9 @@ class _NewVideoFormState extends State<_NewVideoForm> {
               ),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
-                initialValue: _category,
+                initialValue: _category.isEmpty ? null : _category,
                 decoration: const InputDecoration(labelText: 'Catégorie', border: OutlineInputBorder()),
-                items: videoCategories
+                items: _categories
                     .map((category) => DropdownMenuItem(value: category.value, child: Text(category.label)))
                     .toList(),
                 onChanged: (value) => setState(() => _category = value ?? _category),

@@ -66,11 +66,3 @@ class Video {
     );
   }
 }
-
-/// Matches the categories exposed by App\Domain\Video\Enums\VideoCategory.
-const List<VideoCategory> videoCategories = [
-  VideoCategory(value: 'film', label: 'Film'),
-  VideoCategory(value: 'clip', label: 'Clip'),
-  VideoCategory(value: 'sketch', label: 'Sketch'),
-  VideoCategory(value: 'series', label: 'Web-série'),
-];

@@ -5,7 +5,6 @@ namespace App\Filament\Resources\Videos\Tables;
 use App\Domain\Moderation\Enums\ReportStatus;
 use App\Domain\Moderation\Enums\VideoStatus;
 use App\Domain\Moderation\Models\Report;
-use App\Domain\Video\Enums\VideoCategory;
 use App\Domain\Video\Enums\VideoSourceStatus;
 use App\Domain\Video\Models\Video;
 use Filament\Actions\Action;
@@ -33,10 +32,9 @@ class VideosTable
                     ->label('Créateur')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('category')
+                TextColumn::make('category.label')
                     ->label('Catégorie')
-                    ->badge()
-                    ->formatStateUsing(fn (VideoCategory $state) => $state->label()),
+                    ->badge(),
                 TextColumn::make('price')
                     ->label('Prix')
                     ->suffix(' FCFA'),
@@ -71,7 +69,7 @@ class VideosTable
                     ->options(collect(VideoStatus::cases())->mapWithKeys(fn ($case) => [$case->value => $case->label()])),
                 SelectFilter::make('category')
                     ->label('Catégorie')
-                    ->options(collect(VideoCategory::cases())->mapWithKeys(fn ($case) => [$case->value => $case->label()])),
+                    ->relationship('category', 'label'),
                 TernaryFilter::make('reported')
                     ->label('Signalée')
                     ->queries(

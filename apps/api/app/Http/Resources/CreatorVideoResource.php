@@ -17,8 +17,8 @@ class CreatorVideoResource extends JsonResource
             'title' => $this->title,
             'description' => $this->description,
             'category' => [
-                'value' => $this->category->value,
-                'label' => $this->category->label(),
+                'value' => $this->category->slug,
+                'label' => $this->category->label,
             ],
             'poster_path' => $this->poster_path,
             'duration_seconds' => $this->duration_seconds,

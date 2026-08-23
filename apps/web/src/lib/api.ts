@@ -1,16 +1,22 @@
-import type { PaginatedResponse, VideoSummary } from "@/lib/types";
+import type { PaginatedResponse, VideoCategory, VideoSummary } from "@/lib/types";
 
 // Appels SSR (server components) : peuvent avoir besoin d'une URL différente de celle du
 // navigateur (ex. nom de service Docker), d'où API_INTERNAL_URL en priorité sur NEXT_PUBLIC_API_URL.
 const API_BASE_URL =
   process.env.API_INTERNAL_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api";
 
-export const VIDEO_CATEGORIES: { value: string; label: string }[] = [
-  { value: "film", label: "Film" },
-  { value: "clip", label: "Clip" },
-  { value: "sketch", label: "Sketch" },
-  { value: "series", label: "Web-série" },
-];
+export async function fetchCategories(): Promise<VideoCategory[]> {
+  const response = await fetch(`${API_BASE_URL}/categories`, {
+    next: { revalidate: 300 },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Impossible de charger les catégories (${response.status})`);
+  }
+
+  const json: { data: VideoCategory[] } = await response.json();
+  return json.data;
+}
 
 export type CatalogueFilters = {
   category?: string;

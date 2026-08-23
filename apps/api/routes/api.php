@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\LogoutController;
 use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Auth\RegisterCreatorController;
+use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CloudflareStreamWebhookController;
 use App\Http\Controllers\Api\Creator\MessageController;
 use App\Http\Controllers\Api\Creator\PayoutController;
@@ -25,6 +26,8 @@ Route::match(['get', 'post'], '/webhooks/orange-money', OrangeMoneyWebhookContro
     ->name('webhooks.orange-money');
 Route::post('/webhooks/cloudflare-stream', CloudflareStreamWebhookController::class)
     ->name('webhooks.cloudflare-stream');
+
+Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
 
 Route::get('/videos', [VideoCatalogController::class, 'index'])->name('videos.index');
 Route::get('/videos/{video}', [VideoCatalogController::class, 'show'])->name('videos.show');

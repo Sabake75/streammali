@@ -81,8 +81,10 @@ Hébergement/CD choisi et préparé (jamais déployé en conditions réelles —
 
 Webhook Cloudflare Stream (`CloudflareStreamWebhookController`) : ne fait pas confiance au payload entrant, redéclenche juste `RefreshVideoSourceStatus` qui revérifie l'état réel auprès de Cloudflare — même logique que le webhook Orange Money.
 
+**Catégories** gérées par le modérateur (table `categories`, Filament `app/Filament/Resources/Categories/`, endpoint public `GET /api/categories`) — remplace l'ancien enum PHP figé (`film`/`clip`/`sketch`/`series`, toujours seedé par défaut). Web et mobile récupèrent la liste dynamiquement au lieu d'un tableau codé en dur. Détail migration/piège rencontré dans `apps/api/app/Domain/Video/README.md`.
+
 **Prochaine étape — passage en production :**
 1. Obtenir un compte marchand Orange Money Mali (Orange Developer Center) et un compte Cloudflare Stream ; confirmer le contrat API exact de chacun et ajuster `OrangeMoneyGateway`/`CloudflareStreamGateway` si besoin. Puis lier le repo à Render/Vercel (`infra/DEPLOY.md`) et enregistrer l'URL du webhook Cloudflare une fois l'API déployée.
-2. Fonctionnalités cahier des charges non prioritaires pour le MVP : aperçu gratuit avant achat, notation/commentaires, favoris/recommandations, gestion des catégories/mise en avant par le modérateur.
+2. Fonctionnalités cahier des charges non prioritaires restantes pour le MVP : aperçu gratuit avant achat (+ premier lecteur vidéo, aucun n'existe encore côté web/mobile), notation/commentaires, favoris/recommandations, mise en avant sur la page d'accueil par le modérateur.
 
 Les choix de stack (Laravel/PostgreSQL, Next.js, Flutter, Orange Money direct, Cloudflare Stream) sont ceux effectivement implémentés, plus indicatifs à ce stade.

@@ -1,17 +1,26 @@
 "use client";
 
-import { useState } from "react";
-import { createVideo } from "@/lib/api-client";
-import { VIDEO_CATEGORIES } from "@/lib/api";
-import type { VideoCategoryValue } from "@/lib/types";
+import { useEffect, useState } from "react";
+import { createVideo, fetchCategories } from "@/lib/api-client";
+import type { VideoCategory, VideoCategoryValue } from "@/lib/types";
 
 export function NewVideoForm({ onCreated }: { onCreated: () => void }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [category, setCategory] = useState<VideoCategoryValue>("film");
+  const [categories, setCategories] = useState<VideoCategory[]>([]);
+  const [category, setCategory] = useState<VideoCategoryValue>("");
   const [price, setPrice] = useState("25");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchCategories()
+      .then((fetched) => {
+        setCategories(fetched);
+        setCategory((current) => current || (fetched[0]?.value ?? ""));
+      })
+      .catch(() => undefined);
+  }, []);
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -62,7 +71,7 @@ export function NewVideoForm({ onCreated }: { onCreated: () => void }) {
           onChange={(event) => setCategory(event.target.value as VideoCategoryValue)}
           className="rounded border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
         >
-          {VIDEO_CATEGORIES.map((cat) => (
+          {categories.map((cat) => (
             <option key={cat.value} value={cat.value}>
               {cat.label}
             </option>

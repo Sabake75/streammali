@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Domain\Video\Enums\VideoCategory;
+use App\Domain\Video\Models\Category;
 use App\Domain\Video\Models\Video;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -25,8 +25,8 @@ class VideoCatalogApiTest extends TestCase
 
     public function test_catalogue_can_be_filtered_by_category(): void
     {
-        Video::factory()->approved()->create(['category' => VideoCategory::Film]);
-        Video::factory()->approved()->create(['category' => VideoCategory::Clip]);
+        Video::factory()->approved()->create(['category_id' => Category::where('slug', 'film')->value('id')]);
+        Video::factory()->approved()->create(['category_id' => Category::where('slug', 'clip')->value('id')]);
 
         $response = $this->getJson('/api/videos?category=clip')->assertOk();
 

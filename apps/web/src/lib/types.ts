@@ -1,4 +1,5 @@
-export type VideoCategoryValue = "film" | "clip" | "sketch" | "series";
+// Moderator-managed (see GET /api/categories) — not a fixed set at compile time.
+export type VideoCategoryValue = string;
 
 export type VideoCategory = {
   value: VideoCategoryValue;

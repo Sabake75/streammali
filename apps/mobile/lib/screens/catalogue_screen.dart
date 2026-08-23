@@ -24,11 +24,15 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
   String _search = '';
   int _page = 1;
   late Future<PaginatedResponse<Video>> _future;
+  List<VideoCategory> _categories = [];
 
   @override
   void initState() {
     super.initState();
     _future = _apiClient.fetchVideos();
+    _apiClient.fetchCategories().then((categories) {
+      if (mounted) setState(() => _categories = categories);
+    }).catchError((_) {});
   }
 
   void _reload() {
@@ -128,7 +132,7 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
                         ),
                         items: [
                           const DropdownMenuItem(value: null, child: Text('Toutes')),
-                          ...videoCategories.map(
+                          ..._categories.map(
                             (category) => DropdownMenuItem(
                               value: category.value,
                               child: Text(category.label),

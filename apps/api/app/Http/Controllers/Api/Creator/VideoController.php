@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\Creator;
 
 use App\Domain\Creator\Actions\UploadVideo;
-use App\Domain\Video\Enums\VideoCategory;
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CreatorVideoResource;
@@ -16,7 +15,7 @@ class VideoController extends Controller
     {
         $this->authorizeCreator($request);
 
-        $videos = $request->user()->videos()->latest()->paginate(15);
+        $videos = $request->user()->videos()->with('category')->latest()->paginate(15);
 
         return CreatorVideoResource::collection($videos);
     }
@@ -28,7 +27,7 @@ class VideoController extends Controller
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
-            'category' => ['required', 'string', 'in:' . implode(',', array_column(VideoCategory::cases(), 'value'))],
+            'category' => ['required', 'string', 'exists:categories,slug'],
             'poster_path' => ['nullable', 'string', 'max:2048'],
             'duration_seconds' => ['nullable', 'integer', 'min:1'],
             'price' => ['nullable', 'integer', 'min:0'],

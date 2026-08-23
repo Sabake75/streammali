@@ -1,9 +1,11 @@
-import { VIDEO_CATEGORIES } from "@/lib/api";
+import type { VideoCategory } from "@/lib/types";
 
 export function CatalogueFilters({
+  categories,
   defaultCategory,
   defaultSearch,
 }: {
+  categories: VideoCategory[];
   defaultCategory?: string;
   defaultSearch?: string;
 }) {
@@ -33,7 +35,7 @@ export function CatalogueFilters({
           className="rounded border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
         >
           <option value="">Toutes</option>
-          {VIDEO_CATEGORIES.map((category) => (
+          {categories.map((category) => (
             <option key={category.value} value={category.value}>
               {category.label}
             </option>

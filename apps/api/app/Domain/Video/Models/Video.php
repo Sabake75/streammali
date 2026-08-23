@@ -5,7 +5,6 @@ namespace App\Domain\Video\Models;
 use App\Domain\Moderation\Enums\VideoStatus;
 use App\Domain\Moderation\Models\Report;
 use App\Domain\Payment\Models\Payment;
-use App\Domain\Video\Enums\VideoCategory;
 use App\Domain\Video\Enums\VideoSourceStatus;
 use App\Models\User;
 use Database\Factories\VideoFactory;
@@ -20,7 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'creator_id',
     'title',
     'description',
-    'category',
+    'category_id',
     'poster_path',
     'duration_seconds',
     'price',
@@ -50,7 +49,6 @@ class Video extends Model
     protected function casts(): array
     {
         return [
-            'category' => VideoCategory::class,
             'status' => VideoStatus::class,
             'duration_seconds' => 'integer',
             'price' => 'integer',
@@ -62,6 +60,11 @@ class Video extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'creator_id');
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
     }
 
     public function scopeApproved(Builder $query): Builder

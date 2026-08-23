@@ -1,4 +1,4 @@
-import { fetchVideos } from "@/lib/api";
+import { fetchCategories, fetchVideos } from "@/lib/api";
 import { CatalogueFilters } from "@/components/CatalogueFilters";
 import { Pagination } from "@/components/Pagination";
 import { VideoCard } from "@/components/VideoCard";
@@ -9,7 +9,10 @@ export default async function CataloguePage(props: PageProps<"/">) {
   const search = typeof searchParams.search === "string" ? searchParams.search : undefined;
   const page = typeof searchParams.page === "string" ? Number(searchParams.page) || 1 : 1;
 
-  const catalogue = await fetchVideos({ category, search, page });
+  const [catalogue, categories] = await Promise.all([
+    fetchVideos({ category, search, page }),
+    fetchCategories(),
+  ]);
 
   return (
     <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
@@ -21,7 +24,7 @@ export default async function CataloguePage(props: PageProps<"/">) {
       </p>
 
       <div className="mt-6">
-        <CatalogueFilters defaultCategory={category} defaultSearch={search} />
+        <CatalogueFilters categories={categories} defaultCategory={category} defaultSearch={search} />
       </div>
 
       {catalogue.data.length === 0 ? (
