@@ -1,8 +1,7 @@
 "use client";
 
-import * as tus from "tus-js-client";
-import { useEffect, useRef, useState } from "react";
-import { createVideoUploadUrl, fetchVideoSourceStatus } from "@/lib/api-client";
+import { useEffect, useState } from "react";
+import { createVideoUploadUrl, fetchVideoSourceStatus, uploadVideoFile } from "@/lib/api-client";
 import type { VideoSourceStatusValue } from "@/lib/types";
 
 const POLL_INTERVAL_MS = 5000;
@@ -19,7 +18,6 @@ export function VideoUploadWidget({
   const [status, setStatus] = useState(initialStatus);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
-  const uploadRef = useRef<tus.Upload | null>(null);
 
   useEffect(() => {
     if (status !== "processing") return;
@@ -48,26 +46,9 @@ export function VideoUploadWidget({
 
     try {
       const { upload_url } = await createVideoUploadUrl(videoId);
-
-      // Cloudflare's direct_upload already created the upload resource
-      // server-side — passing `uploadUrl` (not `endpoint`) tells tus-js-client
-      // to target it directly instead of trying to create a new one.
-      const upload = new tus.Upload(file, {
-        uploadUrl: upload_url,
-        chunkSize: 50 * 1024 * 1024,
-        retryDelays: [0, 1000, 3000, 5000],
-        onError: (err) => setError(err.message),
-        onProgress: (bytesSent, bytesTotal) => {
-          setProgress(Math.round((bytesSent / bytesTotal) * 100));
-        },
-        onSuccess: () => {
-          setStatus("processing");
-          onStatusChange();
-        },
-      });
-
-      uploadRef.current = upload;
-      upload.start();
+      await uploadVideoFile(upload_url, file, setProgress);
+      setStatus("processing");
+      onStatusChange();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Une erreur est survenue.");
     }

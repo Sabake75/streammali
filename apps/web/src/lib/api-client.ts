@@ -123,6 +123,52 @@ export async function createVideoUploadUrl(videoId: number): Promise<{ upload_ur
   return postJson(`/creator/videos/${videoId}/source`, {}, { authenticated: true });
 }
 
+const UPLOAD_RETRY_DELAYS_MS = [0, 1000, 3000, 5000];
+
+/**
+ * Cloudflare's direct_upload URL only accepts a single plain
+ * `multipart/form-data` POST ("Basic" upload) — TUS resumable uploads
+ * require the account's secret API token on every request, which can never
+ * be exposed to the browser, so this can't be resumed mid-transfer. Retries
+ * the whole file on failure instead, since 3G/4G connections drop mid-upload
+ * often enough that a single attempt isn't reliable.
+ */
+export async function uploadVideoFile(
+  uploadUrl: string,
+  file: File,
+  onProgress: (percent: number) => void,
+): Promise<void> {
+  let lastError: unknown;
+  for (const delay of UPLOAD_RETRY_DELAYS_MS) {
+    if (delay > 0) await new Promise((resolve) => setTimeout(resolve, delay));
+    try {
+      await uploadVideoFileOnce(uploadUrl, file, onProgress);
+      return;
+    } catch (err) {
+      lastError = err;
+    }
+  }
+  throw lastError instanceof Error ? lastError : new Error("Échec de l'envoi du fichier vidéo.");
+}
+
+function uploadVideoFileOnce(uploadUrl: string, file: File, onProgress: (percent: number) => void): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", uploadUrl);
+    xhr.upload.onprogress = (event) => {
+      if (event.lengthComputable) onProgress(Math.round((event.loaded / event.total) * 100));
+    };
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) resolve();
+      else reject(new Error(`Échec de l'envoi du fichier vidéo (${xhr.status}).`));
+    };
+    xhr.onerror = () => reject(new Error("Échec de l'envoi du fichier vidéo (réseau)."));
+    const formData = new FormData();
+    formData.set("file", file);
+    xhr.send(formData);
+  });
+}
+
 export async function fetchVideoSourceStatus(videoId: number): Promise<{
   source_status: { value: string; label: string };
   playback_url: string | null;

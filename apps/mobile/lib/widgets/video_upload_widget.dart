@@ -1,9 +1,7 @@
 import 'dart:async';
 
-import 'package:cross_file/cross_file.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:tus_client_dart/tus_client_dart.dart';
 
 import '../services/api_client.dart';
 import '../services/auth_controller.dart';
@@ -80,30 +78,19 @@ class _VideoUploadWidgetState extends State<VideoUploadWidget> {
     try {
       final uploadUrl = await _apiClient.createVideoUploadUrl(videoId: widget.videoId, token: token);
 
-      final store = TusMemoryStore();
-      final client = TusClient(XFile(path), store: store);
-
-      // Cloudflare's direct_upload already created the upload resource
-      // server-side — seeding the store with the fingerprint pointing at
-      // that URL makes the client treat it as a resumable upload and skip
-      // straight to the tus HEAD/PATCH flow instead of trying to create a
-      // brand new one.
-      final fingerprint = client.generateFingerprint() ?? path;
-      await store.set(fingerprint, Uri.parse(uploadUrl));
-
-      await client.upload(
-        uri: Uri.parse(uploadUrl),
-        onProgress: (progress, estimate) {
+      await _apiClient.uploadVideoFile(
+        uploadUrl: uploadUrl,
+        filePath: path,
+        onProgress: (progress) {
           if (!mounted) return;
           setState(() => _progress = progress);
         },
-        onComplete: () {
-          if (!mounted) return;
-          setState(() => _status = 'processing');
-          _startPolling();
-          widget.onStatusChange();
-        },
       );
+
+      if (!mounted) return;
+      setState(() => _status = 'processing');
+      _startPolling();
+      widget.onStatusChange();
     } catch (err) {
       setState(() => _error = err.toString());
     }

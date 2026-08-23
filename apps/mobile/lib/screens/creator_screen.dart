@@ -1,9 +1,7 @@
 import 'dart:async';
 
-import 'package:cross_file/cross_file.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:tus_client_dart/tus_client_dart.dart';
 
 import '../models/creator_video.dart';
 import '../models/video.dart';
@@ -246,23 +244,18 @@ class _NewVideoFormState extends State<_NewVideoForm> {
 
       setState(() => _phase = _NewVideoPhase.uploading);
 
-      final store = TusMemoryStore();
-      final client = TusClient(XFile(_filePath!), store: store);
-      final fingerprint = client.generateFingerprint() ?? _filePath!;
-      await store.set(fingerprint, Uri.parse(uploadUrl));
-
-      await client.upload(
-        uri: Uri.parse(uploadUrl),
-        onProgress: (progress, estimate) {
+      await _apiClient.uploadVideoFile(
+        uploadUrl: uploadUrl,
+        filePath: _filePath!,
+        onProgress: (progress) {
           if (mounted) setState(() => _progress = progress);
         },
-        onComplete: () {
-          if (!mounted) return;
-          setState(() => _phase = _NewVideoPhase.processing);
-          _startPolling(token);
-          widget.onCreated();
-        },
       );
+
+      if (!mounted) return;
+      setState(() => _phase = _NewVideoPhase.processing);
+      _startPolling(token);
+      widget.onCreated();
     } catch (err) {
       setState(() {
         _error = err.toString();

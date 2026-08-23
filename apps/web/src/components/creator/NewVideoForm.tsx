@@ -1,8 +1,13 @@
 "use client";
 
-import * as tus from "tus-js-client";
 import { useEffect, useRef, useState } from "react";
-import { createVideo, createVideoUploadUrl, fetchCategories, fetchVideoSourceStatus } from "@/lib/api-client";
+import {
+  createVideo,
+  createVideoUploadUrl,
+  fetchCategories,
+  fetchVideoSourceStatus,
+  uploadVideoFile,
+} from "@/lib/api-client";
 import type { VideoCategory, VideoCategoryValue } from "@/lib/types";
 
 const POLL_INTERVAL_MS = 5000;
@@ -77,22 +82,9 @@ export function NewVideoForm({ onCreated }: { onCreated: () => void }) {
       const { upload_url } = await createVideoUploadUrl(video.id);
 
       setPhase("uploading");
-      new tus.Upload(file, {
-        uploadUrl: upload_url,
-        chunkSize: 50 * 1024 * 1024,
-        retryDelays: [0, 1000, 3000, 5000],
-        onError: (err) => {
-          setError(err.message);
-          setPhase("form");
-        },
-        onProgress: (bytesSent, bytesTotal) => {
-          setProgress(Math.round((bytesSent / bytesTotal) * 100));
-        },
-        onSuccess: () => {
-          setPhase("processing");
-          onCreated();
-        },
-      }).start();
+      await uploadVideoFile(upload_url, file, setProgress);
+      setPhase("processing");
+      onCreated();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Une erreur est survenue.");
       setPhase("form");

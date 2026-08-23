@@ -298,6 +298,70 @@ class ApiClient {
     return json['upload_url'] as String;
   }
 
+  /// Cloudflare's direct_upload URL only accepts a single plain
+  /// `multipart/form-data` POST ("Basic" upload) — TUS resumable uploads
+  /// require the account's secret API token on every request, which can
+  /// never be exposed to the client, so this can't be resumed mid-transfer.
+  /// Retries the whole file on failure instead, since 3G/4G connections
+  /// drop mid-upload often enough that a single attempt isn't reliable.
+  Future<void> uploadVideoFile({
+    required String uploadUrl,
+    required String filePath,
+    required void Function(double percent) onProgress,
+  }) async {
+    const retryDelays = [Duration.zero, Duration(seconds: 1), Duration(seconds: 3), Duration(seconds: 5)];
+
+    Object? lastError;
+    for (final delay in retryDelays) {
+      if (delay > Duration.zero) await Future.delayed(delay);
+      try {
+        await _uploadVideoFileOnce(uploadUrl: uploadUrl, filePath: filePath, onProgress: onProgress);
+        return;
+      } catch (err) {
+        lastError = err;
+      }
+    }
+    throw ApiException(lastError.toString());
+  }
+
+  Future<void> _uploadVideoFileOnce({
+    required String uploadUrl,
+    required String filePath,
+    required void Function(double percent) onProgress,
+  }) async {
+    final uri = Uri.parse(uploadUrl);
+    final multipart = http.MultipartRequest('POST', uri)
+      ..files.add(await http.MultipartFile.fromPath('file', filePath));
+    final total = multipart.contentLength;
+
+    final streamedRequest = http.StreamedRequest('POST', uri)
+      ..headers.addAll(multipart.headers)
+      ..contentLength = total;
+
+    var sent = 0;
+    multipart.finalize().listen(
+      (chunk) {
+        sent += chunk.length;
+        if (total > 0) onProgress(sent / total * 100);
+        streamedRequest.sink.add(chunk);
+      },
+      onDone: () => streamedRequest.sink.close(),
+      onError: streamedRequest.sink.addError,
+      cancelOnError: true,
+    );
+
+    final client = http.Client();
+    try {
+      final streamedResponse = await client.send(streamedRequest);
+      final response = await http.Response.fromStream(streamedResponse);
+      if (response.statusCode < 200 || response.statusCode >= 300) {
+        throw ApiException('Échec de l\'envoi du fichier vidéo (${response.statusCode}).');
+      }
+    } finally {
+      client.close();
+    }
+  }
+
   Future<CreatorVideoStatus> fetchVideoSourceStatus({
     required int videoId,
     required String token,
