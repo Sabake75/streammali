@@ -53,6 +53,8 @@ Catégories dynamiques (`GET /api/categories`, plus de liste codée en dur) : `s
 
 Lecteur vidéo (`src/components/VideoPlayer.tsx`, fiche vidéo) : premier lecteur de l'app — `<video>` natif + `hls.js` (Safari lit le HLS nativement, les autres navigateurs non), pas d'autoplay (bouton play natif = tap-to-play). Vidéo achetée et prête → lecture complète (`playback_url`) ; sinon aperçu (`preview_playback_url`, toujours exposé même aux invités) avec mention "Aperçu — achète la vidéo pour la voir en entier."
 
+Notation/commentaires (`src/components/Reviews.tsx`, fiche vidéo) : formulaire (étoiles + commentaire optionnel) visible uniquement si `video.purchased`, `POST /api/videos/{id}/reviews` ; liste des avis publique, `GET /api/videos/{id}/reviews`, rechargée après soumission. Composant autonome, se charge lui-même côté client (même pattern que `Messaging.tsx`) plutôt que de recevoir les données du serveur.
+
 Pas encore fait : jaquettes via `next/image` (actuellement `<img>` brut le temps de choisir un hébergement d'images).
 
 ```

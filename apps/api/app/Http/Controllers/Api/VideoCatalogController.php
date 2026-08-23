@@ -23,6 +23,8 @@ class VideoCatalogController extends Controller
         $videos = Video::query()
             ->approved()
             ->with(['creator', 'category'])
+            ->withAvg('reviews', 'rating')
+            ->withCount('reviews')
             ->when(
                 $validated['category'] ?? null,
                 fn ($query, $category) => $query->whereRelation('category', 'slug', $category),
@@ -38,6 +40,9 @@ class VideoCatalogController extends Controller
     public function show(Video $video): VideoResource
     {
         abort_unless($video->status === VideoStatus::Approved, 404);
+
+        $video->loadAvg('reviews', 'rating');
+        $video->loadCount('reviews');
 
         return new VideoResource($video->load(['creator', 'category']));
     }

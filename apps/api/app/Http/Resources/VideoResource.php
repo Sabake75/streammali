@@ -2,9 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Domain\Payment\Enums\PaymentStatus;
 use App\Domain\Video\Enums\VideoSourceStatus;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -19,7 +17,7 @@ class VideoResource extends JsonResource
         // with no auth:sanctum middleware, where $request->user() would
         // resolve against the default ('web') guard and always be null.
         $user = $request->user('sanctum');
-        $purchased = $user !== null && $this->isPurchasedBy($user);
+        $purchased = $user !== null && $this->resource->isPurchasedBy($user);
 
         return [
             'id' => $this->id,
@@ -46,15 +44,14 @@ class VideoResource extends JsonResource
             // Unlike playback_url, always exposed (even to guests) once
             // set — it's a short standalone clip, not the gated asset.
             'preview_playback_url' => $this->preview_playback_url,
+            // reviews_avg_rating/reviews_count come from withAvg/withCount
+            // (VideoCatalogController) — null/0 here just means the caller
+            // didn't eager-load them, not that there truly are no reviews.
+            'average_rating' => $this->reviews_avg_rating !== null
+                ? round((float) $this->reviews_avg_rating, 1)
+                : null,
+            'reviews_count' => (int) ($this->reviews_count ?? 0),
             'created_at' => $this->created_at,
         ];
-    }
-
-    private function isPurchasedBy(User $user): bool
-    {
-        return $this->resource->payments()
-            ->where('buyer_id', $user->id)
-            ->where('status', PaymentStatus::Succeeded)
-            ->exists();
     }
 }

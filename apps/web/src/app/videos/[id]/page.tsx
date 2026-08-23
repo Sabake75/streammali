@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { PurchaseButton } from "@/components/PurchaseButton";
 import { RecordView } from "@/components/RecordView";
 import { ReportButton } from "@/components/ReportButton";
+import { Reviews } from "@/components/Reviews";
 import { VideoPlayer } from "@/components/VideoPlayer";
 import { fetchVideo } from "@/lib/api";
 import { formatDuration, formatPrice } from "@/lib/format";
@@ -58,6 +59,12 @@ export default async function VideoDetailPage(props: PageProps<"/videos/[id]">) 
         </h1>
         <p className="text-neutral-500 dark:text-neutral-400">
           Par {video.creator.name} · {formatDuration(video.duration_seconds)}
+          {video.reviews_count > 0 && (
+            <>
+              {" "}
+              · <span className="text-amber-500">★</span> {video.average_rating} ({video.reviews_count} avis)
+            </>
+          )}
         </p>
         {video.description && (
           <p className="text-neutral-700 dark:text-neutral-300">{video.description}</p>
@@ -74,6 +81,8 @@ export default async function VideoDetailPage(props: PageProps<"/videos/[id]">) 
           <ReportButton videoId={video.id} />
         </div>
       </div>
+
+      <Reviews videoId={video.id} purchased={Boolean(video.purchased)} />
     </main>
   );
 }

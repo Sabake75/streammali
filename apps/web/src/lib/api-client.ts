@@ -7,6 +7,7 @@ import type {
   PaginatedResponse,
   Payout,
   PayoutListResponse,
+  Review,
   VideoCategory,
   VideoCategoryValue,
 } from "@/lib/types";
@@ -136,6 +137,26 @@ export async function requestPayout(input: {
 
 export async function reportVideo(videoId: number, reason: string): Promise<{ message: string }> {
   return postJson(`/videos/${videoId}/report`, { reason }, { authenticated: true });
+}
+
+export async function fetchReviews(videoId: number): Promise<PaginatedResponse<Review>> {
+  const response = await fetch(`${API_BASE_URL}/videos/${videoId}/reviews`);
+
+  if (!response.ok) {
+    throw new Error(await extractErrorMessage(response));
+  }
+
+  return response.json();
+}
+
+export async function submitReview(
+  videoId: number,
+  input: { rating: number; comment?: string },
+): Promise<Review> {
+  const { data } = await postJson<{ data: Review }>(`/videos/${videoId}/reviews`, input, {
+    authenticated: true,
+  });
+  return data;
 }
 
 export async function fetchCreatorStats(): Promise<CreatorStats> {

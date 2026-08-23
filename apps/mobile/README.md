@@ -52,6 +52,8 @@ Catégories dynamiques (`GET /api/categories`, plus de liste codée en dur) : `_
 
 Lecteur vidéo (`lib/widgets/video_player_widget.dart`, fiche vidéo) : premier lecteur de l'app — packages `video_player` + `chewie`, pas d'autoplay (bouton play natif de Chewie = tap-to-play). Vidéo achetée et prête → lecture complète (`playbackUrl`) ; sinon aperçu (`previewPlaybackUrl`, toujours exposé même aux invités) avec mention "Aperçu — achète la vidéo pour la voir en entier."
 
+Notation/commentaires (`lib/widgets/review_section.dart`, fiche vidéo) : formulaire (étoiles + commentaire optionnel) visible uniquement si `video.purchased`, `POST /api/videos/{id}/reviews` ; liste des avis publique, `GET /api/videos/{id}/reviews`, rechargée après soumission.
+
 `flutter analyze`, `flutter test` (couvre la validation du formulaire de connexion) et `flutter build web` passent tous sans erreur.
 
 ```

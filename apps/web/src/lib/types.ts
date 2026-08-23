@@ -21,6 +21,19 @@ export type VideoSummary = {
   purchased?: boolean;
   playback_url?: string | null;
   preview_playback_url: string | null;
+  average_rating: number | null;
+  reviews_count: number;
+  created_at: string;
+};
+
+export type Review = {
+  id: number;
+  rating: number;
+  comment: string | null;
+  user: {
+    id: number;
+    name: string;
+  };
   created_at: string;
 };
 

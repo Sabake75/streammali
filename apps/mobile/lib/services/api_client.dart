@@ -7,6 +7,7 @@ import '../models/creator_video.dart';
 import '../models/message.dart';
 import '../models/paginated_response.dart';
 import '../models/payout.dart';
+import '../models/review.dart';
 import '../models/user.dart';
 import '../models/video.dart';
 
@@ -161,6 +162,43 @@ class ApiClient {
 
     final json = jsonDecode(response.body) as Map<String, dynamic>;
     return json['message'] as String;
+  }
+
+  Future<PaginatedResponse<Review>> fetchReviews(int videoId) async {
+    final response = await http.get(Uri.parse('$baseUrl/videos/$videoId/reviews'));
+
+    if (response.statusCode != 200) {
+      throw ApiException('Impossible de charger les avis (${response.statusCode}).');
+    }
+
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    return PaginatedResponse.fromJson(json, Review.fromJson);
+  }
+
+  Future<Review> submitReview({
+    required int videoId,
+    required int rating,
+    String? comment,
+    required String token,
+  }) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/videos/$videoId/reviews'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({
+        'rating': rating,
+        if (comment != null && comment.isNotEmpty) 'comment': comment,
+      }),
+    );
+
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      throw ApiException(_extractErrorMessage(response));
+    }
+
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    return Review.fromJson(json['data'] as Map<String, dynamic>);
   }
 
   Future<List<CreatorVideo>> fetchMyVideos(String token) async {

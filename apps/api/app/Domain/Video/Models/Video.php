@@ -4,7 +4,9 @@ namespace App\Domain\Video\Models;
 
 use App\Domain\Moderation\Enums\VideoStatus;
 use App\Domain\Moderation\Models\Report;
+use App\Domain\Payment\Enums\PaymentStatus;
 use App\Domain\Payment\Models\Payment;
+use App\Domain\Review\Models\Review;
 use App\Domain\Video\Enums\VideoSourceStatus;
 use App\Models\User;
 use Database\Factories\VideoFactory;
@@ -82,6 +84,23 @@ class Video extends Model
     public function reports(): HasMany
     {
         return $this->hasMany(Report::class);
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    /**
+     * Promoted from Http\Resources\VideoResource so review-gating (must
+     * have bought the video to review it) can reuse the exact same check.
+     */
+    public function isPurchasedBy(User $user): bool
+    {
+        return $this->payments()
+            ->where('buyer_id', $user->id)
+            ->where('status', PaymentStatus::Succeeded)
+            ->exists();
     }
 
     protected static function newFactory(): VideoFactory

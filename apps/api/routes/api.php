@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\OrangeMoneyWebhookController;
 use App\Http\Controllers\Api\VideoCatalogController;
 use App\Http\Controllers\Api\VideoPurchaseController;
 use App\Http\Controllers\Api\VideoReportController;
+use App\Http\Controllers\Api\VideoReviewController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -32,6 +33,7 @@ Route::get('/categories', [CategoryController::class, 'index'])->name('categorie
 Route::get('/videos', [VideoCatalogController::class, 'index'])->name('videos.index');
 Route::get('/videos/{video}', [VideoCatalogController::class, 'show'])->name('videos.show');
 Route::post('/videos/{video}/view', [VideoCatalogController::class, 'view'])->name('videos.view');
+Route::get('/videos/{video}/reviews', [VideoReviewController::class, 'index'])->name('videos.reviews.index');
 
 Route::middleware(['auth:sanctum', 'account.active'])->group(function () {
     Route::get('/user', function (Request $request) {
@@ -44,6 +46,8 @@ Route::middleware(['auth:sanctum', 'account.active'])->group(function () {
         ->name('videos.purchase');
     Route::post('/videos/{video}/report', [VideoReportController::class, 'store'])
         ->name('videos.report');
+    Route::post('/videos/{video}/reviews', [VideoReviewController::class, 'store'])
+        ->name('videos.reviews.store');
 
     Route::prefix('creator')->name('creator.')->group(function () {
         Route::get('/videos', [CreatorVideoController::class, 'index'])->name('videos.index');

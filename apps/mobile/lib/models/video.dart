@@ -38,6 +38,8 @@ class Video {
   final bool? purchased;
   final String? playbackUrl;
   final String? previewPlaybackUrl;
+  final double? averageRating;
+  final int reviewsCount;
   final DateTime createdAt;
 
   const Video({
@@ -52,6 +54,8 @@ class Video {
     this.purchased,
     this.playbackUrl,
     this.previewPlaybackUrl,
+    this.averageRating,
+    this.reviewsCount = 0,
     required this.createdAt,
   });
 
@@ -68,6 +72,8 @@ class Video {
       purchased: json['purchased'] as bool?,
       playbackUrl: json['playback_url'] as String?,
       previewPlaybackUrl: json['preview_playback_url'] as String?,
+      averageRating: (json['average_rating'] as num?)?.toDouble(),
+      reviewsCount: json['reviews_count'] as int? ?? 0,
       createdAt: DateTime.parse(json['created_at'] as String),
     );
   }

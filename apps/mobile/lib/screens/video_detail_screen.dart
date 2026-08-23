@@ -5,6 +5,7 @@ import '../services/api_client.dart';
 import '../utils/formatting.dart';
 import '../widgets/purchase_section.dart';
 import '../widgets/report_section.dart';
+import '../widgets/review_section.dart';
 import '../widgets/video_player_widget.dart';
 
 class VideoDetailScreen extends StatefulWidget {
@@ -89,7 +90,9 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> {
                 Text(video.title, style: Theme.of(context).textTheme.headlineSmall),
                 const SizedBox(height: 4),
                 Text(
-                  '${video.creator.name} · ${formatDuration(video.durationSeconds)}',
+                  video.reviewsCount > 0
+                      ? '${video.creator.name} · ${formatDuration(video.durationSeconds)} · ★ ${video.averageRating} (${video.reviewsCount} avis)'
+                      : '${video.creator.name} · ${formatDuration(video.durationSeconds)}',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey),
                 ),
                 if (video.description != null && video.description!.isNotEmpty) ...[
@@ -105,6 +108,8 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> {
                 PurchaseSection(videoId: video.id),
                 const SizedBox(height: 8),
                 ReportSection(videoId: video.id),
+                const SizedBox(height: 20),
+                ReviewSection(videoId: video.id, purchased: video.purchased ?? false),
               ],
             ),
           );
