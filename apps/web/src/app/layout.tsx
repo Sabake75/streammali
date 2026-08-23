@@ -48,6 +48,17 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           </div>
         </header>
         {children}
+        <footer className="mt-16 border-t border-neutral-200 dark:border-neutral-800">
+          <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-8 text-sm text-neutral-500 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8 dark:text-neutral-400">
+            <span className="flex items-center gap-2 font-medium text-neutral-700 dark:text-neutral-300">
+              <span className="flex h-6 w-6 items-center justify-center rounded-md bg-gradient-to-br from-orange-500 to-emerald-600 text-xs text-white">
+                ▶
+              </span>
+              StreamMali
+            </span>
+            <span>Films, clips et web-séries de créateurs maliens · 25 FCFA la vidéo · Paiement Orange Money</span>
+          </div>
+        </footer>
       </body>
     </html>
   );

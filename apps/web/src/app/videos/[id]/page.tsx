@@ -8,7 +8,7 @@ import { Reviews } from "@/components/Reviews";
 import { VideoCard } from "@/components/VideoCard";
 import { VideoPlayer } from "@/components/VideoPlayer";
 import { fetchVideo, fetchVideos } from "@/lib/api";
-import { formatDuration, formatPrice } from "@/lib/format";
+import { categoryStyle, formatDuration, formatPrice } from "@/lib/format";
 
 export default async function VideoDetailPage(props: PageProps<"/videos/[id]">) {
   const { id } = await props.params;
@@ -20,6 +20,7 @@ export default async function VideoDetailPage(props: PageProps<"/videos/[id]">) 
 
   const canWatchFull = Boolean(video.purchased && video.playback_url);
   const canWatchPreview = !canWatchFull && Boolean(video.preview_playback_url);
+  const style = categoryStyle(video.category.value);
 
   const similar = await fetchVideos({ category: video.category.value });
   const similarVideos = similar.data.filter((v) => v.id !== video.id).slice(0, 6);
@@ -34,7 +35,9 @@ export default async function VideoDetailPage(props: PageProps<"/videos/[id]">) 
         ← Retour au catalogue
       </Link>
 
-      <div className="mt-4 aspect-video overflow-hidden rounded-xl bg-gradient-to-br from-neutral-100 to-neutral-200 shadow-sm dark:from-neutral-900 dark:to-neutral-800">
+      <div
+        className={`relative mt-4 aspect-video overflow-hidden rounded-xl bg-gradient-to-br shadow-sm ${style.tint}`}
+      >
         {canWatchFull ? (
           <VideoPlayer src={video.playback_url!} poster={video.poster_path} />
         ) : canWatchPreview ? (
@@ -47,8 +50,10 @@ export default async function VideoDetailPage(props: PageProps<"/videos/[id]">) 
             className="h-full w-full object-cover"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-3xl text-neutral-400 opacity-40">
-            ▶
+          <div className="flex h-full w-full items-center justify-center">
+            <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white/70 text-2xl text-neutral-700 shadow-sm backdrop-blur dark:bg-black/30 dark:text-white/80">
+              ▶
+            </span>
           </div>
         )}
       </div>
@@ -59,7 +64,9 @@ export default async function VideoDetailPage(props: PageProps<"/videos/[id]">) 
       )}
 
       <div className="mt-6 flex flex-col gap-3">
-        <span className="badge-category">{video.category.label}</span>
+        <span className={`w-fit rounded-full px-2.5 py-0.5 text-xs font-semibold tracking-wide ${style.badge}`}>
+          {video.category.label}
+        </span>
         <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-50">
           {video.title}
         </h1>
