@@ -55,6 +55,11 @@ class CloudflareStreamGateway implements VideoStorageGateway
         $result = $response['result'];
         $state = $result['status']['state'] ?? null;
 
+        // Cloudflare reports -1 (and possibly 0) while the duration isn't
+        // known yet (upload still processing) — only a positive value is a
+        // real, usable duration.
+        $duration = $result['duration'] ?? null;
+
         return new VideoSourceState(
             status: match ($state) {
                 'ready' => VideoSourceStatus::Ready,
@@ -62,6 +67,7 @@ class CloudflareStreamGateway implements VideoStorageGateway
                 default => VideoSourceStatus::Processing,
             },
             playbackUrl: $result['playback']['hls'] ?? null,
+            durationSeconds: is_numeric($duration) && $duration > 0 ? (int) round($duration) : null,
         );
     }
 

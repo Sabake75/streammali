@@ -9,6 +9,7 @@ final readonly class VideoSourceState
     public function __construct(
         public VideoSourceStatus $status,
         public ?string $playbackUrl,
+        public ?int $durationSeconds = null,
     ) {
     }
 }

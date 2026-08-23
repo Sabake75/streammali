@@ -23,6 +23,10 @@ class RefreshVideoSourceStatus
         $video->update([
             'source_status' => $state->status,
             'playback_url' => $state->playbackUrl,
+            // Cloudflare only reports a real duration once processing is
+            // done — don't clobber an already-known duration with null on a
+            // refresh that didn't get one back.
+            'duration_seconds' => $state->durationSeconds ?? $video->duration_seconds,
         ]);
 
         return $video->fresh();
