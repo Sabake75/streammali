@@ -20,16 +20,14 @@ class VideoCard extends StatelessWidget {
           children: [
             AspectRatio(
               aspectRatio: 16 / 9,
-              child: Container(
-                color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                child: video.posterPath != null
-                    ? Image.network(
-                        video.posterPath!,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => const _PosterPlaceholder(),
-                      )
-                    : const _PosterPlaceholder(),
-              ),
+              child: video.posterPath != null
+                  ? Image.network(
+                      video.posterPath!,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) =>
+                          _PosterPlaceholder(categoryValue: video.category.value),
+                    )
+                  : _PosterPlaceholder(categoryValue: video.category.value),
             ),
             Padding(
               padding: const EdgeInsets.all(12),
@@ -51,6 +49,8 @@ class VideoCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     '${video.creator.name} · ${formatDuration(video.durationSeconds)}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   const SizedBox(height: 6),
@@ -69,12 +69,32 @@ class VideoCard extends StatelessWidget {
 }
 
 class _PosterPlaceholder extends StatelessWidget {
-  const _PosterPlaceholder();
+  final String categoryValue;
+
+  const _PosterPlaceholder({required this.categoryValue});
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Pas de jaquette', style: TextStyle(color: Colors.grey)),
+    final colors = categoryColors(categoryValue);
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: colors,
+        ),
+      ),
+      child: Center(
+        child: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.7),
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(Icons.play_arrow, color: Colors.black54),
+        ),
+      ),
     );
   }
 }

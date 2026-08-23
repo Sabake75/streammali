@@ -139,7 +139,7 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> {
                           Text('Vidéos similaires', style: Theme.of(context).textTheme.titleMedium),
                           const SizedBox(height: 8),
                           SizedBox(
-                            height: 220,
+                            height: 275,
                             child: ListView.separated(
                               scrollDirection: Axis.horizontal,
                               itemCount: similar.length,

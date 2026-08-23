@@ -129,7 +129,7 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
                   Text('En vedette', style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 8),
                   SizedBox(
-                    height: 220,
+                    height: 275,
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       itemCount: _featured!.length,
@@ -213,7 +213,7 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
                   Text('Recommandé pour vous', style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 8),
                   SizedBox(
-                    height: 220,
+                    height: 275,
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       itemCount: _recommended!.length,
