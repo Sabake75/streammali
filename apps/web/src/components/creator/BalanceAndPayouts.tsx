@@ -43,11 +43,14 @@ export function BalanceAndPayouts() {
   }
 
   return (
-    <div className="rounded-lg border border-neutral-200 p-4 dark:border-neutral-800">
-      <h2 className="font-semibold text-neutral-900 dark:text-neutral-50">Solde et retraits</h2>
+    <div className="rounded-xl border border-neutral-200 p-4 shadow-sm dark:border-neutral-800">
+      <h2 className="flex items-center gap-2 font-semibold text-neutral-900 dark:text-neutral-50">
+        <span className="h-4 w-1 rounded-full bg-orange-600" />
+        Solde et retraits
+      </h2>
 
       {balance ? (
-        <p className="mt-2 text-2xl font-bold text-neutral-900 dark:text-neutral-50">
+        <p className="mt-2 text-2xl font-bold text-emerald-700 dark:text-emerald-400">
           {formatPrice(balance.available_balance)}
           <span className="ml-2 text-sm font-normal text-neutral-500 dark:text-neutral-400">
             disponible (retrait min. {formatPrice(balance.minimum_payout_amount)})
@@ -69,7 +72,7 @@ export function BalanceAndPayouts() {
             required
             value={amount}
             onChange={(event) => setAmount(event.target.value)}
-            className="w-32 rounded border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+            className="input-field w-32"
           />
         </div>
         <PhoneNumberField
@@ -81,7 +84,7 @@ export function BalanceAndPayouts() {
         <button
           type="submit"
           disabled={submitting}
-          className="rounded bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700 disabled:opacity-60 dark:bg-neutral-50 dark:text-neutral-900 dark:hover:bg-neutral-300"
+          className="btn-primary"
         >
           {submitting ? "Envoi…" : "Demander un retrait"}
         </button>
@@ -96,7 +99,7 @@ export function BalanceAndPayouts() {
           {payouts.map((payout) => (
             <div
               key={payout.id}
-              className="flex flex-wrap items-center justify-between gap-2 rounded border border-neutral-200 px-3 py-2 text-sm dark:border-neutral-800"
+              className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-neutral-200 px-3 py-2 text-sm dark:border-neutral-800"
             >
               <span>{formatPrice(payout.amount)}</span>
               <span>{payout.destination_msisdn}</span>

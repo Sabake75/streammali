@@ -37,34 +37,36 @@ function RegisterForm() {
   }
 
   return (
-    <>
+    <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-950 sm:p-8">
+      <span className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-orange-500 to-emerald-600 text-white">
+        ▶
+      </span>
       <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-50">Inscription</h1>
       <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
         <FormField id="name" label="Nom" type="text" value={name} onChange={setName} />
         <PhoneNumberField id="phone" value={phone} onChange={setPhone} />
         <PinCodeField id="password" value={password} onChange={setPassword} />
         {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
-        <button
-          type="submit"
-          disabled={submitting}
-          className="rounded bg-neutral-900 px-4 py-2 font-medium text-white hover:bg-neutral-700 disabled:opacity-60 dark:bg-neutral-50 dark:text-neutral-900 dark:hover:bg-neutral-300"
-        >
+        <button type="submit" disabled={submitting} className="btn-primary">
           {submitting ? "Création…" : "Créer mon compte"}
         </button>
       </form>
       <p className="mt-4 text-sm text-neutral-500 dark:text-neutral-400">
         Déjà un compte ?{" "}
-        <Link href={`/connexion?next=${encodeURIComponent(next)}`} className="underline">
+        <Link
+          href={`/connexion?next=${encodeURIComponent(next)}`}
+          className="font-medium text-orange-600 hover:underline dark:text-orange-400"
+        >
           Se connecter
         </Link>
       </p>
       <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
         Tu es créateur ?{" "}
-        <Link href="/inscription-createur" className="underline">
+        <Link href="/inscription-createur" className="font-medium text-orange-600 hover:underline dark:text-orange-400">
           Inscription créateur
         </Link>
       </p>
-    </>
+    </div>
   );
 }
 

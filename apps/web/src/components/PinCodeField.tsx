@@ -23,7 +23,7 @@ export function PinCodeField({
         maxLength={4}
         value={value}
         onChange={(event) => onChange(event.target.value.replace(/\D/g, "").slice(0, 4))}
-        className="rounded border border-neutral-300 bg-white px-3 py-2 dark:border-neutral-700 dark:bg-neutral-900"
+        className="input-field"
       />
     </div>
   );

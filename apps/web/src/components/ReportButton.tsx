@@ -64,22 +64,14 @@ export function ReportButton({ videoId }: { videoId: number }) {
         rows={2}
         value={reason}
         onChange={(event) => setReason(event.target.value)}
-        className="rounded border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+        className="input-field"
       />
       {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
       <div className="flex gap-2">
-        <button
-          type="submit"
-          disabled={submitting}
-          className="w-fit rounded bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700 disabled:opacity-60 dark:bg-neutral-50 dark:text-neutral-900 dark:hover:bg-neutral-300"
-        >
+        <button type="submit" disabled={submitting} className="btn-primary w-fit">
           {submitting ? "Envoi…" : "Envoyer le signalement"}
         </button>
-        <button
-          type="button"
-          onClick={() => setOpen(false)}
-          className="w-fit rounded border border-neutral-300 px-4 py-2 text-sm font-medium hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-900"
-        >
+        <button type="button" onClick={() => setOpen(false)} className="btn-secondary w-fit">
           Annuler
         </button>
       </div>

@@ -30,11 +30,11 @@ export default function CreatorPage() {
   if (!user) {
     return (
       <CenteredMessage>
-        <Link href="/connexion?next=/creer" className="underline">
+        <Link href="/connexion?next=/creer" className="font-medium text-orange-600 hover:underline dark:text-orange-400">
           Connecte-toi
         </Link>{" "}
         ou{" "}
-        <Link href="/inscription-createur" className="underline">
+        <Link href="/inscription-createur" className="font-medium text-orange-600 hover:underline dark:text-orange-400">
           crée un compte créateur
         </Link>{" "}
         pour accéder à cet espace.
@@ -46,7 +46,7 @@ export default function CreatorPage() {
     return (
       <CenteredMessage>
         Cet espace est réservé aux comptes créateur.{" "}
-        <Link href="/inscription-createur" className="underline">
+        <Link href="/inscription-createur" className="font-medium text-orange-600 hover:underline dark:text-orange-400">
           En créer un
         </Link>{" "}
         (pièce d&apos;identité requise).
@@ -56,7 +56,10 @@ export default function CreatorPage() {
 
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
-      <h1 className="text-3xl font-bold text-neutral-900 dark:text-neutral-50">Espace créateur</h1>
+      <h1 className="flex items-center gap-2 text-3xl font-bold text-neutral-900 dark:text-neutral-50">
+        <span className="h-7 w-2 rounded-full bg-orange-600" />
+        Espace créateur
+      </h1>
 
       <div className="mt-6">
         <Stats />
@@ -84,7 +87,7 @@ export default function CreatorPage() {
         {videos?.map((video) => (
           <div
             key={video.id}
-            className="flex flex-col gap-3 rounded-lg border border-neutral-200 p-4 dark:border-neutral-800"
+            className="flex flex-col gap-3 rounded-xl border border-neutral-200 p-4 shadow-sm dark:border-neutral-800"
           >
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div>
@@ -119,7 +122,7 @@ function StatusBadge({ label, tone }: { label: string; tone: "pending" | "approv
     rejected: "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300",
   }[tone];
 
-  return <span className={`w-fit rounded px-2 py-0.5 text-xs font-medium ${toneClasses}`}>{label}</span>;
+  return <span className={`w-fit rounded-full px-2.5 py-0.5 text-xs font-semibold ${toneClasses}`}>{label}</span>;
 }
 
 function CenteredMessage({ children }: { children: React.ReactNode }) {

@@ -22,7 +22,7 @@ export function FormField({
         required
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="rounded border border-neutral-300 bg-white px-3 py-2 dark:border-neutral-700 dark:bg-neutral-900"
+        className="input-field"
       />
     </div>
   );

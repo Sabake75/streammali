@@ -42,50 +42,51 @@ export default function RegisterCreatorPage() {
 
   return (
     <main className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center px-4 py-16">
-      <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-50">
-        Inscription créateur
-      </h1>
-      <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-        Une pièce d&apos;identité est requise pour publier des vidéos sur StreamMali.
-      </p>
-      <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
-        <FormField id="name" label="Nom" type="text" value={name} onChange={setName} />
-        <PhoneNumberField id="phone" value={phone} onChange={setPhone} />
-        <PinCodeField id="password" value={password} onChange={setPassword} />
-        <div className="flex flex-col gap-1">
-          <label htmlFor="identity_document" className="text-sm text-neutral-600 dark:text-neutral-400">
-            Pièce d&apos;identité (JPG, PNG ou PDF)
-          </label>
-          <input
-            id="identity_document"
-            type="file"
-            required
-            accept="image/jpeg,image/png,application/pdf"
-            onChange={(event) => setIdentityDocument(event.target.files?.[0] ?? null)}
-            className="rounded border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
-          />
-        </div>
-        {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
-        <button
-          type="submit"
-          disabled={submitting}
-          className="rounded bg-neutral-900 px-4 py-2 font-medium text-white hover:bg-neutral-700 disabled:opacity-60 dark:bg-neutral-50 dark:text-neutral-900 dark:hover:bg-neutral-300"
-        >
-          {submitting ? "Création…" : "Créer mon compte créateur"}
-        </button>
-      </form>
-      <p className="mt-4 text-sm text-neutral-500 dark:text-neutral-400">
-        Tu es plutôt spectateur ?{" "}
-        <Link href="/inscription" className="underline">
-          Inscription standard
-        </Link>
-      </p>
-      <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-        Déjà un compte ?{" "}
-        <Link href="/connexion?next=/creer" className="underline">
-          Se connecter
-        </Link>
-      </p>
+      <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-950 sm:p-8">
+        <span className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-orange-500 to-emerald-600 text-white">
+          ▶
+        </span>
+        <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-50">
+          Inscription créateur
+        </h1>
+        <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+          Une pièce d&apos;identité est requise pour publier des vidéos sur StreamMali.
+        </p>
+        <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
+          <FormField id="name" label="Nom" type="text" value={name} onChange={setName} />
+          <PhoneNumberField id="phone" value={phone} onChange={setPhone} />
+          <PinCodeField id="password" value={password} onChange={setPassword} />
+          <div className="flex flex-col gap-1">
+            <label htmlFor="identity_document" className="text-sm text-neutral-600 dark:text-neutral-400">
+              Pièce d&apos;identité (JPG, PNG ou PDF)
+            </label>
+            <input
+              id="identity_document"
+              type="file"
+              required
+              accept="image/jpeg,image/png,application/pdf"
+              onChange={(event) => setIdentityDocument(event.target.files?.[0] ?? null)}
+              className="block w-full text-sm text-neutral-500 file:mr-3 file:rounded-lg file:border-0 file:bg-orange-50 file:px-3 file:py-2 file:text-sm file:font-medium file:text-orange-700 hover:file:bg-orange-100 dark:text-neutral-400 dark:file:bg-orange-950/50 dark:file:text-orange-300"
+            />
+          </div>
+          {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
+          <button type="submit" disabled={submitting} className="btn-primary">
+            {submitting ? "Création…" : "Créer mon compte créateur"}
+          </button>
+        </form>
+        <p className="mt-4 text-sm text-neutral-500 dark:text-neutral-400">
+          Tu es plutôt spectateur ?{" "}
+          <Link href="/inscription" className="font-medium text-orange-600 hover:underline dark:text-orange-400">
+            Inscription standard
+          </Link>
+        </p>
+        <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+          Déjà un compte ?{" "}
+          <Link href="/connexion?next=/creer" className="font-medium text-orange-600 hover:underline dark:text-orange-400">
+            Se connecter
+          </Link>
+        </p>
+      </div>
     </main>
   );
 }

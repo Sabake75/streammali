@@ -68,7 +68,7 @@ export function PhoneNumberField({
           aria-label="Indicatif pays"
           value={country}
           onChange={(event) => handleCountryChange(event.target.value as CountryCode)}
-          className="rounded border border-neutral-300 bg-white px-2 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+          className="input-field px-2"
         >
           {COUNTRIES.map((c) => (
             <option key={c} value={c}>
@@ -85,7 +85,7 @@ export function PhoneNumberField({
           onChange={(event) => handleDigitsChange(event.target.value)}
           maxLength={maxDigits}
           placeholder={"X".repeat(maxDigits)}
-          className="flex-1 rounded border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+          className="input-field flex-1"
         />
       </div>
     </div>

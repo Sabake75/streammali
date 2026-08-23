@@ -103,7 +103,7 @@ export function NewVideoForm({ onCreated }: { onCreated: () => void }) {
 
   if (phase !== "form") {
     return (
-      <div className="flex flex-col gap-2 rounded-lg border border-neutral-200 p-4 dark:border-neutral-800">
+      <div className="flex flex-col gap-2 rounded-xl border border-neutral-200 p-4 shadow-sm dark:border-neutral-800">
         <h2 className="font-semibold">{title}</h2>
         {phase === "creating" && <p className="text-sm text-neutral-500">Création…</p>}
         {phase === "uploading" && (
@@ -132,28 +132,31 @@ export function NewVideoForm({ onCreated }: { onCreated: () => void }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col gap-3 rounded-lg border border-neutral-200 p-4 dark:border-neutral-800"
+      className="flex flex-col gap-3 rounded-xl border border-neutral-200 p-4 shadow-sm dark:border-neutral-800"
     >
-      <h2 className="font-semibold">Nouvelle vidéo</h2>
+      <h2 className="flex items-center gap-2 font-semibold">
+        <span className="h-4 w-1 rounded-full bg-orange-600" />
+        Nouvelle vidéo
+      </h2>
       <input
         type="text"
         required
         value={title}
         onChange={(event) => setTitle(event.target.value)}
         placeholder="Titre"
-        className="rounded border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+        className="input-field"
       />
       <textarea
         value={description}
         onChange={(event) => setDescription(event.target.value)}
         placeholder="Description (optionnel)"
-        className="rounded border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+        className="input-field"
       />
       <div className="flex flex-wrap gap-3">
         <select
           value={category}
           onChange={(event) => setCategory(event.target.value as VideoCategoryValue)}
-          className="rounded border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+          className="input-field"
         >
           {categories.map((cat) => (
             <option key={cat.value} value={cat.value}>
@@ -167,7 +170,7 @@ export function NewVideoForm({ onCreated }: { onCreated: () => void }) {
           value={price}
           onChange={(event) => setPrice(event.target.value)}
           placeholder="Prix (FCFA)"
-          className="w-32 rounded border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+          className="input-field w-32"
         />
       </div>
       <label className="text-sm">
@@ -177,13 +180,11 @@ export function NewVideoForm({ onCreated }: { onCreated: () => void }) {
           accept="video/*"
           required
           onChange={(event) => setFile(event.target.files?.[0] ?? null)}
+          className="block w-full text-sm text-neutral-500 file:mr-3 file:rounded-lg file:border-0 file:bg-orange-50 file:px-3 file:py-2 file:text-sm file:font-medium file:text-orange-700 hover:file:bg-orange-100 dark:text-neutral-400 dark:file:bg-orange-950/50 dark:file:text-orange-300"
         />
       </label>
       {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
-      <button
-        type="submit"
-        className="self-start rounded bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700 disabled:opacity-60 dark:bg-neutral-50 dark:text-neutral-900 dark:hover:bg-neutral-300"
-      >
+      <button type="submit" className="btn-primary self-start">
         Créer et envoyer
       </button>
     </form>

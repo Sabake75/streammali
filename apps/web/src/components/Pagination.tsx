@@ -23,7 +23,7 @@ export function Pagination({
   return (
     <nav className="mt-8 flex items-center justify-center gap-4 text-sm">
       {currentPage > 1 ? (
-        <Link href={hrefForPage(currentPage - 1)} className="hover:underline">
+        <Link href={hrefForPage(currentPage - 1)} className="font-medium text-orange-600 hover:underline dark:text-orange-400">
           ← Précédent
         </Link>
       ) : (
@@ -33,7 +33,7 @@ export function Pagination({
         Page {currentPage} / {lastPage}
       </span>
       {currentPage < lastPage ? (
-        <Link href={hrefForPage(currentPage + 1)} className="hover:underline">
+        <Link href={hrefForPage(currentPage + 1)} className="font-medium text-orange-600 hover:underline dark:text-orange-400">
           Suivant →
         </Link>
       ) : (

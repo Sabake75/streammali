@@ -72,7 +72,12 @@ export function VideoUploadWidget({
         <span className="mb-1 block text-neutral-600 dark:text-neutral-400">
           {status === "failed" ? "Échec précédent — réessayer :" : "Fichier vidéo"}
         </span>
-        <input type="file" accept="video/*" onChange={handleFileSelected} />
+        <input
+          type="file"
+          accept="video/*"
+          onChange={handleFileSelected}
+          className="block w-full text-sm text-neutral-500 file:mr-3 file:rounded-lg file:border-0 file:bg-orange-50 file:px-3 file:py-2 file:text-sm file:font-medium file:text-orange-700 hover:file:bg-orange-100 dark:text-neutral-400 dark:file:bg-orange-950/50 dark:file:text-orange-300"
+        />
       </label>
       {progress > 0 && <p className="text-sm text-neutral-500">Envoi en cours… {progress}%</p>}
       {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}

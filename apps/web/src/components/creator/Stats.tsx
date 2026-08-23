@@ -26,8 +26,11 @@ export function Stats() {
   const maxRevenue = Math.max(1, ...stats.timeseries.map((point) => point.revenue));
 
   return (
-    <div className="rounded-lg border border-neutral-200 p-4 dark:border-neutral-800">
-      <h2 className="font-semibold text-neutral-900 dark:text-neutral-50">Statistiques</h2>
+    <div className="rounded-xl border border-neutral-200 p-4 shadow-sm dark:border-neutral-800">
+      <h2 className="flex items-center gap-2 font-semibold text-neutral-900 dark:text-neutral-50">
+        <span className="h-4 w-1 rounded-full bg-orange-600" />
+        Statistiques
+      </h2>
 
       <div className="mt-3 grid grid-cols-3 gap-4 text-center">
         <Stat label="Vues" value={stats.totals.views} />
@@ -43,7 +46,7 @@ export function Stats() {
           <div
             key={point.date}
             title={`${point.date} : ${formatPrice(point.revenue)}`}
-            className="flex-1 rounded-t bg-neutral-900 dark:bg-neutral-100"
+            className="flex-1 rounded-t bg-gradient-to-t from-orange-600 to-orange-400 dark:from-orange-500 dark:to-orange-300"
             style={{ height: `${Math.max(4, (point.revenue / maxRevenue) * 100)}%` }}
           />
         ))}

@@ -39,7 +39,10 @@ export function Reviews({ videoId, purchased }: { videoId: number; purchased: bo
 
   return (
     <div className="mt-8">
-      <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">Avis</h2>
+      <h2 className="flex items-center gap-2 text-lg font-semibold text-neutral-900 dark:text-neutral-50">
+        <span className="h-4 w-1 rounded-full bg-orange-600" />
+        Avis
+      </h2>
 
       {purchased && (
         <form onSubmit={handleSubmit} className="mt-3 flex flex-col gap-2">
@@ -63,14 +66,10 @@ export function Reviews({ videoId, purchased }: { videoId: number; purchased: bo
             onChange={(event) => setComment(event.target.value)}
             placeholder="Un commentaire (optionnel)"
             rows={2}
-            className="rounded border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+            className="input-field"
           />
           {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-fit rounded bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700 disabled:opacity-60 dark:bg-neutral-50 dark:text-neutral-900 dark:hover:bg-neutral-300"
-          >
+          <button type="submit" disabled={submitting} className="btn-primary w-fit">
             {submitting ? "Envoi…" : "Publier mon avis"}
           </button>
         </form>
@@ -82,7 +81,7 @@ export function Reviews({ videoId, purchased }: { videoId: number; purchased: bo
           <p className="text-sm text-neutral-500 dark:text-neutral-400">Aucun avis pour l&apos;instant.</p>
         )}
         {reviews?.map((review) => (
-          <div key={review.id} className="rounded-lg border border-neutral-200 p-3 dark:border-neutral-800">
+          <div key={review.id} className="rounded-xl border border-neutral-200 p-3 dark:border-neutral-800">
             <div className="flex items-center justify-between gap-2">
               <span className="text-sm font-medium text-neutral-900 dark:text-neutral-50">
                 {review.user.name}

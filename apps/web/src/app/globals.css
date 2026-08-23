@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fffaf3;
+  --foreground: #1c1712;
 }
 
 @theme inline {
@@ -14,13 +14,31 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #120e0a;
+    --foreground: #f5ede1;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-orange-500 hover:shadow-md disabled:opacity-60 disabled:hover:bg-orange-600 disabled:hover:shadow-sm dark:bg-orange-500 dark:hover:bg-orange-400;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-900 transition hover:border-orange-300 hover:bg-orange-50 disabled:opacity-60 dark:border-neutral-700 dark:bg-neutral-950 dark:text-neutral-50 dark:hover:border-orange-800 dark:hover:bg-neutral-900;
+  }
+
+  .input-field {
+    @apply rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 shadow-sm transition outline-none placeholder:text-neutral-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/30 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-50;
+  }
+
+  .badge-category {
+    @apply w-fit rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold tracking-wide text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300;
+  }
 }

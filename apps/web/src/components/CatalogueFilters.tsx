@@ -21,7 +21,7 @@ export function CatalogueFilters({
           name="search"
           defaultValue={defaultSearch}
           placeholder="Titre d'un film, clip, sketch…"
-          className="rounded border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+          className="input-field"
         />
       </div>
       <div className="flex flex-col gap-1">
@@ -32,7 +32,7 @@ export function CatalogueFilters({
           id="category"
           name="category"
           defaultValue={defaultCategory ?? ""}
-          className="rounded border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+          className="input-field"
         >
           <option value="">Toutes</option>
           {categories.map((category) => (
@@ -44,7 +44,7 @@ export function CatalogueFilters({
       </div>
       <button
         type="submit"
-        className="rounded bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700 dark:bg-neutral-50 dark:text-neutral-900 dark:hover:bg-neutral-300"
+        className="btn-primary"
       >
         Filtrer
       </button>

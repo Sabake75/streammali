@@ -12,7 +12,7 @@ export function AuthStatus() {
 
   if (!user) {
     return (
-      <Link href="/connexion" className="text-sm font-medium hover:underline">
+      <Link href="/connexion" className="text-sm font-medium text-orange-600 hover:underline dark:text-orange-400">
         Connexion
       </Link>
     );
@@ -28,7 +28,7 @@ export function AuthStatus() {
           clearSession();
           router.push("/");
         }}
-        className="font-medium hover:underline"
+        className="font-medium text-neutral-600 hover:text-orange-600 dark:text-neutral-400 dark:hover:text-orange-400"
       >
         Déconnexion
       </button>

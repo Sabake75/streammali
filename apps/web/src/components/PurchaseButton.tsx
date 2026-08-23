@@ -16,7 +16,7 @@ export function PurchaseButton({ videoId }: { videoId: number }) {
     return (
       <a
         href={`/connexion?next=${encodeURIComponent(`/videos/${videoId}`)}`}
-        className="rounded bg-neutral-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-neutral-700 dark:bg-neutral-50 dark:text-neutral-900 dark:hover:bg-neutral-300"
+        className="btn-primary px-5 py-2.5"
       >
         Se connecter pour acheter
       </a>
@@ -49,7 +49,7 @@ export function PurchaseButton({ videoId }: { videoId: number }) {
         <button
           type="submit"
           disabled={submitting}
-          className="rounded bg-neutral-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-neutral-700 disabled:opacity-60 dark:bg-neutral-50 dark:text-neutral-900 dark:hover:bg-neutral-300"
+          className="btn-primary px-5 py-2.5"
         >
           {submitting ? "Redirection…" : "Acheter"}
         </button>

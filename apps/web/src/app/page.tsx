@@ -18,16 +18,19 @@ export default async function CataloguePage(props: PageProps<"/">) {
 
   return (
     <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
-      <h1 className="text-3xl font-bold text-neutral-900 dark:text-neutral-50">
-        Catalogue
-      </h1>
-      <p className="mt-1 text-neutral-500 dark:text-neutral-400">
-        Films, clips et sketchs de créateurs maliens, 25 FCFA la vidéo.
-      </p>
+      <section className="overflow-hidden rounded-2xl bg-gradient-to-br from-orange-600 via-orange-500 to-emerald-600 px-6 py-10 text-white shadow-lg sm:px-10 sm:py-14">
+        <h1 className="max-w-2xl text-3xl font-extrabold tracking-tight sm:text-4xl">
+          Le cinéma malien, à portée de Mobile Money.
+        </h1>
+        <p className="mt-3 max-w-xl text-orange-50">
+          Films, clips et sketchs de créateurs maliens, 25 FCFA la vidéo. Paiement Orange Money, accès immédiat.
+        </p>
+      </section>
 
       {featured.length > 0 && (
-        <section className="mt-8">
-          <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-50">
+        <section className="mt-10">
+          <h2 className="flex items-center gap-2 text-xl font-semibold text-neutral-900 dark:text-neutral-50">
+            <span className="h-5 w-1.5 rounded-full bg-orange-600" />
             En vedette
           </h2>
           <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

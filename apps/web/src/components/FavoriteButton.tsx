@@ -37,7 +37,7 @@ export function FavoriteButton({
       onClick={handleClick}
       disabled={submitting}
       aria-pressed={favorited}
-      className="flex items-center gap-1.5 rounded border border-neutral-300 px-3 py-1.5 text-sm hover:bg-neutral-50 disabled:opacity-60 dark:border-neutral-700 dark:hover:bg-neutral-900"
+      className="btn-secondary gap-1.5 px-3 py-1.5"
     >
       <span className={favorited ? "text-red-500" : "text-neutral-400"}>{favorited ? "♥" : "♡"}</span>
       {favorited ? "Dans mes favoris" : "Ajouter aux favoris"}

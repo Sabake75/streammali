@@ -27,11 +27,14 @@ export default async function VideoDetailPage(props: PageProps<"/videos/[id]">) 
   return (
     <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
       <RecordView videoId={video.id} />
-      <Link href="/" className="text-sm text-neutral-500 hover:underline">
+      <Link
+        href="/"
+        className="text-sm text-neutral-500 transition hover:text-orange-600 dark:text-neutral-400 dark:hover:text-orange-400"
+      >
         ← Retour au catalogue
       </Link>
 
-      <div className="mt-4 aspect-video overflow-hidden rounded-lg bg-neutral-100 dark:bg-neutral-900">
+      <div className="mt-4 aspect-video overflow-hidden rounded-xl bg-gradient-to-br from-neutral-100 to-neutral-200 shadow-sm dark:from-neutral-900 dark:to-neutral-800">
         {canWatchFull ? (
           <VideoPlayer src={video.playback_url!} poster={video.poster_path} />
         ) : canWatchPreview ? (
@@ -44,8 +47,8 @@ export default async function VideoDetailPage(props: PageProps<"/videos/[id]">) 
             className="h-full w-full object-cover"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-sm text-neutral-400">
-            Pas de jaquette
+          <div className="flex h-full w-full items-center justify-center text-3xl text-neutral-400 opacity-40">
+            ▶
           </div>
         )}
       </div>
@@ -56,9 +59,7 @@ export default async function VideoDetailPage(props: PageProps<"/videos/[id]">) 
       )}
 
       <div className="mt-6 flex flex-col gap-3">
-        <span className="w-fit rounded bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">
-          {video.category.label}
-        </span>
+        <span className="badge-category">{video.category.label}</span>
         <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-50">
           {video.title}
         </h1>
@@ -76,7 +77,7 @@ export default async function VideoDetailPage(props: PageProps<"/videos/[id]">) 
         )}
 
         <div className="mt-4 flex flex-wrap items-center gap-4">
-          <span className="text-2xl font-bold text-neutral-900 dark:text-neutral-50">
+          <span className="text-2xl font-bold text-orange-700 dark:text-orange-400">
             {formatPrice(video.price)}
           </span>
           <PurchaseButton videoId={video.id} />
@@ -92,7 +93,8 @@ export default async function VideoDetailPage(props: PageProps<"/videos/[id]">) 
 
       {similarVideos.length > 0 && (
         <section className="mt-10">
-          <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-50">
+          <h2 className="flex items-center gap-2 text-xl font-semibold text-neutral-900 dark:text-neutral-50">
+            <span className="h-5 w-1.5 rounded-full bg-orange-600" />
             Vidéos similaires
           </h2>
           <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

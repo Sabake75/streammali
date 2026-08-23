@@ -37,8 +37,11 @@ export function Messaging() {
   }
 
   return (
-    <div className="rounded-lg border border-neutral-200 p-4 dark:border-neutral-800">
-      <h2 className="font-semibold text-neutral-900 dark:text-neutral-50">Messagerie avec la modération</h2>
+    <div className="rounded-xl border border-neutral-200 p-4 shadow-sm dark:border-neutral-800">
+      <h2 className="flex items-center gap-2 font-semibold text-neutral-900 dark:text-neutral-50">
+        <span className="h-4 w-1 rounded-full bg-orange-600" />
+        Messagerie avec la modération
+      </h2>
 
       <div className="mt-3 flex max-h-80 flex-col gap-3 overflow-y-auto">
         {messages === null && <p className="text-neutral-500">Chargement…</p>}
@@ -55,7 +58,7 @@ export function Messaging() {
               className={`flex flex-col gap-0.5 rounded-lg px-3 py-2 text-sm ${
                 isModerator
                   ? "self-start bg-neutral-100 dark:bg-neutral-800"
-                  : "self-end bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900"
+                  : "self-end bg-orange-600 text-white dark:bg-orange-500"
               }`}
             >
               <span className="text-xs font-medium opacity-70">
@@ -75,14 +78,10 @@ export function Messaging() {
           value={body}
           onChange={(event) => setBody(event.target.value)}
           placeholder="Écris ton message à la modération…"
-          className="rounded border border-neutral-300 bg-white px-3 py-2 text-sm dark:border-neutral-700 dark:bg-neutral-900"
+          className="input-field"
         />
         {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
-        <button
-          type="submit"
-          disabled={submitting}
-          className="w-fit rounded bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700 disabled:opacity-60 dark:bg-neutral-50 dark:text-neutral-900 dark:hover:bg-neutral-300"
-        >
+        <button type="submit" disabled={submitting} className="btn-primary w-fit">
           {submitting ? "Envoi…" : "Envoyer"}
         </button>
       </form>
