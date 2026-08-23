@@ -1,4 +1,9 @@
+import 'dart:async';
+
+import 'package:cross_file/cross_file.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:tus_client_dart/tus_client_dart.dart';
 
 import '../models/creator_video.dart';
 import '../models/video.dart';
@@ -162,6 +167,8 @@ class _NewVideoForm extends StatefulWidget {
   State<_NewVideoForm> createState() => _NewVideoFormState();
 }
 
+enum _NewVideoPhase { form, creating, uploading, processing, ready, failed }
+
 class _NewVideoFormState extends State<_NewVideoForm> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
@@ -171,8 +178,12 @@ class _NewVideoFormState extends State<_NewVideoForm> {
 
   String _category = '';
   List<VideoCategory> _categories = [];
-  bool _submitting = false;
+  String? _filePath;
+  _NewVideoPhase _phase = _NewVideoPhase.form;
+  double _progress = 0;
   String? _error;
+  int? _videoId;
+  Timer? _pollTimer;
 
   @override
   void initState() {
@@ -192,41 +203,135 @@ class _NewVideoFormState extends State<_NewVideoForm> {
     _titleController.dispose();
     _descriptionController.dispose();
     _priceController.dispose();
+    _pollTimer?.cancel();
     super.dispose();
+  }
+
+  Future<void> _pickFile() async {
+    final result = await FilePicker.pickFiles(type: FileType.video);
+    final path = result?.files.single.path;
+    if (path != null) setState(() => _filePath = path);
   }
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
+    if (_filePath == null) {
+      setState(() => _error = 'Choisis un fichier vidéo.');
+      return;
+    }
 
     final token = AuthController.instance.token;
     if (token == null) return;
 
     setState(() {
-      _submitting = true;
+      _phase = _NewVideoPhase.creating;
       _error = null;
     });
 
     try {
-      await _apiClient.createVideo(
+      // The file always goes straight from the device to Cloudflare, never
+      // through our API — but Cloudflare's upload URL is tied to a video
+      // record that has to exist first, so this is unavoidably two calls
+      // even though it's one form/one tap for the creator.
+      final video = await _apiClient.createVideo(
         token: token,
         title: _titleController.text,
         description: _descriptionController.text,
         category: _category,
         price: int.tryParse(_priceController.text),
       );
+      _videoId = video.id;
+
+      final uploadUrl = await _apiClient.createVideoUploadUrl(videoId: video.id, token: token);
+
+      setState(() => _phase = _NewVideoPhase.uploading);
+
+      final store = TusMemoryStore();
+      final client = TusClient(XFile(_filePath!), store: store);
+      final fingerprint = client.generateFingerprint() ?? _filePath!;
+      await store.set(fingerprint, Uri.parse(uploadUrl));
+
+      await client.upload(
+        uri: Uri.parse(uploadUrl),
+        onProgress: (progress, estimate) {
+          if (mounted) setState(() => _progress = progress);
+        },
+        onComplete: () {
+          if (!mounted) return;
+          setState(() => _phase = _NewVideoPhase.processing);
+          _startPolling(token);
+          widget.onCreated();
+        },
+      );
+    } catch (err) {
+      setState(() {
+        _error = err.toString();
+        _phase = _NewVideoPhase.form;
+      });
+    }
+  }
+
+  void _startPolling(String token) {
+    _pollTimer?.cancel();
+    _pollTimer = Timer.periodic(const Duration(seconds: 5), (_) async {
+      try {
+        final status = await _apiClient.fetchVideoSourceStatus(videoId: _videoId!, token: token);
+        if (!mounted) return;
+        if (status.value == 'ready') {
+          setState(() => _phase = _NewVideoPhase.ready);
+          _pollTimer?.cancel();
+        } else if (status.value == 'failed') {
+          setState(() => _phase = _NewVideoPhase.failed);
+          _pollTimer?.cancel();
+        }
+      } catch (_) {
+        // transient polling failure — try again next tick
+      }
+    });
+  }
+
+  void _addAnother() {
+    setState(() {
+      _phase = _NewVideoPhase.form;
       _titleController.clear();
       _descriptionController.clear();
       _priceController.text = '25';
-      widget.onCreated();
-    } catch (err) {
-      setState(() => _error = err.toString());
-    } finally {
-      if (mounted) setState(() => _submitting = false);
-    }
+      _filePath = null;
+      _progress = 0;
+      _videoId = null;
+      _error = null;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_phase != _NewVideoPhase.form) {
+      return Card(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(_titleController.text, style: Theme.of(context).textTheme.titleMedium),
+              const SizedBox(height: 8),
+              if (_phase == _NewVideoPhase.creating) const Text('Création…'),
+              if (_phase == _NewVideoPhase.uploading)
+                Text('Envoi en cours… ${_progress.toStringAsFixed(0)}%'),
+              if (_phase == _NewVideoPhase.processing) const Text('Traitement en cours…'),
+              if (_phase == _NewVideoPhase.ready)
+                const Text('Fichier vidéo prêt.', style: TextStyle(color: Colors.green)),
+              if (_phase == _NewVideoPhase.failed)
+                const Text('Échec du traitement.', style: TextStyle(color: Colors.red)),
+              if (_phase == _NewVideoPhase.ready || _phase == _NewVideoPhase.failed) ...[
+                const SizedBox(height: 8),
+                TextButton(onPressed: _addAnother, child: const Text('Ajouter une autre vidéo')),
+              ],
+            ],
+          ),
+        ),
+      );
+    }
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -263,14 +368,20 @@ class _NewVideoFormState extends State<_NewVideoForm> {
                 decoration: const InputDecoration(labelText: 'Prix (FCFA)', border: OutlineInputBorder()),
                 keyboardType: TextInputType.number,
               ),
+              const SizedBox(height: 8),
+              OutlinedButton.icon(
+                onPressed: _pickFile,
+                icon: const Icon(Icons.upload_file),
+                label: Text(_filePath == null ? 'Choisir le fichier vidéo' : 'Fichier sélectionné ✓'),
+              ),
               if (_error != null) ...[
                 const SizedBox(height: 8),
                 Text(_error!, style: const TextStyle(color: Colors.red)),
               ],
               const SizedBox(height: 12),
               FilledButton(
-                onPressed: _submitting ? null : _submit,
-                child: Text(_submitting ? 'Création…' : 'Créer'),
+                onPressed: _submit,
+                child: const Text('Créer et envoyer'),
               ),
             ],
           ),
