@@ -49,6 +49,10 @@ Statistiques créateur (`/creer`) : `src/components/creator/Stats.tsx`, totaux (
 
 Comptage de vues (fiche vidéo) : `src/components/RecordView.tsx`, composant client sans rendu qui déclenche `POST /api/videos/{id}/view` au montage. Volontairement séparé de `fetchVideo()` (`src/lib/api.ts`), qui utilise `next: { revalidate: 60 }` — un effet de bord placé dans un fetch mis en cache serait silencieusement sauté pour toute requête servie depuis le cache (partagé entre visiteurs). En dev (`next dev`), React Strict Mode double-invoque l'effet (2 requêtes `/view` par visite) — artefact connu de React, sans impact en production (`next build && next start` : une visite = une requête, vérifié).
 
+Catégories dynamiques (`GET /api/categories`, plus de liste codée en dur) : `src/lib/api.ts` (`fetchCategories`, SSR) et `src/lib/api-client.ts` (browser, `NewVideoForm`) — remplace l'ancien `VIDEO_CATEGORIES` figé côté `CatalogueFilters` et `NewVideoForm`.
+
+Lecteur vidéo (`src/components/VideoPlayer.tsx`, fiche vidéo) : premier lecteur de l'app — `<video>` natif + `hls.js` (Safari lit le HLS nativement, les autres navigateurs non), pas d'autoplay (bouton play natif = tap-to-play). Vidéo achetée et prête → lecture complète (`playback_url`) ; sinon aperçu (`preview_playback_url`, toujours exposé même aux invités) avec mention "Aperçu — achète la vidéo pour la voir en entier."
+
 Pas encore fait : jaquettes via `next/image` (actuellement `<img>` brut le temps de choisir un hébergement d'images).
 
 ```

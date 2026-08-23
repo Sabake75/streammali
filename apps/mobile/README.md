@@ -48,6 +48,10 @@ Statistiques créateur (espace créateur) : `lib/widgets/stats.dart`, totaux (vu
 
 Comptage de vues (fiche vidéo) : `_apiClient.recordVideoView(id)` appelé dans `initState()` de `video_detail_screen.dart`, best-effort (n'interrompt jamais l'affichage de la page en cas d'échec), `POST /api/videos/{id}/view`.
 
+Catégories dynamiques (`GET /api/categories`, plus de liste codée en dur) : `_apiClient.fetchCategories()` dans `catalogue_screen.dart` (filtre) et `creator_screen.dart` (formulaire de création) — remplace l'ancienne const `videoCategories` figée dans `lib/models/video.dart`.
+
+Lecteur vidéo (`lib/widgets/video_player_widget.dart`, fiche vidéo) : premier lecteur de l'app — packages `video_player` + `chewie`, pas d'autoplay (bouton play natif de Chewie = tap-to-play). Vidéo achetée et prête → lecture complète (`playbackUrl`) ; sinon aperçu (`previewPlaybackUrl`, toujours exposé même aux invités) avec mention "Aperçu — achète la vidéo pour la voir en entier."
+
 `flutter analyze`, `flutter test` (couvre la validation du formulaire de connexion) et `flutter build web` passent tous sans erreur.
 
 ```

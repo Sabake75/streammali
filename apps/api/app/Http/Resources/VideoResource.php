@@ -43,6 +43,9 @@ class VideoResource extends JsonResource
                 $purchased && $this->resource->source_status === VideoSourceStatus::Ready,
                 $this->playback_url,
             ),
+            // Unlike playback_url, always exposed (even to guests) once
+            // set — it's a short standalone clip, not the gated asset.
+            'preview_playback_url' => $this->preview_playback_url,
             'created_at' => $this->created_at,
         ];
     }

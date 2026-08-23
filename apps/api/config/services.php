@@ -54,6 +54,7 @@ return [
         'account_id' => env('CLOUDFLARE_STREAM_ACCOUNT_ID'),
         'api_token' => env('CLOUDFLARE_STREAM_API_TOKEN'),
         'max_duration_seconds' => (int) env('CLOUDFLARE_STREAM_MAX_DURATION_SECONDS', 7200),
+        'preview_duration_seconds' => (int) env('CLOUDFLARE_STREAM_PREVIEW_DURATION_SECONDS', 45),
     ],
 
 ];

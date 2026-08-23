@@ -19,6 +19,8 @@ export type VideoSummary = {
     name: string;
   };
   purchased?: boolean;
+  playback_url?: string | null;
+  preview_playback_url: string | null;
   created_at: string;
 };
 

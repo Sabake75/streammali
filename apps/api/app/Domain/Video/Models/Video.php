@@ -29,6 +29,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'provider_video_id',
     'source_status',
     'playback_url',
+    'preview_provider_video_id',
+    'preview_playback_url',
 ])]
 class Video extends Model
 {

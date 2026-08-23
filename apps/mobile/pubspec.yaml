@@ -42,6 +42,8 @@ dependencies:
   cross_file: ^0.3.5+2
   phone_numbers_parser: ^9.0.25
   country_code_picker: ^3.4.1
+  video_player: ^2.10.0
+  chewie: ^1.11.2
 
 dev_dependencies:
   flutter_test:

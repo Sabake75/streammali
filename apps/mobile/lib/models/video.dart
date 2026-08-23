@@ -36,6 +36,8 @@ class Video {
   final int price;
   final VideoCreator creator;
   final bool? purchased;
+  final String? playbackUrl;
+  final String? previewPlaybackUrl;
   final DateTime createdAt;
 
   const Video({
@@ -48,6 +50,8 @@ class Video {
     required this.price,
     required this.creator,
     this.purchased,
+    this.playbackUrl,
+    this.previewPlaybackUrl,
     required this.createdAt,
   });
 
@@ -62,6 +66,8 @@ class Video {
       price: json['price'] as int,
       creator: VideoCreator.fromJson(json['creator'] as Map<String, dynamic>),
       purchased: json['purchased'] as bool?,
+      playbackUrl: json['playback_url'] as String?,
+      previewPlaybackUrl: json['preview_playback_url'] as String?,
       createdAt: DateTime.parse(json['created_at'] as String),
     );
   }

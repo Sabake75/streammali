@@ -3,6 +3,7 @@
 namespace App\Domain\Video\Gateways;
 
 use App\Domain\Video\Contracts\VideoStorageGateway;
+use App\Domain\Video\Data\VideoPreviewState;
 use App\Domain\Video\Data\VideoSourceState;
 use App\Domain\Video\Data\VideoUploadInitiation;
 use App\Domain\Video\Enums\VideoSourceStatus;
@@ -60,6 +61,36 @@ class CloudflareStreamGateway implements VideoStorageGateway
                 'error' => VideoSourceStatus::Failed,
                 default => VideoSourceStatus::Processing,
             },
+            playbackUrl: $result['playback']['hls'] ?? null,
+        );
+    }
+
+    /**
+     * Cloudflare Stream's Clip API (documented publicly, unverified against
+     * a real account like the rest of this gateway — see class docblock).
+     * Derives a short standalone clip from the source video's first N
+     * seconds; it gets its own `uid`/HLS manifest, so it can be served to
+     * everyone (even guests) without exposing the full, gated asset.
+     */
+    public function createClip(Video $video): VideoPreviewState
+    {
+        $config = config('services.cloudflare_stream');
+        $endSeconds = min($config['preview_duration_seconds'], $video->duration_seconds ?? $config['preview_duration_seconds']);
+
+        $response = Http::withToken($config['api_token'])
+            ->baseUrl($this->apiBaseUrl())
+            ->post('/stream/clip', [
+                'clippedFromVideoUID' => $video->provider_video_id,
+                'startTimeSeconds' => 0,
+                'endTimeSeconds' => $endSeconds,
+            ])
+            ->throw()
+            ->json();
+
+        $result = $response['result'];
+
+        return new VideoPreviewState(
+            providerVideoId: $result['uid'],
             playbackUrl: $result['playback']['hls'] ?? null,
         );
     }

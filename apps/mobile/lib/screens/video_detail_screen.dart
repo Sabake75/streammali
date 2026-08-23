@@ -5,6 +5,7 @@ import '../services/api_client.dart';
 import '../utils/formatting.dart';
 import '../widgets/purchase_section.dart';
 import '../widgets/report_section.dart';
+import '../widgets/video_player_widget.dart';
 
 class VideoDetailScreen extends StatefulWidget {
   final int videoId;
@@ -46,28 +47,42 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> {
             return const Center(child: Text('Vidéo introuvable.'));
           }
 
+          final canWatchFull = (video.purchased ?? false) && video.playbackUrl != null;
+          final canWatchPreview = !canWatchFull && video.previewPlaybackUrl != null;
+
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                AspectRatio(
-                  aspectRatio: 16 / 9,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Container(
-                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                      child: video.posterPath != null
-                          ? Image.network(
-                              video.posterPath!,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  const Center(child: Text('Pas de jaquette')),
-                            )
-                          : const Center(child: Text('Pas de jaquette')),
-                    ),
-                  ),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: canWatchFull
+                      ? VideoPlayerWidget(url: video.playbackUrl!)
+                      : canWatchPreview
+                      ? VideoPlayerWidget(url: video.previewPlaybackUrl!)
+                      : AspectRatio(
+                          aspectRatio: 16 / 9,
+                          child: Container(
+                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                            child: video.posterPath != null
+                                ? Image.network(
+                                    video.posterPath!,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) =>
+                                        const Center(child: Text('Pas de jaquette')),
+                                  )
+                                : const Center(child: Text('Pas de jaquette')),
+                          ),
+                        ),
                 ),
+                if (canWatchPreview) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    'Aperçu — achète la vidéo pour la voir en entier.',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                  ),
+                ],
                 const SizedBox(height: 16),
                 Chip(label: Text(video.category.label)),
                 const SizedBox(height: 8),
