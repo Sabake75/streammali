@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Debug builds only (merged in via src/debug/AndroidManifest.xml) — allows
+  plain HTTP to the local dev API (Android blocks cleartext traffic by
+  default since API 28). Release builds keep the strict default, since
+  production serves the API over HTTPS.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true" />
+</network-security-config>
