@@ -73,7 +73,7 @@ Construit et vérifié :
 - **Signalement de vidéo** : n'importe quel utilisateur connecté peut signaler une vidéo (motif obligatoire) depuis sa fiche (web + mobile) ; le modérateur voit un badge et la liste des motifs sur `/moderation/videos`, et dépublie via l'action "Refuser" déjà existante (pas de mécanisme séparé).
 - **Statistiques créateur** : dashboard vues/achats/revenus par vidéo + historique de revenu 14 jours (web + mobile), sur les données existantes (ledger, achats) plus un compteur de vues dédié, incrémenté par un endpoint séparé du fetch mis en cache pour ne pas sous-compter (voir `apps/api/app/Domain/Creator/README.md`).
 
-Deux intégrations tierces (`App\Domain\Payment\Gateways\OrangeMoneyGateway`, `App\Domain\Video\Gateways\CloudflareStreamGateway`) sont écrites contre la documentation publique de chaque fournisseur mais **jamais vérifiées avec de vrais credentials** — c'est le principal risque avant mise en production.
+`App\Domain\Video\Gateways\CloudflareStreamGateway` **vérifiée avec de vrais credentials** (2026-08-24) : compte Cloudflare Stream réel connecté, token API scopé Stream avec restriction d'IP, upload de test confirmé bout en bout (vidéo `ready`, URLs de lecture HLS/DASH fonctionnelles). `App\Domain\Payment\Gateways\OrangeMoneyGateway`, elle, reste écrite contre la documentation publique uniquement et **jamais vérifiée avec de vrais credentials** — c'est désormais le principal risque avant mise en production.
 
 CI GitHub Actions (`.github/workflows/ci.yml`) : PHPUnit, lint+tsc+build web, flutter analyze+test, plus build d'un APK release (artefact CI, pas de publication store) à chaque push sur `master`.
 
@@ -92,6 +92,6 @@ Webhook Cloudflare Stream (`CloudflareStreamWebhookController`) : ne fait pas co
 **Mise en avant** : `videos.featured_at`, bascule via l'action Filament "Mettre en avant"/"Retirer" sur `/moderation/videos` (vidéo déjà validée uniquement). `GET /api/videos/featured` (public, contrairement à "recommandé" — donc directement server-renderable côté web, pas besoin d'attendre l'auth côté client). Section "En vedette" en haut de l'accueil (web + mobile).
 
 **Prochaine étape — passage en production, seul chantier restant :**
-Obtenir un compte marchand Orange Money Mali (Orange Developer Center) et un compte Cloudflare Stream ; confirmer le contrat API exact de chacun et ajuster `OrangeMoneyGateway`/`CloudflareStreamGateway` si besoin (c'est le principal risque avant mise en production — voir plus haut). Puis lier le repo à Render/Vercel (`infra/DEPLOY.md`) et enregistrer l'URL du webhook Cloudflare une fois l'API déployée.
+Obtenir un compte marchand Orange Money Mali (Orange Developer Center), confirmer le contrat API exact et ajuster `OrangeMoneyGateway` si besoin (c'est désormais le principal risque avant mise en production — voir plus haut ; Cloudflare Stream est déjà vérifié). Puis lier le repo à Render/Vercel (`infra/DEPLOY.md`) et enregistrer l'URL du webhook Cloudflare une fois l'API déployée — l'IP autorisée sur le token Cloudflare Stream devra alors couvrir l'IP de sortie de Render, pas seulement celle utilisée pour la vérification manuelle.
 
 Les choix de stack (Laravel/PostgreSQL, Next.js, Flutter, Orange Money direct, Cloudflare Stream) sont ceux effectivement implémentés, plus indicatifs à ce stade.
