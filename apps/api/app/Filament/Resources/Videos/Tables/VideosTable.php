@@ -13,6 +13,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\View;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -92,10 +93,8 @@ class VideosTable
                     ->modalSubmitAction(false)
                     ->modalCancelActionLabel('Fermer')
                     ->schema(fn ($record) => [
-                        TextEntry::make('player')
-                            ->hiddenLabel()
-                            ->state(fn () => static::playerEmbed($record))
-                            ->html(),
+                        View::make('filament.videos.player')
+                            ->viewData(['src' => static::playerEmbedUrl($record)]),
                     ]),
                 Action::make('approve')
                     ->label('Valider')
@@ -163,15 +162,14 @@ class VideosTable
      * has an equivalent iframe embed at the same path minus
      * "/manifest/video.m3u8" — no extra Cloudflare config needed, and it
      * comes with its own player UI (works without hls.js in the admin panel).
+     *
+     * Rendered via a dedicated Blade view (not TextEntry::html()) because
+     * Filament runs html() state through Symfony's HtmlSanitizer, which
+     * strips <iframe> by default — the modal would otherwise open empty.
      */
-    private static function playerEmbed(Video $video): string
+    private static function playerEmbedUrl(Video $video): string
     {
-        $src = e(preg_replace('#/manifest/video\.m3u8$#', '/iframe', (string) $video->playback_url));
-
-        return '<div style="position:relative;padding-top:56.25%;">'
-            .'<iframe src="'.$src.'" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" '
-            .'allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;" allowfullscreen></iframe>'
-            .'</div>';
+        return preg_replace('#/manifest/video\.m3u8$#', '/iframe', (string) $video->playback_url);
     }
 
     private static function pendingReportsCount(Video $video): int
