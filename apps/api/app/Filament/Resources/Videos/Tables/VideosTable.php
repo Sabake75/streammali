@@ -83,6 +83,20 @@ class VideosTable
                     ),
             ])
             ->recordActions([
+                Action::make('watch')
+                    ->label('Visionner')
+                    ->icon('heroicon-o-play-circle')
+                    ->color('gray')
+                    ->visible(fn ($record) => $record->source_status === VideoSourceStatus::Ready && $record->playback_url !== null)
+                    ->modalHeading(fn ($record) => $record->title)
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Fermer')
+                    ->schema(fn ($record) => [
+                        TextEntry::make('player')
+                            ->hiddenLabel()
+                            ->state(fn () => static::playerEmbed($record))
+                            ->html(),
+                    ]),
                 Action::make('approve')
                     ->label('Valider')
                     ->icon('heroicon-o-check-circle')
@@ -142,6 +156,22 @@ class VideosTable
                     DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    /**
+     * Cloudflare Stream's manifest URL (used by the web/mobile HLS players)
+     * has an equivalent iframe embed at the same path minus
+     * "/manifest/video.m3u8" — no extra Cloudflare config needed, and it
+     * comes with its own player UI (works without hls.js in the admin panel).
+     */
+    private static function playerEmbed(Video $video): string
+    {
+        $src = e(preg_replace('#/manifest/video\.m3u8$#', '/iframe', (string) $video->playback_url));
+
+        return '<div style="position:relative;padding-top:56.25%;">'
+            .'<iframe src="'.$src.'" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" '
+            .'allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;" allowfullscreen></iframe>'
+            .'</div>';
     }
 
     private static function pendingReportsCount(Video $video): int
