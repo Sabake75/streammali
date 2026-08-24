@@ -1,10 +1,13 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+
+import '../screens/terms_webview_screen.dart';
 
 /// Required "I accept the CGU" checkbox shown on both registration screens.
 /// The CGU text itself lives on the web app (not duplicated natively here)
-/// — tapping the link opens it in an external browser.
+/// — tapping the link opens it in an in-app WebView rather than handing off
+/// to an external browser, so reading and accepting happens without leaving
+/// the registration flow. Accepting there checks the box automatically.
 class TermsCheckbox extends StatelessWidget {
   final bool value;
   final ValueChanged<bool> onChanged;
@@ -21,8 +24,13 @@ class TermsCheckbox extends StatelessWidget {
     this.trailingNote,
   });
 
-  Future<void> _openTerms() async {
-    await launchUrl(Uri.parse(termsUrl), mode: LaunchMode.externalApplication);
+  Future<void> _openTerms(BuildContext context) async {
+    final accepted = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (context) => TermsWebViewScreen(url: termsUrl, title: linkLabel),
+      ),
+    );
+    if (accepted == true) onChanged(true);
   }
 
   @override
@@ -45,7 +53,7 @@ class TermsCheckbox extends StatelessWidget {
                       color: Theme.of(context).colorScheme.primary,
                       fontWeight: FontWeight.w600,
                     ),
-                    recognizer: TapGestureRecognizer()..onTap = _openTerms,
+                    recognizer: TapGestureRecognizer()..onTap = () => _openTerms(context),
                   ),
                   if (trailingNote != null) TextSpan(text: ' $trailingNote'),
                 ],
