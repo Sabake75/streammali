@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../services/api_client.dart';
 import '../services/auth_controller.dart';
+import '../widgets/app_logo.dart';
 import '../widgets/phone_number_field.dart';
 import '../widgets/pin_code_field.dart';
 import '../widgets/terms_checkbox.dart';
@@ -81,16 +82,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Inscription')),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              const Center(child: AppLogo(badgeSize: 44, fontSize: 24)),
+              const SizedBox(height: 28),
               TextFormField(
                 controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Nom', border: OutlineInputBorder()),
+                decoration: const InputDecoration(labelText: 'Nom'),
                 validator: (value) => (value == null || value.isEmpty) ? 'Champ requis' : null,
               ),
               const SizedBox(height: 12),

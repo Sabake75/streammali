@@ -90,7 +90,7 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
         SizedBox(
           width: 150,
           child: InputDecorator(
-            decoration: const InputDecoration(labelText: 'Indicatif', border: OutlineInputBorder()),
+            decoration: const InputDecoration(labelText: 'Indicatif'),
             child: DropdownButtonHideUnderline(
               child: DropdownButton<IsoCode>(
                 value: _country,
@@ -114,7 +114,7 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
         Expanded(
           child: TextFormField(
             controller: _digitsController,
-            decoration: InputDecoration(labelText: widget.label, border: const OutlineInputBorder()),
+            decoration: InputDecoration(labelText: widget.label),
             keyboardType: TextInputType.phone,
             maxLength: maxDigits,
             buildCounter: (context, {required currentLength, required isFocused, maxLength}) => null,

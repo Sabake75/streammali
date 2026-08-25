@@ -11,7 +11,7 @@ class PinCodeField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
-      decoration: InputDecoration(labelText: label, border: const OutlineInputBorder()),
+      decoration: InputDecoration(labelText: label),
       keyboardType: TextInputType.number,
       obscureText: true,
       maxLength: 4,

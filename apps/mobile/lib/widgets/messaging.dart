@@ -127,7 +127,6 @@ class _MessagingState extends State<Messaging> {
               controller: _bodyController,
               decoration: const InputDecoration(
                 labelText: 'Message',
-                border: OutlineInputBorder(),
               ),
               minLines: 2,
               maxLines: 4,

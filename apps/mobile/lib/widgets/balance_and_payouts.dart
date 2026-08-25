@@ -101,7 +101,7 @@ class _BalanceAndPayoutsState extends State<BalanceAndPayouts> {
             const SizedBox(height: 12),
             TextField(
               controller: _amountController,
-              decoration: const InputDecoration(labelText: 'Montant (FCFA)', border: OutlineInputBorder()),
+              decoration: const InputDecoration(labelText: 'Montant (FCFA)'),
               keyboardType: TextInputType.number,
             ),
             const SizedBox(height: 8),

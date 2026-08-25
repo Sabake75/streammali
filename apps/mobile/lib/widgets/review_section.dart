@@ -91,7 +91,6 @@ class _ReviewSectionState extends State<ReviewSection> {
             controller: _commentController,
             decoration: const InputDecoration(
               labelText: 'Un commentaire (optionnel)',
-              border: OutlineInputBorder(),
             ),
             minLines: 2,
             maxLines: 4,

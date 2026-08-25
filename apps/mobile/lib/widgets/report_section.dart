@@ -86,7 +86,6 @@ class _ReportSectionState extends State<ReportSection> {
               controller: _reasonController,
               decoration: const InputDecoration(
                 labelText: 'Pourquoi signaler cette vidéo ?',
-                border: OutlineInputBorder(),
               ),
               minLines: 2,
               maxLines: 4,

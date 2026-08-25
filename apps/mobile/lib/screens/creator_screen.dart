@@ -11,6 +11,7 @@ import '../utils/formatting.dart';
 import '../widgets/balance_and_payouts.dart';
 import '../widgets/messaging.dart';
 import '../widgets/stats.dart';
+import '../theme.dart';
 import '../widgets/video_upload_widget.dart';
 import 'register_creator_screen.dart';
 
@@ -99,7 +100,7 @@ class _CreatorScreenState extends State<CreatorScreen> {
               const SizedBox(height: 24),
               _NewVideoForm(onCreated: _reload),
               const SizedBox(height: 24),
-              Text('Mes vidéos', style: Theme.of(context).textTheme.titleLarge),
+              const SectionHeading(title: 'Mes vidéos'),
               const SizedBox(height: 8),
               if (_error != null) Text(_error!, style: const TextStyle(color: Colors.red)),
               if (_videos == null && _error == null) const Center(child: CircularProgressIndicator()),
@@ -337,19 +338,19 @@ class _NewVideoFormState extends State<_NewVideoForm> {
               const SizedBox(height: 12),
               TextFormField(
                 controller: _titleController,
-                decoration: const InputDecoration(labelText: 'Titre', border: OutlineInputBorder()),
+                decoration: const InputDecoration(labelText: 'Titre'),
                 validator: (value) => (value == null || value.isEmpty) ? 'Champ requis' : null,
               ),
               const SizedBox(height: 8),
               TextFormField(
                 controller: _descriptionController,
-                decoration: const InputDecoration(labelText: 'Description', border: OutlineInputBorder()),
+                decoration: const InputDecoration(labelText: 'Description'),
                 maxLines: 2,
               ),
               const SizedBox(height: 8),
               DropdownButtonFormField<String>(
                 initialValue: _category.isEmpty ? null : _category,
-                decoration: const InputDecoration(labelText: 'Catégorie', border: OutlineInputBorder()),
+                decoration: const InputDecoration(labelText: 'Catégorie'),
                 items: _categories
                     .map((category) => DropdownMenuItem(value: category.value, child: Text(category.label)))
                     .toList(),
@@ -358,7 +359,7 @@ class _NewVideoFormState extends State<_NewVideoForm> {
               const SizedBox(height: 8),
               TextFormField(
                 controller: _priceController,
-                decoration: const InputDecoration(labelText: 'Prix (FCFA)', border: OutlineInputBorder()),
+                decoration: const InputDecoration(labelText: 'Prix (FCFA)'),
                 keyboardType: TextInputType.number,
               ),
               const SizedBox(height: 8),

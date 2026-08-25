@@ -106,7 +106,7 @@ class _RegisterCreatorScreenState extends State<RegisterCreatorScreen> {
               const SizedBox(height: 16),
               TextFormField(
                 controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Nom', border: OutlineInputBorder()),
+                decoration: const InputDecoration(labelText: 'Nom'),
                 validator: (value) => (value == null || value.isEmpty) ? 'Champ requis' : null,
               ),
               const SizedBox(height: 12),

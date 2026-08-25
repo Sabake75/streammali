@@ -4,6 +4,9 @@ import '../models/paginated_response.dart';
 import '../models/video.dart';
 import '../services/api_client.dart';
 import '../services/auth_controller.dart';
+import '../theme.dart';
+import '../widgets/app_logo.dart';
+import '../widgets/hero_banner.dart';
 import '../widgets/video_card.dart';
 import 'creator_screen.dart';
 import 'login_screen.dart';
@@ -69,7 +72,7 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('StreamMali'),
+        title: const AppLogo(),
         actions: [
           ListenableBuilder(
             listenable: AuthController.instance,
@@ -120,13 +123,17 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
       ),
       body: Column(
         children: [
+          const Padding(
+            padding: EdgeInsets.fromLTRB(12, 12, 12, 0),
+            child: HeroBanner(),
+          ),
           if (_featured != null && _featured!.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+              padding: const EdgeInsets.fromLTRB(12, 20, 12, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('En vedette', style: Theme.of(context).textTheme.titleMedium),
+                  const SectionHeading(title: 'En vedette'),
                   const SizedBox(height: 8),
                   SizedBox(
                     height: 275,
@@ -156,61 +163,70 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
               ),
             ),
           Padding(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.fromLTRB(12, 20, 12, 0),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TextField(
-                  controller: _searchController,
-                  decoration: const InputDecoration(
-                    labelText: 'Recherche',
-                    hintText: "Titre d'un film, clip, sketch…",
-                    prefixIcon: Icon(Icons.search),
-                    border: OutlineInputBorder(),
-                  ),
-                  onSubmitted: (value) {
-                    _search = value;
-                    _page = 1;
-                    _reload();
-                  },
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Expanded(
-                      child: DropdownButtonFormField<String?>(
-                        initialValue: _category,
-                        decoration: const InputDecoration(
-                          labelText: 'Catégorie',
-                          border: OutlineInputBorder(),
-                        ),
-                        items: [
-                          const DropdownMenuItem(value: null, child: Text('Toutes')),
-                          ..._categories.map(
-                            (category) => DropdownMenuItem(
-                              value: category.value,
-                              child: Text(category.label),
-                            ),
+                const SectionHeading(title: 'Catalogue'),
+                const SizedBox(height: 12),
+                Card(
+                  margin: EdgeInsets.zero,
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
+                      children: [
+                        TextField(
+                          controller: _searchController,
+                          decoration: const InputDecoration(
+                            labelText: 'Recherche',
+                            hintText: "Titre d'un film, clip, sketch…",
+                            prefixIcon: Icon(Icons.search),
                           ),
-                        ],
-                        onChanged: (value) {
-                          _category = value;
-                          _page = 1;
-                          _reload();
-                        },
-                      ),
+                          onSubmitted: (value) {
+                            _search = value;
+                            _page = 1;
+                            _reload();
+                          },
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: DropdownButtonFormField<String?>(
+                                initialValue: _category,
+                                decoration: const InputDecoration(labelText: 'Catégorie'),
+                                items: [
+                                  const DropdownMenuItem(value: null, child: Text('Toutes')),
+                                  ..._categories.map(
+                                    (category) => DropdownMenuItem(
+                                      value: category.value,
+                                      child: Text(category.label),
+                                    ),
+                                  ),
+                                ],
+                                onChanged: (value) {
+                                  _category = value;
+                                  _page = 1;
+                                  _reload();
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ],
             ),
           ),
           if (_recommended != null && _recommended!.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
+              padding: const EdgeInsets.fromLTRB(12, 20, 12, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Recommandé pour vous', style: Theme.of(context).textTheme.titleMedium),
+                  const SectionHeading(title: 'Recommandé pour vous'),
                   const SizedBox(height: 8),
                   SizedBox(
                     height: 275,
