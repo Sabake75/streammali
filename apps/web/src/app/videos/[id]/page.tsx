@@ -83,16 +83,17 @@ export default async function VideoDetailPage(props: PageProps<"/videos/[id]">) 
           <p className="text-neutral-700 dark:text-neutral-300">{video.description}</p>
         )}
 
-        <div className="mt-4 flex flex-wrap items-center gap-4">
-          <span className="text-2xl font-bold text-orange-700 dark:text-orange-400">
-            {formatPrice(video.price)}
-          </span>
-          <PurchaseButton videoId={video.id} />
-          <FavoriteButton videoId={video.id} initialFavorited={Boolean(video.favorited)} />
-        </div>
-
-        <div className="mt-2">
-          <ReportButton videoId={video.id} />
+        <div className="mt-4 rounded-xl border border-neutral-200 p-4 shadow-sm dark:border-neutral-800">
+          <div className="flex flex-wrap items-center gap-4">
+            <span className="text-2xl font-bold text-orange-700 dark:text-orange-400">
+              {formatPrice(video.price)}
+            </span>
+            <PurchaseButton videoId={video.id} />
+            <FavoriteButton videoId={video.id} initialFavorited={Boolean(video.favorited)} />
+          </div>
+          <div className="mt-3 border-t border-neutral-100 pt-3 dark:border-neutral-900">
+            <ReportButton videoId={video.id} />
+          </div>
         </div>
       </div>
 

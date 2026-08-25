@@ -16,15 +16,19 @@ export function ReportButton({ videoId }: { videoId: number }) {
     return (
       <a
         href={`/connexion?next=${encodeURIComponent(`/videos/${videoId}`)}`}
-        className="text-sm text-neutral-500 underline hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
+        className="inline-flex items-center gap-1.5 text-sm text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
       >
-        Se connecter pour signaler ce contenu
+        <FlagIcon /> Se connecter pour signaler ce contenu
       </a>
     );
   }
 
   if (confirmation) {
-    return <p className="text-sm text-neutral-500 dark:text-neutral-400">{confirmation}</p>;
+    return (
+      <p className="inline-flex items-center gap-1.5 text-sm text-neutral-500 dark:text-neutral-400">
+        <FlagIcon /> {confirmation}
+      </p>
+    );
   }
 
   if (!open) {
@@ -32,9 +36,9 @@ export function ReportButton({ videoId }: { videoId: number }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="text-sm text-neutral-500 underline hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
+        className="inline-flex items-center gap-1.5 text-sm text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
       >
-        Signaler ce contenu
+        <FlagIcon /> Signaler ce contenu
       </button>
     );
   }
@@ -76,5 +80,14 @@ export function ReportButton({ videoId }: { videoId: number }) {
         </button>
       </div>
     </form>
+  );
+}
+
+function FlagIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M4 21V4" />
+      <path d="M4 4h13l-2.5 4L17 12H4" />
+    </svg>
   );
 }

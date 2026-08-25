@@ -12,14 +12,6 @@ import { useAuthUser } from "@/lib/use-auth";
 import { categoryStyle, formatDuration, formatPrice } from "@/lib/format";
 import type { CreatorVideo } from "@/lib/types";
 
-const SECTIONS = [
-  { id: "stats", label: "Statistiques" },
-  { id: "solde", label: "Solde & retraits" },
-  { id: "messagerie", label: "Messagerie" },
-  { id: "nouvelle-video", label: "Nouvelle vidéo" },
-  { id: "mes-videos", label: "Mes vidéos" },
-];
-
 export default function CreatorPage() {
   const user = useAuthUser();
   const [videos, setVideos] = useState<CreatorVideo[] | null>(null);
@@ -79,19 +71,7 @@ export default function CreatorPage() {
         </a>
       </div>
 
-      <nav className="mt-6 flex flex-wrap gap-2 border-b border-neutral-200 pb-4 dark:border-neutral-800">
-        {SECTIONS.map((section) => (
-          <a
-            key={section.id}
-            href={`#${section.id}`}
-            className="rounded-full border border-neutral-200 px-3 py-1 text-sm font-medium text-neutral-600 transition hover:border-orange-300 hover:text-orange-600 dark:border-neutral-800 dark:text-neutral-400 dark:hover:border-orange-800 dark:hover:text-orange-400"
-          >
-            {section.label}
-          </a>
-        ))}
-      </nav>
-
-      <div id="stats" className="mt-8 scroll-mt-24">
+      <div id="stats" className="mt-8 scroll-mt-24 border-t border-neutral-200 pt-8 dark:border-neutral-800">
         <Stats />
       </div>
 

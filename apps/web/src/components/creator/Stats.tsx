@@ -41,20 +41,28 @@ export function Stats() {
       <h3 className="mt-6 text-sm font-medium text-neutral-600 dark:text-neutral-400">
         Revenus des 14 derniers jours
       </h3>
-      <div className="mt-2 flex h-24 items-end gap-1">
-        {stats.timeseries.map((point) => (
-          <div
-            key={point.date}
-            title={`${point.date} : ${formatPrice(point.revenue)}`}
-            className="flex-1 rounded-t bg-gradient-to-t from-orange-600 to-orange-400 dark:from-orange-500 dark:to-orange-300"
-            style={{ height: `${Math.max(4, (point.revenue / maxRevenue) * 100)}%` }}
-          />
-        ))}
-      </div>
-      <div className="mt-1 flex justify-between text-xs text-neutral-500 dark:text-neutral-400">
-        <span>{formatShortDate(stats.timeseries[0]?.date)}</span>
-        <span>{formatShortDate(stats.timeseries[stats.timeseries.length - 1]?.date)}</span>
-      </div>
+      {stats.timeseries.every((point) => point.revenue === 0) ? (
+        <p className="mt-2 flex h-24 items-center justify-center text-sm text-neutral-400 dark:text-neutral-500">
+          Aucune vente sur cette période.
+        </p>
+      ) : (
+        <>
+          <div className="mt-2 flex h-24 items-end gap-1">
+            {stats.timeseries.map((point) => (
+              <div
+                key={point.date}
+                title={`${point.date} : ${formatPrice(point.revenue)}`}
+                className="flex-1 rounded-t bg-gradient-to-t from-orange-600 to-orange-400 dark:from-orange-500 dark:to-orange-300"
+                style={{ height: `${Math.max(4, (point.revenue / maxRevenue) * 100)}%` }}
+              />
+            ))}
+          </div>
+          <div className="mt-1 flex justify-between text-xs text-neutral-500 dark:text-neutral-400">
+            <span>{formatShortDate(stats.timeseries[0]?.date)}</span>
+            <span>{formatShortDate(stats.timeseries[stats.timeseries.length - 1]?.date)}</span>
+          </div>
+        </>
+      )}
 
       {stats.videos.length > 0 && (
         <div className="mt-6 overflow-x-auto">
