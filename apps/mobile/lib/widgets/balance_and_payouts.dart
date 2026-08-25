@@ -58,7 +58,10 @@ class _BalanceAndPayoutsState extends State<BalanceAndPayouts> {
     if (token == null) return;
 
     final amount = int.tryParse(_amountController.text);
-    if (amount == null) return;
+    if (amount == null) {
+      setState(() => _error = 'Montant invalide.');
+      return;
+    }
 
     setState(() {
       _submitting = true;

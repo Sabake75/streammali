@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/paginated_response.dart';
 import '../models/video.dart';
 import '../services/api_client.dart';
+import '../theme.dart';
 import '../utils/formatting.dart';
 import '../widgets/favorite_button.dart';
 import '../widgets/purchase_section.dart';
@@ -20,21 +21,45 @@ class VideoDetailScreen extends StatefulWidget {
   State<VideoDetailScreen> createState() => _VideoDetailScreenState();
 }
 
-class _VideoDetailScreenState extends State<VideoDetailScreen> {
+class _VideoDetailScreenState extends State<VideoDetailScreen> with WidgetsBindingObserver {
   final ApiClient _apiClient = ApiClient();
   late Future<Video?> _future;
   Future<PaginatedResponse<Video>>? _similarFuture;
+  Video? _lastLoadedVideo;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _loadVideo();
+    _apiClient.recordVideoView(widget.videoId);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  void _loadVideo() {
     _future = _apiClient.fetchVideo(widget.videoId).then((video) {
+      _lastLoadedVideo = video;
       if (video != null) {
         _similarFuture = _apiClient.fetchVideos(category: video.category.value);
       }
       return video;
     });
-    _apiClient.recordVideoView(widget.videoId);
+  }
+
+  // Orange Money payment happens outside the app (external browser/app) —
+  // when the user comes back, re-check purchase status so a successful
+  // payment unlocks the video without needing to leave and re-enter this
+  // screen manually.
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed && _lastLoadedVideo?.purchased != true) {
+      setState(_loadVideo);
+    }
   }
 
   @override
@@ -136,7 +161,7 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Vidéos similaires', style: Theme.of(context).textTheme.titleMedium),
+                          const SectionHeading(title: 'Vidéos similaires'),
                           const SizedBox(height: 8),
                           SizedBox(
                             height: 275,

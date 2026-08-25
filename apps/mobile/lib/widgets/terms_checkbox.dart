@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import '../screens/terms_webview_screen.dart';
+import '../theme.dart';
 
 /// Required "I accept the CGU" checkbox shown on both registration screens.
 /// The CGU text itself lives on the web app (not duplicated natively here)
@@ -35,33 +36,42 @@ class TermsCheckbox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Checkbox(value: value, onChanged: (checked) => onChanged(checked ?? false)),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.only(top: 12),
-            child: RichText(
-              text: TextSpan(
-                style: DefaultTextStyle.of(context).style,
-                children: [
-                  const TextSpan(text: "J'ai lu et j'accepte les "),
-                  TextSpan(
-                    text: linkLabel,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.w600,
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      decoration: BoxDecoration(
+        color: value ? AppColors.orange50 : Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: value ? AppColors.orange100 : AppColors.neutral300),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Checkbox(value: value, onChanged: (checked) => onChanged(checked ?? false)),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 12, right: 8),
+              child: RichText(
+                text: TextSpan(
+                  style: DefaultTextStyle.of(context).style,
+                  children: [
+                    const TextSpan(text: "J'ai lu et j'accepte les "),
+                    TextSpan(
+                      text: linkLabel,
+                      style: const TextStyle(
+                        color: AppColors.orange600,
+                        fontWeight: FontWeight.w600,
+                        decoration: TextDecoration.underline,
+                      ),
+                      recognizer: TapGestureRecognizer()..onTap = () => _openTerms(context),
                     ),
-                    recognizer: TapGestureRecognizer()..onTap = () => _openTerms(context),
-                  ),
-                  if (trailingNote != null) TextSpan(text: ' $trailingNote'),
-                ],
+                    if (trailingNote != null) TextSpan(text: ' $trailingNote'),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

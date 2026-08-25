@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../services/api_client.dart';
 import '../services/auth_controller.dart';
+import '../widgets/app_logo.dart';
 import '../widgets/phone_number_field.dart';
 import '../widgets/pin_code_field.dart';
 import '../widgets/terms_checkbox.dart';
@@ -93,13 +94,15 @@ class _RegisterCreatorScreenState extends State<RegisterCreatorScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Inscription créateur')),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              const Center(child: AppLogo(badgeSize: 44, fontSize: 24)),
+              const SizedBox(height: 28),
               const Text(
                 "Une pièce d'identité est requise pour publier des vidéos sur StreamMali.",
               ),
