@@ -37,13 +37,8 @@ export function Messaging() {
   }
 
   return (
-    <div className="flex h-full flex-col rounded-xl border border-neutral-200 p-4 shadow-sm dark:border-neutral-800">
-      <h2 className="flex items-center gap-2 font-semibold text-neutral-900 dark:text-neutral-50">
-        <span className="h-4 w-1 rounded-full bg-orange-600" />
-        Messagerie avec la modération
-      </h2>
-
-      <div className="mt-3 flex max-h-80 min-h-24 flex-1 flex-col gap-3 overflow-y-auto">
+    <div className="flex h-full flex-col">
+      <div className="flex max-h-80 min-h-24 flex-1 flex-col gap-3 overflow-y-auto">
         {messages === null && <p className="text-neutral-500">Chargement…</p>}
         {messages?.length === 0 && (
           <p className="text-sm text-neutral-500 dark:text-neutral-400">

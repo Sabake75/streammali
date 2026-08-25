@@ -43,24 +43,19 @@ export function BalanceAndPayouts() {
   }
 
   return (
-    <div className="flex h-full flex-col rounded-xl border border-neutral-200 p-4 shadow-sm dark:border-neutral-800">
-      <h2 className="flex items-center gap-2 font-semibold text-neutral-900 dark:text-neutral-50">
-        <span className="h-4 w-1 rounded-full bg-orange-600" />
-        Solde et retraits
-      </h2>
-
+    <div>
       {balance ? (
-        <p className="mt-2 text-2xl font-bold text-emerald-700 dark:text-emerald-400">
+        <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-400">
           {formatPrice(balance.available_balance)}
           <span className="ml-2 text-sm font-normal text-neutral-500 dark:text-neutral-400">
             disponible (retrait min. {formatPrice(balance.minimum_payout_amount)})
           </span>
         </p>
       ) : (
-        <p className="mt-2 text-neutral-500">Chargement…</p>
+        <p className="text-neutral-500">Chargement…</p>
       )}
 
-      <form onSubmit={handleSubmit} className="mt-4 flex flex-wrap items-end gap-2">
+      <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-3">
         <div className="flex flex-col gap-1">
           <label htmlFor="payout-amount" className="text-sm text-neutral-600 dark:text-neutral-400">
             Montant (FCFA)
@@ -84,7 +79,7 @@ export function BalanceAndPayouts() {
         <button
           type="submit"
           disabled={submitting}
-          className="btn-primary"
+          className="btn-primary self-start"
         >
           {submitting ? "Envoi…" : "Demander un retrait"}
         </button>

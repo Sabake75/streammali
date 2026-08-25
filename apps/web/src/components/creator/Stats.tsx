@@ -26,13 +26,8 @@ export function Stats() {
   const maxRevenue = Math.max(1, ...stats.timeseries.map((point) => point.revenue));
 
   return (
-    <div className="rounded-xl border border-neutral-200 p-4 shadow-sm dark:border-neutral-800">
-      <h2 className="flex items-center gap-2 font-semibold text-neutral-900 dark:text-neutral-50">
-        <span className="h-4 w-1 rounded-full bg-orange-600" />
-        Statistiques
-      </h2>
-
-      <div className="mt-3 grid grid-cols-3 gap-4 text-center">
+    <div>
+      <div className="grid grid-cols-3 gap-4 text-center">
         <Stat label="Vues" value={stats.totals.views} />
         <Stat label="Achats" value={stats.totals.purchases} />
         <Stat label="Revenus" value={formatPrice(stats.totals.revenue)} />

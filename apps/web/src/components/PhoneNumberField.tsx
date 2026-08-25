@@ -59,16 +59,16 @@ export function PhoneNumberField({
   }
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex min-w-0 flex-col gap-1">
       <label htmlFor={id} className="text-sm text-neutral-600 dark:text-neutral-400">
         {label}
       </label>
-      <div className="flex gap-2">
+      <div className="flex min-w-0 gap-2">
         <select
           aria-label="Indicatif pays"
           value={country}
           onChange={(event) => handleCountryChange(event.target.value as CountryCode)}
-          className="input-field max-w-[45%] shrink-0 px-2"
+          className="input-field min-w-0 max-w-[45%] shrink-0 px-2"
         >
           {COUNTRIES.map((c) => (
             <option key={c} value={c}>

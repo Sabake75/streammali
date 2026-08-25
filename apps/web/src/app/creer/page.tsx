@@ -2,18 +2,12 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
-import { BalanceAndPayouts } from "@/components/creator/BalanceAndPayouts";
-import { Messaging } from "@/components/creator/Messaging";
-import { NewVideoForm } from "@/components/creator/NewVideoForm";
-import { Stats } from "@/components/creator/Stats";
 import { VideoUploadWidget } from "@/components/creator/VideoUploadWidget";
 import { fetchMyVideos } from "@/lib/api-client";
-import { useAuthUser } from "@/lib/use-auth";
 import { categoryStyle, formatDuration, formatPrice } from "@/lib/format";
 import type { CreatorVideo } from "@/lib/types";
 
 export default function CreatorPage() {
-  const user = useAuthUser();
   const [videos, setVideos] = useState<CreatorVideo[] | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
 
@@ -24,35 +18,8 @@ export default function CreatorPage() {
   }, []);
 
   useEffect(() => {
-    if (user?.role === "creator") reload();
-  }, [user, reload]);
-
-  if (!user) {
-    return (
-      <CenteredMessage>
-        <Link href="/connexion?next=/creer" className="font-medium text-orange-600 hover:underline dark:text-orange-400">
-          Connecte-toi
-        </Link>{" "}
-        ou{" "}
-        <Link href="/inscription-createur" className="font-medium text-orange-600 hover:underline dark:text-orange-400">
-          crée un compte créateur
-        </Link>{" "}
-        pour accéder à cet espace.
-      </CenteredMessage>
-    );
-  }
-
-  if (user.role !== "creator") {
-    return (
-      <CenteredMessage>
-        Cet espace est réservé aux comptes créateur.{" "}
-        <Link href="/inscription-createur" className="font-medium text-orange-600 hover:underline dark:text-orange-400">
-          En créer un
-        </Link>{" "}
-        (pièce d&apos;identité requise).
-      </CenteredMessage>
-    );
-  }
+    reload();
+  }, [reload]);
 
   return (
     <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
@@ -63,32 +30,27 @@ export default function CreatorPage() {
             Espace créateur
           </h1>
           <p className="mt-1 ml-4 text-neutral-500 dark:text-neutral-400">
-            Statistiques, solde, vidéos et échanges avec la modération, au même endroit.
+            Tes vidéos, et un accès rapide au reste ci-dessous.
           </p>
         </div>
-        <a href="#nouvelle-video" className="btn-primary">
+      </div>
+
+      <div className="mt-6 flex flex-wrap gap-2 border-b border-neutral-200 pb-6 dark:border-neutral-800">
+        <Link href="/creer/statistiques" className="btn-secondary">
+          Statistiques
+        </Link>
+        <Link href="/creer/solde" className="btn-secondary">
+          Solde & retraits
+        </Link>
+        <Link href="/creer/messagerie" className="btn-secondary">
+          Messagerie
+        </Link>
+        <Link href="/creer/nouvelle-video" className="btn-primary">
           + Nouvelle vidéo
-        </a>
+        </Link>
       </div>
 
-      <div id="stats" className="mt-8 scroll-mt-24 border-t border-neutral-200 pt-8 dark:border-neutral-800">
-        <Stats />
-      </div>
-
-      <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div id="solde" className="scroll-mt-24">
-          <BalanceAndPayouts />
-        </div>
-        <div id="messagerie" className="scroll-mt-24">
-          <Messaging />
-        </div>
-      </div>
-
-      <div id="nouvelle-video" className="mt-8 scroll-mt-24">
-        <NewVideoForm onCreated={reload} />
-      </div>
-
-      <section id="mes-videos" className="mt-10 scroll-mt-24">
+      <section className="mt-8">
         <h2 className="flex items-center gap-2 text-xl font-semibold text-neutral-900 dark:text-neutral-50">
           <span className="h-5 w-1.5 rounded-full bg-orange-600" />
           Mes vidéos
@@ -145,12 +107,4 @@ function StatusBadge({ label, tone }: { label: string; tone: "pending" | "approv
   }[tone];
 
   return <span className={`w-fit rounded-full px-2.5 py-0.5 text-xs font-semibold ${toneClasses}`}>{label}</span>;
-}
-
-function CenteredMessage({ children }: { children: React.ReactNode }) {
-  return (
-    <main className="mx-auto flex w-full max-w-md flex-1 flex-col items-center justify-center px-4 py-16 text-center text-neutral-600 dark:text-neutral-400">
-      <p>{children}</p>
-    </main>
-  );
 }

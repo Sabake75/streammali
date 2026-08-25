@@ -103,7 +103,7 @@ export function NewVideoForm({ onCreated }: { onCreated: () => void }) {
 
   if (phase !== "form") {
     return (
-      <div className="flex flex-col gap-2 rounded-xl border border-neutral-200 p-4 shadow-sm dark:border-neutral-800">
+      <div className="flex flex-col gap-2">
         <h2 className="font-semibold">{title}</h2>
         {phase === "creating" && <p className="text-sm text-neutral-500">Création…</p>}
         {phase === "uploading" && (
@@ -130,14 +130,7 @@ export function NewVideoForm({ onCreated }: { onCreated: () => void }) {
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex flex-col gap-3 rounded-xl border border-neutral-200 p-4 shadow-sm dark:border-neutral-800"
-    >
-      <h2 className="flex items-center gap-2 font-semibold">
-        <span className="h-4 w-1 rounded-full bg-orange-600" />
-        Nouvelle vidéo
-      </h2>
+    <form onSubmit={handleSubmit} className="flex flex-col gap-3">
       <input
         type="text"
         required
