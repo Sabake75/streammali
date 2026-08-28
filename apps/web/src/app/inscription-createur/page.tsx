@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { FilePicker } from "@/components/FilePicker";
 import { FormField } from "@/components/FormField";
 import { PhoneNumberField } from "@/components/PhoneNumberField";
 import { PinCodeField } from "@/components/PinCodeField";
@@ -66,19 +67,14 @@ export default function RegisterCreatorPage() {
           <FormField id="name" label="Nom" type="text" value={name} onChange={setName} />
           <PhoneNumberField id="phone" value={phone} onChange={setPhone} />
           <PinCodeField id="password" value={password} onChange={setPassword} />
-          <div className="flex flex-col gap-1">
-            <label htmlFor="identity_document" className="text-sm text-neutral-600 dark:text-neutral-400">
-              Pièce d&apos;identité (JPG, PNG ou PDF)
-            </label>
-            <input
-              id="identity_document"
-              type="file"
-              required
-              accept="image/jpeg,image/png,application/pdf"
-              onChange={(event) => setIdentityDocument(event.target.files?.[0] ?? null)}
-              className="block w-full text-sm text-neutral-500 file:mr-3 file:rounded-lg file:border-0 file:bg-orange-50 file:px-3 file:py-2 file:text-sm file:font-medium file:text-orange-700 hover:file:bg-orange-100 dark:text-neutral-400 dark:file:bg-orange-950/50 dark:file:text-orange-300"
-            />
-          </div>
+          <FilePicker
+            id="identity_document"
+            label="Pièce d'identité (JPG, PNG ou PDF)"
+            accept="image/jpeg,image/png,application/pdf"
+            file={identityDocument}
+            onChange={setIdentityDocument}
+            placeholder="Choisir la pièce d'identité"
+          />
           <label className="flex items-start gap-2 text-sm text-neutral-600 dark:text-neutral-400">
             <input
               type="checkbox"
