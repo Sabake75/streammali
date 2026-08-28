@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use App\Domain\Payment\Contracts\PaymentGateway;
-use App\Domain\Payment\Gateways\OrangeMoneyGateway;
+use App\Domain\Payment\Gateways\PayDunyaGateway;
 use App\Domain\Video\Contracts\VideoStorageGateway;
 use App\Domain\Video\Gateways\CloudflareStreamGateway;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -19,7 +19,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(PaymentGateway::class, OrangeMoneyGateway::class);
+        $this->app->bind(PaymentGateway::class, PayDunyaGateway::class);
         $this->app->bind(VideoStorageGateway::class, CloudflareStreamGateway::class);
     }
 

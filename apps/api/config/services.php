@@ -48,6 +48,22 @@ return [
         'notif_url' => env('ORANGE_MONEY_NOTIF_URL'),
     ],
 
+    // À vérifier contre la doc PayDunya une fois le compte marchand
+    // disponible — voir App\Domain\Payment\Gateways\PayDunyaGateway.
+    // C'est le gateway actif (voir le binding dans AppServiceProvider) ;
+    // orange_money ci-dessus reste dans le repo comme implémentation de
+    // rechange derrière la même interface PaymentGateway.
+    'paydunya' => [
+        'base_url' => env('PAYDUNYA_BASE_URL', 'https://app.paydunya.com/api/v1'),
+        'master_key' => env('PAYDUNYA_MASTER_KEY'),
+        'private_key' => env('PAYDUNYA_PRIVATE_KEY'),
+        'public_key' => env('PAYDUNYA_PUBLIC_KEY'),
+        'token' => env('PAYDUNYA_TOKEN'),
+        'return_url' => env('PAYDUNYA_RETURN_URL'),
+        'cancel_url' => env('PAYDUNYA_CANCEL_URL'),
+        'callback_url' => env('PAYDUNYA_CALLBACK_URL'),
+    ],
+
     // À vérifier contre la doc Cloudflare Stream une fois un compte
     // disponible — voir App\Domain\Video\Gateways\CloudflareStreamGateway.
     'cloudflare_stream' => [

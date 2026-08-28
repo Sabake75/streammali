@@ -26,10 +26,10 @@ class VideoPurchaseApiTest extends TestCase
     public function test_authenticated_viewer_can_purchase_an_approved_video(): void
     {
         Http::fake([
-            '*/oauth/v3/token' => Http::response(['access_token' => 'fake-token'], 200),
-            '*/webpayment' => Http::response([
-                'payment_url' => 'https://webpay.orange-money.test/pay/abc123',
-                'pay_token' => 'pay-token-abc123',
+            '*/checkout-invoice/create' => Http::response([
+                'response_code' => '00',
+                'response_text' => 'Invoice Created',
+                'token' => 'invoice-token-abc123',
             ], 200),
         ]);
 
@@ -42,7 +42,7 @@ class VideoPurchaseApiTest extends TestCase
             ])
             ->assertCreated();
 
-        $response->assertJsonPath('payment_url', 'https://webpay.orange-money.test/pay/abc123');
+        $response->assertJsonPath('payment_url', 'https://paydunya.com/checkout/invoice/invoice-token-abc123');
         $response->assertJsonPath('payment.status', 'pending');
         $response->assertJsonPath('payment.amount', 25);
 

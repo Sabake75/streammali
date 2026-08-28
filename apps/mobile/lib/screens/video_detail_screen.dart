@@ -51,7 +51,7 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> with WidgetsBindi
     });
   }
 
-  // Orange Money payment happens outside the app (external browser/app) —
+  // Mobile Money payment happens outside the app (external browser/app) —
   // when the user comes back, re-check purchase status so a successful
   // payment unlocks the video without needing to leave and re-enter this
   // screen manually.

@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\Creator\StatsController;
 use App\Http\Controllers\Api\Creator\VideoController as CreatorVideoController;
 use App\Http\Controllers\Api\Creator\VideoSourceController;
 use App\Http\Controllers\Api\OrangeMoneyWebhookController;
+use App\Http\Controllers\Api\PayDunyaWebhookController;
 use App\Http\Controllers\Api\VideoCatalogController;
 use App\Http\Controllers\Api\VideoFavoriteController;
 use App\Http\Controllers\Api\VideoPurchaseController;
@@ -27,6 +28,8 @@ Route::post('/login', [LoginController::class, 'store'])->middleware('throttle:l
 
 Route::match(['get', 'post'], '/webhooks/orange-money', OrangeMoneyWebhookController::class)
     ->name('webhooks.orange-money');
+Route::post('/webhooks/paydunya', PayDunyaWebhookController::class)
+    ->name('webhooks.paydunya');
 Route::post('/webhooks/cloudflare-stream', CloudflareStreamWebhookController::class)
     ->name('webhooks.cloudflare-stream');
 

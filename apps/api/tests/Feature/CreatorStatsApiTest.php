@@ -18,8 +18,7 @@ class CreatorStatsApiTest extends TestCase
     private function sellVideo(Video $video, int $amount): void
     {
         Http::fake([
-            '*/oauth/v3/token' => Http::response(['access_token' => 'fake-token'], 200),
-            '*/transactionstatus*' => Http::response(['status' => 'SUCCESS'], 200),
+            '*/checkout-invoice/confirm/*' => Http::response(['status' => 'completed'], 200),
         ]);
 
         $payment = Payment::factory()->create([

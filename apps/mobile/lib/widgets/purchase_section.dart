@@ -55,7 +55,7 @@ class _PurchaseSectionState extends State<PurchaseSection> {
       );
 
       if (!launched) {
-        throw ApiException("Impossible d'ouvrir la page de paiement Orange Money.");
+        throw ApiException("Impossible d'ouvrir la page de paiement Mobile Money.");
       }
     } catch (error) {
       setState(() => _error = error.toString());
@@ -85,7 +85,7 @@ class _PurchaseSectionState extends State<PurchaseSection> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            PhoneNumberField(controller: _msisdnController, label: 'Numéro Orange Money'),
+            PhoneNumberField(controller: _msisdnController, label: 'Numéro Mobile Money'),
             const SizedBox(height: 8),
             FilledButton(
               onPressed: _submitting ? null : _submit,

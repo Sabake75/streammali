@@ -39,7 +39,7 @@ export function ViewerTermsContent() {
           prix affiché sur la fiche de chaque vidéo.
         </p>
         <p>
-          Le paiement se fait uniquement par <strong>Orange Money</strong> pour l&apos;instant.
+          Le paiement se fait par <strong>Mobile Money</strong> (Orange Money, Moov Money…).
           Une fois le paiement confirmé, tu as accès à la vidéo en streaming illimité, à tout
           moment.
         </p>
@@ -85,7 +85,7 @@ export function ViewerTermsContent() {
       <TermsSection title="Tes données personnelles">
         <p>
           Nous collectons ton nom et ton numéro de téléphone pour créer et gérer ton compte, et
-          pour le paiement Orange Money. Ces informations ne sont jamais revendues à des tiers.
+          pour le paiement Mobile Money. Ces informations ne sont jamais revendues à des tiers.
           Elles servent uniquement au bon fonctionnement de StreamMali.
         </p>
       </TermsSection>

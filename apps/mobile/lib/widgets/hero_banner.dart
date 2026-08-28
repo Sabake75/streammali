@@ -35,7 +35,7 @@ class HeroBanner extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             'Films, clips et sketchs de créateurs maliens, 100 FCFA la vidéo. '
-            'Paiement Orange Money, accès immédiat.',
+            'Paiement Mobile Money, accès immédiat.',
             style: TextStyle(color: Colors.white.withValues(alpha: 0.92), fontSize: 14, height: 1.4),
           ),
           const SizedBox(height: 14),
@@ -44,7 +44,7 @@ class HeroBanner extends StatelessWidget {
             runSpacing: 8,
             children: const [
               _HeroPill(icon: Icons.account_balance_wallet_outlined, label: '100 FCFA la vidéo'),
-              _HeroPill(icon: Icons.smartphone, label: 'Orange Money'),
+              _HeroPill(icon: Icons.smartphone, label: 'Mobile Money'),
               _HeroPill(icon: Icons.movie_creation_outlined, label: 'Créateurs maliens'),
             ],
           ),

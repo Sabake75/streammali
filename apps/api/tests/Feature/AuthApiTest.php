@@ -142,10 +142,10 @@ class AuthApiTest extends TestCase
         $token = $registerResponse->json('token');
 
         Http::fake([
-            '*/oauth/v3/token' => Http::response(['access_token' => 'fake-token'], 200),
-            '*/webpayment' => Http::response([
-                'payment_url' => 'https://webpay.orange-money.test/pay/abc123',
-                'pay_token' => 'pay-token-abc123',
+            '*/checkout-invoice/create' => Http::response([
+                'response_code' => '00',
+                'response_text' => 'Invoice Created',
+                'token' => 'invoice-token-abc123',
             ], 200),
         ]);
 

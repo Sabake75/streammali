@@ -42,7 +42,7 @@ export function PurchaseButton({ videoId }: { videoId: number }) {
       <div className="flex flex-wrap items-end gap-2">
         <PhoneNumberField
           id="msisdn"
-          label="Numéro Orange Money"
+          label="Numéro Mobile Money"
           value={msisdn ?? user?.phone ?? ""}
           onChange={setMsisdn}
         />
