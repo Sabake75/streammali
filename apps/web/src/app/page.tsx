@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { fetchCategories, fetchFeaturedVideos, fetchVideos } from "@/lib/api";
 import { CatalogueFilters } from "@/components/CatalogueFilters";
 import { Pagination } from "@/components/Pagination";
@@ -67,9 +68,17 @@ export default async function CataloguePage(props: PageProps<"/">) {
         </div>
 
         {catalogue.data.length === 0 ? (
-          <p className="mt-10 text-neutral-500 dark:text-neutral-400">
-            Aucune vidéo ne correspond à ces critères.
-          </p>
+          <div className="mt-6 flex flex-col items-center gap-3 rounded-xl border border-dashed border-neutral-300 py-14 text-center dark:border-neutral-700">
+            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-neutral-100 text-neutral-400 dark:bg-neutral-900 dark:text-neutral-600">
+              <SearchOffIcon />
+            </span>
+            <p className="text-neutral-500 dark:text-neutral-400">Aucune vidéo ne correspond à ces critères.</p>
+            {(category || search) && (
+              <Link href="/" className="text-sm font-medium text-orange-600 hover:underline dark:text-orange-400">
+                Réinitialiser les filtres
+              </Link>
+            )}
+          </div>
         ) : (
           <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {catalogue.data.map((video) => (
@@ -120,6 +129,15 @@ function ClapperIcon() {
       <path d="M3 9l1.2-4.2a1 1 0 0 1 1-.8H19a1 1 0 0 1 1 1V9" />
       <rect x="3" y="9" width="18" height="11" rx="1" />
       <path d="M7 9l1.5-5M13 9l1.5-5" />
+    </svg>
+  );
+}
+
+function SearchOffIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <circle cx="10" cy="10" r="6" />
+      <path d="M14.5 14.5 20 20M4 4l16 16" />
     </svg>
   );
 }
