@@ -37,7 +37,7 @@ Référence complète : `CAHIER_DES_CHARGES_STREAMMALI.md`.
 - Reversement au créateur : solde restant, **périodicité hebdomadaire**, vers Mobile Money.
 - Frais des opérateurs Mobile Money à la charge de la plateforme.
 - Montant minimum de retrait : **10 000 FCFA**.
-- Paiement (MVP) : **Orange Money uniquement**, intégration directe (pas d'agrégateur, pas de carte bancaire dans un premier temps) ; parcours = sélection vidéo → confirmation prix → paiement Orange Money (USSD/push) → déverrouillage immédiat après confirmation. Autres opérateurs (Moov Money, Sama Money) et carte bancaire envisagés en phase ultérieure.
+- Paiement (MVP) : **PayDunya** (agrégateur Mobile Money couvrant Orange Money, Moov Money…) ; parcours = sélection vidéo → confirmation prix → redirection vers la page de paiement PayDunya → déverrouillage immédiat après confirmation. Choix initial d'une intégration Orange Money directe (sans agrégateur) abandonné en cours de route — PayDunya réutilise l'interface `PaymentGateway` déjà prévue pour ça, voir plus bas.
 
 ## Stack technique proposée (à valider)
 
@@ -45,7 +45,7 @@ Référence complète : `CAHIER_DES_CHARGES_STREAMMALI.md`.
 - **Mobile** : Android natif ou multiplateforme (Flutter / React Native) — Android prioritaire.
 - **Backend** : API REST sécurisée (Node.js, Laravel ou équivalent) + base de données relationnelle.
 - **Vidéo** : service de streaming/CDN adapté (upload, transcodage, protection du flux, streaming adaptatif multi-qualité).
-- **Paiement (MVP)** : intégration directe **Orange Money Web Payment API** (OAuth2 client credentials + webhook de confirmation), sans passerelle agrégée. Prévoir une interface `PaymentGateway` côté backend pour pouvoir brancher d'autres opérateurs plus tard sans réécrire la logique métier.
+- **Paiement (MVP)** : **PayDunya** (API "Checkout Invoice" : redirection + webhook de confirmation revérifié côté serveur), derrière une interface `PaymentGateway` côté backend qui permet de changer de fournisseur sans réécrire la logique métier — c'est ce qui a permis de remplacer le choix initial (Orange Money direct) sans toucher au reste.
 - **Back-office modérateur** : dashboard d'admin séparé avec gestion des rôles/droits.
 
 ## Contraintes clés
@@ -66,14 +66,16 @@ Construit et vérifié :
 - **Catalogue** : liste/filtres/recherche/pagination, fiche détail, SSR côté web.
 - **Upload vidéo** : métadonnées + fichier (Cloudflare Stream, flux direct upload), branché web + mobile.
 - **Modération** : file d'attente Filament, valider/refuser (motif obligatoire), validation bloquée tant que le fichier n'est pas prêt.
-- **Achat** : Orange Money (intégration directe), webhook revérifié côté serveur, déverrouillage immédiat.
+- **Achat** : PayDunya (agrégateur Mobile Money), webhook revérifié côté serveur, déverrouillage immédiat.
 - **Ledger & retraits** : commission automatique par vente, solde/historique/demande de retrait côté créateur (web+mobile), traitement côté modérateur.
 - **Comptes** : suspension/blocage/réactivation par le modérateur, effectif immédiatement (connexion + tokens existants).
 - **Messagerie créateur ↔ modération** : fil unique par créateur (web + mobile côté créateur, action dédiée sur `/moderation/users` côté modérateur).
 - **Signalement de vidéo** : n'importe quel utilisateur connecté peut signaler une vidéo (motif obligatoire) depuis sa fiche (web + mobile) ; le modérateur voit un badge et la liste des motifs sur `/moderation/videos`, et dépublie via l'action "Refuser" déjà existante (pas de mécanisme séparé).
 - **Statistiques créateur** : dashboard vues/achats/revenus par vidéo + historique de revenu 14 jours (web + mobile), sur les données existantes (ledger, achats) plus un compteur de vues dédié, incrémenté par un endpoint séparé du fetch mis en cache pour ne pas sous-compter (voir `apps/api/app/Domain/Creator/README.md`).
 
-`App\Domain\Video\Gateways\CloudflareStreamGateway` **vérifiée avec de vrais credentials** (2026-08-24) : compte Cloudflare Stream réel connecté, token API scopé Stream avec restriction d'IP, upload de test confirmé bout en bout (vidéo `ready`, URLs de lecture HLS/DASH fonctionnelles). `App\Domain\Payment\Gateways\OrangeMoneyGateway`, elle, reste écrite contre la documentation publique uniquement et **jamais vérifiée avec de vrais credentials** — c'est désormais le principal risque avant mise en production.
+`App\Domain\Video\Gateways\CloudflareStreamGateway` **vérifiée avec de vrais credentials** (2026-08-24) : compte Cloudflare Stream réel connecté, token API scopé Stream avec restriction d'IP, upload de test confirmé bout en bout (vidéo `ready`, URLs de lecture HLS/DASH fonctionnelles).
+
+**Changement de fournisseur de paiement** (2026-08-28) : intégration Orange Money directe remplacée par `App\Domain\Payment\Gateways\PayDunyaGateway` (agrégateur, API "Checkout Invoice") — `OrangeMoneyGateway` reste dans le repo comme implémentation de rechange derrière la même interface `PaymentGateway`, mais n'est plus le binding actif (voir `AppServiceProvider`). Compte marchand sandbox PayDunya connecté et **partiellement vérifié avec de vrais credentials** : les 4 clés sont acceptées (réponse structurée de PayDunya, pas une erreur d'authentification), mais le compte est bloqué par PayDunya tant que son **KYC** (vérification d'identité marchand) n'est pas complété côté PayDunya — impossible de créer une facture réelle avant ça. C'est désormais le principal risque avant mise en production, avec la forme exacte du payload webhook PayDunya (jamais vue en vrai, un appel de paiement complet n'ayant pas pu aboutir).
 
 CI GitHub Actions (`.github/workflows/ci.yml`) : PHPUnit, lint+tsc+build web, flutter analyze+test, plus build d'un APK release (artefact CI, pas de publication store) à chaque push sur `master`.
 
@@ -92,6 +94,6 @@ Webhook Cloudflare Stream (`CloudflareStreamWebhookController`) : ne fait pas co
 **Mise en avant** : `videos.featured_at`, bascule via l'action Filament "Mettre en avant"/"Retirer" sur `/moderation/videos` (vidéo déjà validée uniquement). `GET /api/videos/featured` (public, contrairement à "recommandé" — donc directement server-renderable côté web, pas besoin d'attendre l'auth côté client). Section "En vedette" en haut de l'accueil (web + mobile).
 
 **Prochaine étape — passage en production, seul chantier restant :**
-Obtenir un compte marchand Orange Money Mali (Orange Developer Center), confirmer le contrat API exact et ajuster `OrangeMoneyGateway` si besoin (c'est désormais le principal risque avant mise en production — voir plus haut ; Cloudflare Stream est déjà vérifié). Puis lier le repo à Render/Vercel (`infra/DEPLOY.md`) et enregistrer l'URL du webhook Cloudflare une fois l'API déployée — l'IP autorisée sur le token Cloudflare Stream devra alors couvrir l'IP de sortie de Render, pas seulement celle utilisée pour la vérification manuelle.
+Compléter le KYC du compte marchand PayDunya (voir plus haut) pour pouvoir vérifier un paiement PayDunya réel de bout en bout, y compris la forme exacte du payload webhook envoyé à `callback_url` (Cloudflare Stream est déjà vérifié). Puis lier le repo à Render/Vercel (`infra/DEPLOY.md`) et enregistrer les URLs de webhook (Cloudflare, PayDunya) une fois l'API déployée — l'IP autorisée sur le token Cloudflare Stream devra alors couvrir l'IP de sortie de Render, pas seulement celle utilisée pour la vérification manuelle.
 
-Les choix de stack (Laravel/PostgreSQL, Next.js, Flutter, Orange Money direct, Cloudflare Stream) sont ceux effectivement implémentés, plus indicatifs à ce stade.
+Les choix de stack (Laravel/PostgreSQL, Next.js, Flutter, PayDunya, Cloudflare Stream) sont ceux effectivement implémentés, plus indicatifs à ce stade.
