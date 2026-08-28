@@ -27,6 +27,14 @@ abstract final class AppColors {
   static const darkInputBorder = Color(0xFF404040);
 }
 
+/// Material 3's default bodyMedium is 14px — the ambient style every bare
+/// `Text(...)` picks up without an explicit style. Bumped to 16px (the
+/// recommended mobile minimum, readable in bright outdoor light) since it
+/// silently undersizes most reading content in the app: descriptions,
+/// messages, review comments, error text… Other fields stay null so
+/// ThemeData still fills them in from its own Material defaults.
+const _textTheme = TextTheme(bodyMedium: TextStyle(fontSize: 16));
+
 class AppTheme {
   static ThemeData light() {
     final colorScheme = ColorScheme.fromSeed(seedColor: AppColors.orange600).copyWith(
@@ -44,6 +52,7 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme,
+      textTheme: _textTheme,
       scaffoldBackgroundColor: AppColors.background,
       appBarTheme: const AppBarTheme(
         backgroundColor: AppColors.background,
@@ -133,6 +142,7 @@ class AppTheme {
       useMaterial3: true,
       brightness: Brightness.dark,
       colorScheme: colorScheme,
+      textTheme: _textTheme,
       scaffoldBackgroundColor: AppColors.darkBackground,
       appBarTheme: const AppBarTheme(
         backgroundColor: AppColors.darkBackground,

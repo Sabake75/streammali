@@ -36,7 +36,7 @@ class HeroBanner extends StatelessWidget {
           Text(
             'Films, clips et sketchs de créateurs maliens, 100 FCFA la vidéo. '
             'Paiement Mobile Money, accès immédiat.',
-            style: TextStyle(color: Colors.white.withValues(alpha: 0.92), fontSize: 14, height: 1.4),
+            style: TextStyle(color: Colors.white.withValues(alpha: 0.92), fontSize: 16, height: 1.4),
           ),
           const SizedBox(height: 14),
           Wrap(
