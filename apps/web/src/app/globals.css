@@ -3,6 +3,8 @@
 :root {
   --background: #fffaf3;
   --foreground: #1c1712;
+  --bogolan-orange: #ea580c;
+  --bogolan-emerald: #059669;
 }
 
 @theme inline {

@@ -6,6 +6,7 @@ import '../services/api_client.dart';
 import '../services/auth_controller.dart';
 import '../theme.dart';
 import '../widgets/app_logo.dart';
+import '../widgets/bogolan_strip.dart';
 import '../widgets/hero_banner.dart';
 import '../widgets/video_card.dart';
 import 'creator_screen.dart';
@@ -126,6 +127,10 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
           const Padding(
             padding: EdgeInsets.fromLTRB(12, 12, 12, 0),
             child: HeroBanner(),
+          ),
+          const Padding(
+            padding: EdgeInsets.fromLTRB(12, 6, 12, 0),
+            child: BogolanStrip(),
           ),
           if (_featured != null && _featured!.isNotEmpty)
             Padding(
@@ -279,7 +284,42 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
                 final catalogue = snapshot.data!;
 
                 if (catalogue.data.isEmpty) {
-                  return const Center(child: Text('Aucune vidéo ne correspond à ces critères.'));
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 56,
+                            height: 56,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(Icons.search_off, color: Colors.grey.shade400, size: 28),
+                          ),
+                          const SizedBox(height: 12),
+                          const Text('Aucune vidéo ne correspond à ces critères.', textAlign: TextAlign.center),
+                          if (_search.isNotEmpty || _category != null) ...[
+                            const SizedBox(height: 8),
+                            TextButton(
+                              onPressed: () {
+                                _searchController.clear();
+                                setState(() {
+                                  _search = '';
+                                  _category = null;
+                                  _page = 1;
+                                });
+                                _reload();
+                              },
+                              child: const Text('Réinitialiser les filtres'),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  );
                 }
 
                 return Column(
