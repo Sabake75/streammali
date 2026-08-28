@@ -8,6 +8,7 @@ use App\Domain\Moderation\Models\Report;
 use App\Domain\Video\Enums\VideoSourceStatus;
 use App\Domain\Video\Models\Video;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -56,7 +57,7 @@ class VideosTable
                     ->getStateUsing(fn ($record) => $record->featured_at !== null),
                 TextColumn::make('created_at')
                     ->label('Soumis le')
-                    ->dateTime()
+                    ->dateTime('d/m/Y H:i')
                     ->sortable(),
                 TextColumn::make('pending_reports_count')
                     ->label('Signalements')
@@ -84,6 +85,7 @@ class VideosTable
                     ),
             ])
             ->recordActions([
+                ActionGroup::make([
                 Action::make('watch')
                     ->label('Visionner')
                     ->icon('heroicon-o-play-circle')
@@ -149,6 +151,7 @@ class VideosTable
                         ->where('status', ReportStatus::Pending)
                         ->update(['status' => ReportStatus::Dismissed])),
                 EditAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

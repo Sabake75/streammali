@@ -23,6 +23,14 @@ class PayoutResource extends Resource
 
     protected static ?string $pluralModelLabel = 'demandes de retrait';
 
+    // Filament title-cases each word of pluralModelLabel by default
+    // ("Demandes De Retrait") when deriving the sidebar label and
+    // breadcrumb — set explicitly to keep proper French sentence case.
+    // (The page <h1> title has the same issue, fixed on ListPayouts::$title.)
+    protected static ?string $navigationLabel = 'Demandes de retrait';
+
+    protected static ?string $breadcrumb = 'Demandes de retrait';
+
     public static function form(Schema $schema): Schema
     {
         return PayoutForm::configure($schema);

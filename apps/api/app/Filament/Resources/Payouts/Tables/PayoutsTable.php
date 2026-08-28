@@ -35,7 +35,7 @@ class PayoutsTable
                     ->formatStateUsing(fn (PayoutStatus $state) => $state->label()),
                 TextColumn::make('created_at')
                     ->label('Demandé le')
-                    ->dateTime()
+                    ->dateTime('d/m/Y H:i')
                     ->sortable(),
             ])
             ->defaultSort('created_at', 'asc')

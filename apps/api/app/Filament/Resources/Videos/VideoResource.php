@@ -20,6 +20,12 @@ class VideoResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    protected static ?string $modelLabel = 'vidéo';
+
+    protected static ?string $pluralModelLabel = 'vidéos';
+
+    protected static ?string $navigationLabel = 'Vidéos';
+
     public static function form(Schema $schema): Schema
     {
         return VideoForm::configure($schema);

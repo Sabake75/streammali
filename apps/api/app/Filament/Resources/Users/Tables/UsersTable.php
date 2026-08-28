@@ -8,6 +8,7 @@ use App\Domain\Moderation\Models\Message;
 use App\Enums\UserRole;
 use App\Models\User;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -51,7 +52,7 @@ class UsersTable
                     ->getStateUsing(fn ($record) => $record->identity_verified_at !== null),
                 TextColumn::make('created_at')
                     ->label('Inscrit le')
-                    ->dateTime()
+                    ->dateTime('d/m/Y H:i')
                     ->sortable(),
             ])
             ->filters([
@@ -72,6 +73,7 @@ class UsersTable
                     ),
             ])
             ->recordActions([
+                ActionGroup::make([
                 Action::make('view_identity_document')
                     ->label("Pièce d'identité")
                     ->icon('heroicon-o-document-text')
@@ -143,6 +145,7 @@ class UsersTable
                         'identity_verified_at' => $record->identity_verified_at ? null : now(),
                     ])),
                 EditAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

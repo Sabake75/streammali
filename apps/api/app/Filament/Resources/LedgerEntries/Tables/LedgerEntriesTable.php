@@ -29,7 +29,7 @@ class LedgerEntriesTable
                     ->suffix(' FCFA'),
                 TextColumn::make('created_at')
                     ->label('Date')
-                    ->dateTime()
+                    ->dateTime('d/m/Y H:i')
                     ->sortable(),
             ])
             ->defaultSort('created_at', 'desc')
