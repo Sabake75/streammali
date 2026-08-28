@@ -105,10 +105,10 @@ function ActionTile({
   return (
     <Link
       href={href}
-      className={`flex flex-col items-center gap-2 rounded-xl border p-4 text-center text-sm font-semibold shadow-sm transition ${
+      className={`flex flex-col items-center gap-2 rounded-xl border p-4 text-center text-sm font-semibold shadow-sm transition active:scale-[0.97] ${
         highlight
-          ? "border-orange-600 bg-orange-600 text-white hover:bg-orange-700"
-          : "border-neutral-200 bg-white text-neutral-700 hover:border-orange-300 hover:text-orange-600 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:border-orange-800 dark:hover:text-orange-400"
+          ? "border-orange-600 bg-orange-600 text-white hover:bg-orange-700 active:bg-orange-800"
+          : "border-neutral-200 bg-white text-neutral-700 hover:border-orange-300 hover:text-orange-600 active:bg-orange-50 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:border-orange-800 dark:hover:text-orange-400 dark:active:bg-neutral-800"
       }`}
     >
       {icon}

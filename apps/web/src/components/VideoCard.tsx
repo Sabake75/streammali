@@ -8,7 +8,7 @@ export function VideoCard({ video }: { video: VideoSummary }) {
   return (
     <Link
       href={`/videos/${video.id}`}
-      className="group flex flex-col overflow-hidden rounded-xl border border-neutral-200/80 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_20px_-12px_rgba(0,0,0,0.12)] transition duration-200 hover:-translate-y-1 hover:border-orange-300 hover:shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-12px_rgba(234,88,12,0.25)] dark:border-neutral-800 dark:bg-neutral-950 dark:hover:border-orange-800"
+      className="group flex flex-col overflow-hidden rounded-xl border border-neutral-200/80 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_20px_-12px_rgba(0,0,0,0.12)] transition duration-200 hover:-translate-y-1 hover:border-orange-300 hover:shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-12px_rgba(234,88,12,0.25)] active:scale-[0.98] active:border-orange-300 dark:border-neutral-800 dark:bg-neutral-950 dark:hover:border-orange-800"
     >
       <div
         className={`relative flex aspect-video items-center justify-center overflow-hidden bg-gradient-to-br ${style.tint}`}
