@@ -18,6 +18,7 @@ class StreamMaliApp extends StatelessWidget {
     return MaterialApp(
       title: 'StreamMali',
       theme: AppTheme.light(),
+      darkTheme: AppTheme.dark(),
       home: const CatalogueScreen(),
     );
   }

@@ -13,6 +13,8 @@ class AppLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -36,12 +38,15 @@ class AppLogo extends StatelessWidget {
             style: TextStyle(
               fontSize: fontSize,
               fontWeight: FontWeight.w800,
-              color: AppColors.neutral900,
+              color: isDark ? AppColors.darkForeground : AppColors.neutral900,
               letterSpacing: -0.3,
             ),
-            children: const [
-              TextSpan(text: 'Stream'),
-              TextSpan(text: 'Mali', style: TextStyle(color: AppColors.orange600)),
+            children: [
+              const TextSpan(text: 'Stream'),
+              TextSpan(
+                text: 'Mali',
+                style: TextStyle(color: isDark ? AppColors.orange400 : AppColors.orange600),
+              ),
             ],
           ),
         ),

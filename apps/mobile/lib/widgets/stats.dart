@@ -73,29 +73,40 @@ class _StatsState extends State<Stats> {
       const SizedBox(height: 16),
       Text('Revenus des 14 derniers jours', style: Theme.of(context).textTheme.bodySmall),
       const SizedBox(height: 8),
-      SizedBox(
-        height: 80,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: stats.timeseries
-              .map(
-                (point) => Expanded(
-                  child: Tooltip(
-                    message: '${point.date} : ${formatPrice(point.revenue)}',
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 1),
-                      height: 80 * (point.revenue / maxRevenue).clamp(0.05, 1.0),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primary,
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(2)),
+      if (stats.timeseries.every((point) => point.revenue == 0))
+        SizedBox(
+          height: 80,
+          child: Center(
+            child: Text(
+              'Aucune vente sur cette période.',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
+            ),
+          ),
+        )
+      else
+        SizedBox(
+          height: 80,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: stats.timeseries
+                .map(
+                  (point) => Expanded(
+                    child: Tooltip(
+                      message: '${point.date} : ${formatPrice(point.revenue)}',
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 1),
+                        height: 80 * (point.revenue / maxRevenue).clamp(0.05, 1.0),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primary,
+                          borderRadius: const BorderRadius.vertical(top: Radius.circular(2)),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              )
-              .toList(),
+                )
+                .toList(),
+          ),
         ),
-      ),
       if (stats.videos.isNotEmpty) ...[
         const SizedBox(height: 16),
         Text('Par vidéo', style: Theme.of(context).textTheme.bodySmall),

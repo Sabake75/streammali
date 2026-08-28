@@ -36,12 +36,18 @@ class TermsCheckbox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final uncheckedColor = Theme.of(context).inputDecorationTheme.fillColor ?? Theme.of(context).colorScheme.surface;
+    final uncheckedBorder = isDark ? AppColors.darkInputBorder : AppColors.neutral300;
+    final checkedColor = isDark ? const Color(0xFF431407) : AppColors.orange50;
+    final checkedBorder = isDark ? AppColors.orange700 : AppColors.orange100;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
-        color: value ? AppColors.orange50 : Colors.white,
+        color: value ? checkedColor : uncheckedColor,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: value ? AppColors.orange100 : AppColors.neutral300),
+        border: Border.all(color: value ? checkedBorder : uncheckedBorder),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -57,8 +63,8 @@ class TermsCheckbox extends StatelessWidget {
                     const TextSpan(text: "J'ai lu et j'accepte les "),
                     TextSpan(
                       text: linkLabel,
-                      style: const TextStyle(
-                        color: AppColors.orange600,
+                      style: TextStyle(
+                        color: isDark ? AppColors.orange400 : AppColors.orange600,
                         fontWeight: FontWeight.w600,
                         decoration: TextDecoration.underline,
                       ),
