@@ -30,6 +30,9 @@ export function PurchaseButton({ videoId }: { videoId: number }) {
 
     try {
       const result = await purchaseVideo(videoId, msisdn ?? user?.phone ?? "");
+      // Read by /paiement/succes and /paiement/annule after PayDunya redirects back —
+      // that's how the confirmation page knows which video to poll/link to.
+      sessionStorage.setItem("streammali:pending_purchase_video_id", String(videoId));
       window.location.href = result.payment_url;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Une erreur est survenue.");

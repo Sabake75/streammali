@@ -23,7 +23,7 @@ Webhooks : `POST /api/webhooks/paydunya` (actif, `App\Http\Controllers\Api\PayDu
 
 Testé (mock HTTP, aucun appel réseau réel) dans `tests/Feature/PayDunyaPaymentTest.php` et `tests/Feature/OrangeMoneyPaymentTest.php`.
 
-**Note séparée, pas spécifique à PayDunya** : `return_url`/`cancel_url` pointent vers l'accueil web (`http://localhost:3000`) faute de pages "paiement réussi/annulé" dédiées côté web — ces pages n'existent pas encore (l'ancien `ORANGE_MONEY_RETURN_URL` pointait déjà vers des routes `/paiement/succes`/`/annule` qui n'ont jamais été construites). À faire avant la mise en prod.
+`return_url`/`cancel_url` pointent vers `apps/web/src/app/paiement/{succes,annule}/page.tsx` (`.env` : `PAYDUNYA_RETURN_URL`/`PAYDUNYA_CANCEL_URL`). La page succès ne fait pas confiance au retour de redirection lui-même comme preuve d'achat (le webhook, revérifié côté serveur, reste la seule source de vérité) : elle relit l'id vidéo posé en `sessionStorage` par `PurchaseButton` avant la redirection, puis sonde `GET /api/videos/{id}` (authentifié, donc `purchased` reflète le vrai état) jusqu'à confirmation ou timeout (~30s), pendant que le webhook confirme le paiement en tâche de fond.
 
 **Ledger et retraits** (cahier des charges §6) :
 - `Models/LedgerEntry.php` — une écriture par vente réussie (créée automatiquement par `ConfirmPayment` quand un paiement passe à `succeeded`), avec la répartition `gross_amount` / `commission_amount` / `net_amount`. Taux de commission configurable (`config/platform.php`, `PLATFORM_COMMISSION_RATE`, défaut 25 % — indicatif, cahier des charges donne une fourchette 20-30 %).

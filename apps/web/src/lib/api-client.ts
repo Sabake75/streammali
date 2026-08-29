@@ -95,6 +95,17 @@ export async function fetchMyPurchases(): Promise<PaginatedResponse<VideoSummary
   return getJson("/purchases");
 }
 
+/**
+ * Authenticated fetch of a single video — unlike the SSR helper in
+ * lib/api.ts (no auth header, so `purchased` always reads false there),
+ * this is for the /paiement/succes polling loop, which needs the real
+ * per-user `purchased` flag.
+ */
+export async function fetchVideoStatus(videoId: number): Promise<VideoSummary> {
+  const { data } = await getJson<{ data: VideoSummary }>(`/videos/${videoId}`);
+  return data;
+}
+
 export async function favoriteVideo(videoId: number): Promise<{ favorited: boolean }> {
   return postJson(`/videos/${videoId}/favorite`, {}, { authenticated: true });
 }
