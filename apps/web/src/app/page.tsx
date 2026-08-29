@@ -13,9 +13,10 @@ export default async function CataloguePage(props: PageProps<"/">) {
   const page = typeof searchParams.page === "string" ? Number(searchParams.page) || 1 : 1;
   const creatorIdParam = typeof searchParams.creator_id === "string" ? searchParams.creator_id : undefined;
   const creatorId = creatorIdParam ? Number(creatorIdParam) || undefined : undefined;
+  const sort = searchParams.sort === "popular" ? "popular" : "recent";
 
   const [catalogue, categories, featured] = await Promise.all([
-    fetchVideos({ category, search, page, creatorId }),
+    fetchVideos({ category, search, page, creatorId, sort }),
     fetchCategories(),
     fetchFeaturedVideos(),
   ]);
@@ -77,7 +78,7 @@ export default async function CataloguePage(props: PageProps<"/">) {
         )}
 
         <div className="mt-4 rounded-xl border border-neutral-200 bg-white/60 p-4 shadow-sm dark:border-neutral-800 dark:bg-neutral-950/60">
-          <CatalogueFilters categories={categories} defaultCategory={category} defaultSearch={search} />
+          <CatalogueFilters categories={categories} defaultCategory={category} defaultSearch={search} defaultSort={sort} />
         </div>
 
         {catalogue.data.length === 0 ? (
@@ -103,7 +104,7 @@ export default async function CataloguePage(props: PageProps<"/">) {
         <Pagination
           currentPage={catalogue.meta.current_page}
           lastPage={catalogue.meta.last_page}
-          searchParams={{ category, search, creator_id: creatorIdParam }}
+          searchParams={{ category, search, creator_id: creatorIdParam, sort: sort !== "recent" ? sort : undefined }}
         />
       </section>
 

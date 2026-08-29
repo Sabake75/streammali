@@ -4,10 +4,12 @@ export function CatalogueFilters({
   categories,
   defaultCategory,
   defaultSearch,
+  defaultSort,
 }: {
   categories: VideoCategory[];
   defaultCategory?: string;
   defaultSearch?: string;
+  defaultSort?: string;
 }) {
   return (
     <form method="get" className="flex flex-wrap items-end gap-3">
@@ -40,6 +42,20 @@ export function CatalogueFilters({
               {category.label}
             </option>
           ))}
+        </select>
+      </div>
+      <div className="flex flex-col gap-1">
+        <label htmlFor="sort" className="text-sm text-neutral-600 dark:text-neutral-400">
+          Trier par
+        </label>
+        <select
+          id="sort"
+          name="sort"
+          defaultValue={defaultSort ?? "recent"}
+          className="input-field"
+        >
+          <option value="recent">Plus récent</option>
+          <option value="popular">Plus populaire</option>
         </select>
       </div>
       <button

@@ -18,6 +18,7 @@ class VideoCatalogController extends Controller
             'category' => ['nullable', 'string', 'exists:categories,slug'],
             'creator_id' => ['nullable', 'integer'],
             'search' => ['nullable', 'string', 'max:255'],
+            'sort' => ['nullable', 'string', 'in:recent,popular'],
         ]);
 
         $videos = Video::query()
@@ -30,8 +31,27 @@ class VideoCatalogController extends Controller
                 fn ($query, $category) => $query->whereRelation('category', 'slug', $category),
             )
             ->when($validated['creator_id'] ?? null, fn ($query, $creatorId) => $query->where('creator_id', $creatorId))
-            ->when($validated['search'] ?? null, fn ($query, $search) => $query->where('title', 'like', "%{$search}%"))
-            ->latest()
+            // Title + description + creator name, not just title — and
+            // case-insensitive on every driver: plain LIKE is
+            // case-insensitive on SQLite (what the test suite runs against)
+            // but case-SENSITIVE on PostgreSQL (what production runs), so a
+            // search that "worked" in every local/CI run could still silently
+            // fail on a mixed-case title once deployed. LOWER() on both
+            // sides sidesteps that instead of relying on ILIKE, which SQLite
+            // doesn't have.
+            ->when($validated['search'] ?? null, function ($query, $search) {
+                $needle = '%'.mb_strtolower($search).'%';
+                $query->where(function ($query) use ($needle) {
+                    $query->whereRaw('LOWER(title) LIKE ?', [$needle])
+                        ->orWhereRaw('LOWER(description) LIKE ?', [$needle])
+                        ->orWhereHas('creator', fn ($query) => $query->whereRaw('LOWER(name) LIKE ?', [$needle]));
+                });
+            })
+            ->when(
+                ($validated['sort'] ?? 'recent') === 'popular',
+                fn ($query) => $query->orderByDesc('views_count')->latest(),
+                fn ($query) => $query->latest(),
+            )
             ->paginate(15);
 
         return VideoResource::collection($videos);

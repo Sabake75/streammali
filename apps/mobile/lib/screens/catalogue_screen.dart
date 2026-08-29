@@ -28,6 +28,7 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
 
   String? _category;
   String _search = '';
+  String _sort = 'recent';
   int _page = 1;
   late Future<PaginatedResponse<Video>> _future;
   List<VideoCategory> _categories = [];
@@ -61,7 +62,7 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
 
   void _reload() {
     setState(() {
-      _future = _apiClient.fetchVideos(category: _category, search: _search, page: _page);
+      _future = _apiClient.fetchVideos(category: _category, search: _search, page: _page, sort: _sort);
     });
   }
 
@@ -222,6 +223,22 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
                                 ],
                                 onChanged: (value) {
                                   _category = value;
+                                  _page = 1;
+                                  _reload();
+                                },
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: DropdownButtonFormField<String>(
+                                initialValue: _sort,
+                                decoration: const InputDecoration(labelText: 'Trier par'),
+                                items: const [
+                                  DropdownMenuItem(value: 'recent', child: Text('Plus récent')),
+                                  DropdownMenuItem(value: 'popular', child: Text('Plus populaire')),
+                                ],
+                                onChanged: (value) {
+                                  _sort = value ?? 'recent';
                                   _page = 1;
                                   _reload();
                                 },

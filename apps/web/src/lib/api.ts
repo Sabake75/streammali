@@ -23,6 +23,7 @@ export type CatalogueFilters = {
   search?: string;
   page?: number;
   creatorId?: number;
+  sort?: "recent" | "popular";
 };
 
 export async function fetchVideos(
@@ -33,6 +34,7 @@ export async function fetchVideos(
   if (filters.search) query.set("search", filters.search);
   if (filters.page && filters.page > 1) query.set("page", String(filters.page));
   if (filters.creatorId) query.set("creator_id", String(filters.creatorId));
+  if (filters.sort && filters.sort !== "recent") query.set("sort", filters.sort);
 
   const response = await fetch(`${API_BASE_URL}/videos?${query.toString()}`, {
     next: { revalidate: 60 },
