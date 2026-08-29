@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { VideoCard } from "@/components/VideoCard";
 import { fetchMyPurchases } from "@/lib/api-client";
+import { formatDate, formatPrice } from "@/lib/format";
 import type { VideoSummary } from "@/lib/types";
 
 export default function LibraryPage() {
@@ -48,11 +49,44 @@ export default function LibraryPage() {
       {videos && videos.length > 0 && (
         <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {videos.map((video) => (
-            <VideoCard key={video.id} video={video} />
+            <div key={video.id} className="flex flex-col gap-2">
+              <VideoCard video={video} />
+              {video.purchase && <PurchaseReceipt purchase={video.purchase} />}
+            </div>
           ))}
         </div>
       )}
     </main>
+  );
+}
+
+function PurchaseReceipt({ purchase }: { purchase: NonNullable<VideoSummary["purchase"]> }) {
+  const [copied, setCopied] = useState(false);
+
+  async function copyReference() {
+    try {
+      await navigator.clipboard.writeText(purchase.order_reference);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      // Clipboard access denied — the reference stays visible on screen either way.
+    }
+  }
+
+  return (
+    <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 rounded-lg border border-neutral-200 bg-white/60 px-3 py-2 text-xs text-neutral-500 dark:border-neutral-800 dark:bg-neutral-950/60 dark:text-neutral-400">
+      <span>
+        Payé {formatPrice(purchase.amount)} le {formatDate(purchase.purchased_at)}
+      </span>
+      <button
+        type="button"
+        onClick={copyReference}
+        title="Copier la référence"
+        className="font-mono text-neutral-400 hover:text-orange-600 dark:text-neutral-500 dark:hover:text-orange-400"
+      >
+        {copied ? "Copié !" : `Réf. ${purchase.order_reference}`}
+      </button>
+    </div>
   );
 }
 

@@ -90,6 +90,48 @@ class VideoPurchaseApiTest extends TestCase
         $this->getJson('/api/purchases')->assertUnauthorized();
     }
 
+    public function test_viewer_library_exposes_the_purchase_receipt_detail(): void
+    {
+        $viewer = User::factory()->create(['role' => UserRole::Viewer]);
+        $video = Video::factory()->approved()->create(['price' => 250]);
+
+        $video->payments()->create([
+            'buyer_id' => $viewer->id,
+            'amount' => 250,
+            'order_reference' => 'receipt-order-ref',
+            'status' => PaymentStatus::Succeeded,
+            'confirmed_at' => '2026-08-20 10:00:00',
+        ]);
+
+        $response = $this->actingAs($viewer, 'sanctum')
+            ->getJson('/api/purchases')
+            ->assertOk();
+
+        $response->assertJsonPath('data.0.purchase.amount', 250);
+        $response->assertJsonPath('data.0.purchase.order_reference', 'receipt-order-ref');
+        $response->assertJsonPath('data.0.purchase.purchased_at', '2026-08-20T10:00:00.000000Z');
+    }
+
+    public function test_catalogue_and_favorites_never_expose_the_purchase_block(): void
+    {
+        $viewer = User::factory()->create(['role' => UserRole::Viewer]);
+        $video = Video::factory()->approved()->create();
+
+        $video->payments()->create([
+            'buyer_id' => $viewer->id,
+            'amount' => $video->price,
+            'order_reference' => 'unrelated-context-order',
+            'status' => PaymentStatus::Succeeded,
+            'confirmed_at' => now(),
+        ]);
+
+        $response = $this->actingAs($viewer, 'sanctum')
+            ->getJson('/api/videos')
+            ->assertOk();
+
+        $response->assertJsonMissingPath('data.0.purchase');
+    }
+
     public function test_viewer_library_only_lists_successfully_purchased_videos(): void
     {
         $viewer = User::factory()->create(['role' => UserRole::Viewer]);

@@ -13,6 +13,10 @@ export function formatPrice(price: number): string {
   return `${price} FCFA`;
 }
 
+export function formatDate(isoDate: string): string {
+  return new Intl.DateTimeFormat("fr-FR", { dateStyle: "long" }).format(new Date(isoDate));
+}
+
 /**
  * Categories are moderator-managed (dynamic, not a fixed enum — see
  * apps/api/app/Domain/Video/README.md), so colors can't be hardcoded per

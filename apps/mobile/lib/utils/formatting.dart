@@ -13,6 +13,25 @@ String formatDuration(int? seconds) {
 
 String formatPrice(int price) => '$price FCFA';
 
+const _frenchMonths = [
+  'janvier',
+  'février',
+  'mars',
+  'avril',
+  'mai',
+  'juin',
+  'juillet',
+  'août',
+  'septembre',
+  'octobre',
+  'novembre',
+  'décembre',
+];
+
+/// No `intl` dependency for one date format — hand-rolled to match the rest
+/// of the app's French-only copy rather than pulling in a package for it.
+String formatDate(DateTime date) => '${date.day} ${_frenchMonths[date.month - 1]} ${date.year}';
+
 /// Categories are moderator-managed (dynamic, not a fixed enum), so colors
 /// can't be hardcoded per known value — hashing the category's own value
 /// into a fixed palette keeps the same category visually consistent

@@ -25,6 +25,13 @@ export type VideoSummary = {
   average_rating: number | null;
   reviews_count: number;
   created_at: string;
+  // Only present on GET /api/purchases ("Mes achats") — the receipt detail
+  // for that specific purchase, absent everywhere else (catalogue, favorites…).
+  purchase?: {
+    amount: number;
+    purchased_at: string;
+    order_reference: string;
+  };
 };
 
 export type Review = {

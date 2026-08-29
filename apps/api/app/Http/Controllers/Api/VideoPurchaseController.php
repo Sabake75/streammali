@@ -58,7 +58,15 @@ class VideoPurchaseController extends Controller
     {
         $videos = Video::query()
             ->approved()
-            ->with(['creator', 'category'])
+            ->with([
+                'creator',
+                'category',
+                // Constrained to this user's own successful payment — read by
+                // VideoResource to expose the "purchase" (receipt) block.
+                'payments' => fn ($query) => $query
+                    ->where('buyer_id', $request->user()->id)
+                    ->where('status', PaymentStatus::Succeeded),
+            ])
             ->withAvg('reviews', 'rating')
             ->withCount('reviews')
             ->whereHas('payments', fn ($query) => $query

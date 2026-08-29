@@ -26,6 +26,24 @@ class VideoCreator {
   }
 }
 
+/// The "reçu" detail — only present on GET /purchases ("Mes achats"),
+/// absent everywhere else (catalogue, favorites, recommended…).
+class VideoPurchase {
+  final int amount;
+  final DateTime purchasedAt;
+  final String orderReference;
+
+  const VideoPurchase({required this.amount, required this.purchasedAt, required this.orderReference});
+
+  factory VideoPurchase.fromJson(Map<String, dynamic> json) {
+    return VideoPurchase(
+      amount: json['amount'] as int,
+      purchasedAt: DateTime.parse(json['purchased_at'] as String),
+      orderReference: json['order_reference'] as String,
+    );
+  }
+}
+
 class Video {
   final int id;
   final String title;
@@ -42,6 +60,7 @@ class Video {
   final double? averageRating;
   final int reviewsCount;
   final DateTime createdAt;
+  final VideoPurchase? purchase;
 
   const Video({
     required this.id,
@@ -59,6 +78,7 @@ class Video {
     this.averageRating,
     this.reviewsCount = 0,
     required this.createdAt,
+    this.purchase,
   });
 
   factory Video.fromJson(Map<String, dynamic> json) {
@@ -78,6 +98,9 @@ class Video {
       averageRating: (json['average_rating'] as num?)?.toDouble(),
       reviewsCount: json['reviews_count'] as int? ?? 0,
       createdAt: DateTime.parse(json['created_at'] as String),
+      purchase: json['purchase'] != null
+          ? VideoPurchase.fromJson(json['purchase'] as Map<String, dynamic>)
+          : null,
     );
   }
 }

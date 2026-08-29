@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../models/paginated_response.dart';
 import '../models/video.dart';
 import '../services/api_client.dart';
 import '../services/auth_controller.dart';
+import '../utils/formatting.dart';
 import '../widgets/video_card.dart';
 import 'video_detail_screen.dart';
 
@@ -87,24 +89,82 @@ class _LibraryScreenState extends State<LibraryScreen> {
             padding: const EdgeInsets.all(12),
             gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
               maxCrossAxisExtent: 280,
-              mainAxisExtent: 260,
+              mainAxisExtent: 296,
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
             ),
             itemCount: videos.length,
             itemBuilder: (context, index) {
               final video = videos[index];
-              return VideoCard(
-                video: video,
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => VideoDetailScreen(videoId: video.id)),
-                  );
-                },
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  VideoCard(
+                    video: video,
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => VideoDetailScreen(videoId: video.id)),
+                      );
+                    },
+                  ),
+                  if (video.purchase != null) ...[
+                    const SizedBox(height: 6),
+                    _PurchaseReceipt(purchase: video.purchase!),
+                  ],
+                ],
               );
             },
           );
         },
+      ),
+    );
+  }
+}
+
+class _PurchaseReceipt extends StatelessWidget {
+  final VideoPurchase purchase;
+
+  const _PurchaseReceipt({required this.purchase});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              'Payé ${formatPrice(purchase.amount)} le ${formatDate(purchase.purchasedAt)}',
+              style: Theme.of(context).textTheme.bodySmall,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          InkWell(
+            onTap: () async {
+              await Clipboard.setData(ClipboardData(text: purchase.orderReference));
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Référence copiée'), duration: Duration(seconds: 1)),
+                );
+              }
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+              child: Text(
+                'Réf.',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -53,6 +53,23 @@ class VideoResource extends JsonResource
                 : null,
             'reviews_count' => (int) ($this->reviews_count ?? 0),
             'created_at' => $this->created_at,
+            // "Reçu" detail — only present when the caller eager-loaded a
+            // `payments` relation constrained to this user's own successful
+            // payment (VideoPurchaseController::index, "Mes achats"). Absent
+            // everywhere else (catalogue, favorites, recommended…), which
+            // never load `payments` this way.
+            'purchase' => $this->when(
+                $this->relationLoaded('payments') && $this->payments->isNotEmpty(),
+                function () {
+                    $payment = $this->payments->first();
+
+                    return [
+                        'amount' => $payment->amount,
+                        'purchased_at' => $payment->confirmed_at,
+                        'order_reference' => $payment->order_reference,
+                    ];
+                },
+            ),
         ];
     }
 }
