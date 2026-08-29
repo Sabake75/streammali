@@ -11,12 +11,15 @@ export default async function CataloguePage(props: PageProps<"/">) {
   const category = typeof searchParams.category === "string" ? searchParams.category : undefined;
   const search = typeof searchParams.search === "string" ? searchParams.search : undefined;
   const page = typeof searchParams.page === "string" ? Number(searchParams.page) || 1 : 1;
+  const creatorIdParam = typeof searchParams.creator_id === "string" ? searchParams.creator_id : undefined;
+  const creatorId = creatorIdParam ? Number(creatorIdParam) || undefined : undefined;
 
   const [catalogue, categories, featured] = await Promise.all([
-    fetchVideos({ category, search, page }),
+    fetchVideos({ category, search, page, creatorId }),
     fetchCategories(),
     fetchFeaturedVideos(),
   ]);
+  const creatorName = creatorId ? catalogue.data[0]?.creator.name : undefined;
 
   return (
     <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
@@ -62,8 +65,16 @@ export default async function CataloguePage(props: PageProps<"/">) {
       <section className="mt-14">
         <h2 className="flex items-center gap-2 text-xl font-semibold text-neutral-900 dark:text-neutral-50">
           <span className="h-5 w-1.5 rounded-full bg-orange-600" />
-          Catalogue
+          {creatorName ? `Vidéos de ${creatorName}` : "Catalogue"}
         </h2>
+
+        {creatorId && (
+          <p className="mt-1 ml-4 text-sm text-neutral-500 dark:text-neutral-400">
+            <Link href="/" className="font-medium text-orange-600 hover:underline dark:text-orange-400">
+              ← Voir tout le catalogue
+            </Link>
+          </p>
+        )}
 
         <div className="mt-4 rounded-xl border border-neutral-200 bg-white/60 p-4 shadow-sm dark:border-neutral-800 dark:bg-neutral-950/60">
           <CatalogueFilters categories={categories} defaultCategory={category} defaultSearch={search} />
@@ -75,7 +86,7 @@ export default async function CataloguePage(props: PageProps<"/">) {
               <SearchOffIcon />
             </span>
             <p className="text-neutral-500 dark:text-neutral-400">Aucune vidéo ne correspond à ces critères.</p>
-            {(category || search) && (
+            {(category || search || creatorId) && (
               <Link href="/" className="text-sm font-medium text-orange-600 hover:underline dark:text-orange-400">
                 Réinitialiser les filtres
               </Link>
@@ -92,7 +103,7 @@ export default async function CataloguePage(props: PageProps<"/">) {
         <Pagination
           currentPage={catalogue.meta.current_page}
           lastPage={catalogue.meta.last_page}
-          searchParams={{ category, search }}
+          searchParams={{ category, search, creator_id: creatorIdParam }}
         />
       </section>
 

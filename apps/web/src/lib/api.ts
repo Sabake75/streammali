@@ -22,6 +22,7 @@ export type CatalogueFilters = {
   category?: string;
   search?: string;
   page?: number;
+  creatorId?: number;
 };
 
 export async function fetchVideos(
@@ -31,6 +32,7 @@ export async function fetchVideos(
   if (filters.category) query.set("category", filters.category);
   if (filters.search) query.set("search", filters.search);
   if (filters.page && filters.page > 1) query.set("page", String(filters.page));
+  if (filters.creatorId) query.set("creator_id", String(filters.creatorId));
 
   const response = await fetch(`${API_BASE_URL}/videos?${query.toString()}`, {
     next: { revalidate: 60 },

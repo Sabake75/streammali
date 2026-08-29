@@ -101,7 +101,14 @@ export default async function VideoDetailPage(props: PageProps<"/videos/[id]">) 
           {video.title}
         </h1>
         <p className="text-neutral-500 dark:text-neutral-400">
-          Par {video.creator.name} · {formatDuration(video.duration_seconds)}
+          Par{" "}
+          <Link
+            href={`/?creator_id=${video.creator.id}`}
+            className="font-medium hover:text-orange-600 hover:underline dark:hover:text-orange-400"
+          >
+            {video.creator.name}
+          </Link>{" "}
+          · {formatDuration(video.duration_seconds)}
           {video.reviews_count > 0 && (
             <>
               {" "}

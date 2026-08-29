@@ -15,6 +15,7 @@ export function Pagination({
     const query = new URLSearchParams();
     if (searchParams.category) query.set("category", searchParams.category);
     if (searchParams.search) query.set("search", searchParams.search);
+    if (searchParams.creator_id) query.set("creator_id", searchParams.creator_id);
     if (page > 1) query.set("page", String(page));
     const qs = query.toString();
     return qs ? `/?${qs}` : "/";

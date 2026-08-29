@@ -11,6 +11,7 @@ import '../widgets/report_section.dart';
 import '../widgets/review_section.dart';
 import '../widgets/video_card.dart';
 import '../widgets/video_player_widget.dart';
+import 'creator_videos_screen.dart';
 
 class VideoDetailScreen extends StatefulWidget {
   final int videoId;
@@ -123,11 +124,33 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> with WidgetsBindi
                 const SizedBox(height: 8),
                 Text(video.title, style: Theme.of(context).textTheme.headlineSmall),
                 const SizedBox(height: 4),
-                Text(
-                  video.reviewsCount > 0
-                      ? '${video.creator.name} · ${formatDuration(video.durationSeconds)} · ★ ${video.averageRating} (${video.reviewsCount} avis)'
-                      : '${video.creator.name} · ${formatDuration(video.durationSeconds)}',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey),
+                Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => CreatorVideosScreen(
+                            creatorId: video.creator.id,
+                            creatorName: video.creator.name,
+                          ),
+                        ),
+                      ),
+                      child: Text(
+                        video.creator.name,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: AppColors.orange600,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      video.reviewsCount > 0
+                          ? ' · ${formatDuration(video.durationSeconds)} · ★ ${video.averageRating} (${video.reviewsCount} avis)'
+                          : ' · ${formatDuration(video.durationSeconds)}',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey),
+                    ),
+                  ],
                 ),
                 if (video.description != null && video.description!.isNotEmpty) ...[
                   const SizedBox(height: 12),

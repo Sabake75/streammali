@@ -54,11 +54,13 @@ class ApiClient {
     String? category,
     String? search,
     int page = 1,
+    int? creatorId,
   }) async {
     final query = <String, String>{};
     if (category != null && category.isNotEmpty) query['category'] = category;
     if (search != null && search.isNotEmpty) query['search'] = search;
     if (page > 1) query['page'] = page.toString();
+    if (creatorId != null) query['creator_id'] = creatorId.toString();
 
     final uri = Uri.parse('$baseUrl/videos').replace(
       queryParameters: query.isEmpty ? null : query,
