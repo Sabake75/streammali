@@ -21,7 +21,7 @@ export default async function CataloguePage(props: PageProps<"/">) {
     <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
       <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-orange-700 via-orange-600 to-orange-500 px-6 py-12 text-white shadow-lg sm:px-10 sm:py-16">
         <div className="hero-dots pointer-events-none absolute inset-0" />
-        <div className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-emerald-400/30 blur-3xl" />
+        <div className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-accent-400/30 blur-3xl" />
         <div className="relative">
           <h1 className="max-w-2xl text-3xl font-extrabold tracking-tight sm:text-4xl">
             Le cinéma malien, à portée de Mobile Money.

@@ -45,7 +45,7 @@ export function BalanceAndPayouts() {
   return (
     <div>
       {balance ? (
-        <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-400">
+        <p className="text-2xl font-bold text-accent-700 dark:text-accent-400">
           {formatPrice(balance.available_balance)}
           <span className="ml-2 text-sm font-normal text-neutral-500 dark:text-neutral-400">
             disponible (retrait min. {formatPrice(balance.minimum_payout_amount)})

@@ -30,7 +30,7 @@ export function RecommendedVideos() {
   return (
     <section className="mt-14">
       <h2 className="flex items-center gap-2 text-xl font-semibold text-neutral-900 dark:text-neutral-50">
-        <span className="h-5 w-1.5 rounded-full bg-emerald-600" />
+        <span className="h-5 w-1.5 rounded-full bg-accent-600" />
         Recommandé pour vous
       </h2>
       <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

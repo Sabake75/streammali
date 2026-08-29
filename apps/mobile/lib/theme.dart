@@ -1,26 +1,28 @@
 import 'package:flutter/material.dart';
 
-/// Mirrors the web app's design tokens (apps/web/src/app/globals.css and
-/// the Tailwind orange/emerald palette used throughout its components) so
-/// both platforms read as the same product.
+/// Mirrors the web app's design tokens (apps/web/src/app/globals.css) so
+/// both platforms read as the same product. Palette "ocre & terre cuite" —
+/// ocre/moutarde as the brand tone, rouille/terre cuite as the secondary
+/// accent, on an écru background — closer to real bogolan mud-cloth dye
+/// tones than the earlier generic orange/emerald pairing.
 abstract final class AppColors {
-  static const orange700 = Color(0xFFC2410C);
-  static const orange600 = Color(0xFFEA580C);
-  static const orange500 = Color(0xFFF97316);
-  static const orange400 = Color(0xFFFB923C);
-  static const orange300 = Color(0xFFFDBA74);
-  static const orange100 = Color(0xFFFFEDD5);
-  static const orange50 = Color(0xFFFFF7ED);
-  static const emerald600 = Color(0xFF059669);
-  static const background = Color(0xFFFFFAF3);
+  static const orange700 = Color(0xFF954409);
+  static const orange600 = Color(0xFFB45309);
+  static const orange500 = Color(0xFFC67B24);
+  static const orange400 = Color(0xFFD8933F);
+  static const orange300 = Color(0xFFE6AF66);
+  static const orange100 = Color(0xFFF9E8CE);
+  static const orange50 = Color(0xFFFDF6EC);
+  static const accent600 = Color(0xFF7C2D12);
+  static const background = Color(0xFFFBF3E7);
   static const neutral900 = Color(0xFF171717);
   static const neutral300 = Color(0xFFD4D4D4);
 
   // Dark mode — mirrors apps/web/src/app/globals.css's
   // `@media (prefers-color-scheme: dark)` block and its neutral-800/900/950
   // border/surface pairing used throughout web's dark: classes.
-  static const darkBackground = Color(0xFF120E0A);
-  static const darkForeground = Color(0xFFF5EDE1);
+  static const darkBackground = Color(0xFF17110A);
+  static const darkForeground = Color(0xFFF2E6D3);
   static const darkSurface = Color(0xFF0A0A0A);
   static const darkInputSurface = Color(0xFF171717);
   static const darkBorder = Color(0xFF262626);
@@ -40,7 +42,7 @@ class AppTheme {
     final colorScheme = ColorScheme.fromSeed(seedColor: AppColors.orange600).copyWith(
       primary: AppColors.orange600,
       onPrimary: Colors.white,
-      secondary: AppColors.emerald600,
+      secondary: AppColors.accent600,
       surface: Colors.white,
     );
 
@@ -129,7 +131,7 @@ class AppTheme {
     ).copyWith(
       primary: AppColors.orange500,
       onPrimary: Colors.black,
-      secondary: AppColors.emerald600,
+      secondary: AppColors.accent600,
       surface: AppColors.darkSurface,
     );
 

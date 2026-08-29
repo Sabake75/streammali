@@ -1,10 +1,46 @@
 @import "tailwindcss";
 
+/*
+ * Palette "ocre & terre cuite" — inspirée des teintures bogolan maliennes
+ * (ocre/moutarde + rouille sur fond écru) plutôt que l'orange vif/vert
+ * générique utilisé avant. Redéfinit directement les échelles Tailwind
+ * `orange-*` (marque) et une échelle `accent-*` (secondaire, remplace
+ * l'ancien emerald-*) pour que chaque usage existant de `orange-*` dans le
+ * code prenne la nouvelle teinte sans devoir toucher chaque fichier.
+ * `emerald-*` reste disponible tel quel : il sert aussi à distinguer les
+ * catégories dans lib/format.ts, un usage sans lien avec la marque.
+ */
+@theme {
+  --color-orange-50: #fdf6ec;
+  --color-orange-100: #f9e8ce;
+  --color-orange-200: #f1ce9b;
+  --color-orange-300: #e6af66;
+  --color-orange-400: #d8933f;
+  --color-orange-500: #c67b24;
+  --color-orange-600: #b45309;
+  --color-orange-700: #954409;
+  --color-orange-800: #74350d;
+  --color-orange-900: #5c2b10;
+  --color-orange-950: #331708;
+
+  --color-accent-50: #fbeee7;
+  --color-accent-100: #f3d6c4;
+  --color-accent-200: #e5b190;
+  --color-accent-300: #d48a5f;
+  --color-accent-400: #bc6738;
+  --color-accent-500: #a24c22;
+  --color-accent-600: #7c2d12;
+  --color-accent-700: #642508;
+  --color-accent-800: #4d1c08;
+  --color-accent-900: #3a1608;
+  --color-accent-950: #200b03;
+}
+
 :root {
-  --background: #fffaf3;
-  --foreground: #1c1712;
-  --bogolan-orange: #ea580c;
-  --bogolan-emerald: #059669;
+  --background: #fbf3e7;
+  --foreground: #292118;
+  --bogolan-orange: var(--color-orange-600);
+  --bogolan-accent: var(--color-accent-600);
 }
 
 @theme inline {
@@ -16,8 +52,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #120e0a;
-    --foreground: #f5ede1;
+    --background: #17110a;
+    --foreground: #f2e6d3;
   }
 }
 

@@ -6,13 +6,15 @@
  *
  * CSS zigzag (not an SVG viewBox) so the pattern actually repeats at a
  * fixed tile size regardless of the strip's rendered width, rather than
- * being stretched into a handful of oversized triangles.
+ * being stretched into a handful of oversized triangles. The black
+ * hairlines top/bottom echo real bogolan cloth, which outlines its motifs
+ * in black rather than letting them float on the raw fabric.
  */
 export function BogolanStrip() {
   return (
     <div
       aria-hidden
-      className="h-3 w-full"
+      className="h-3 w-full border-y border-neutral-900/80"
       style={{
         backgroundImage: [
           "linear-gradient(135deg, var(--bogolan-a) 25%, transparent 25.5%)",
@@ -25,7 +27,7 @@ export function BogolanStrip() {
         // Tailwind can't reach into inline gradients, so the two tones are
         // passed as CSS custom properties instead (still theme-aware).
         ["--bogolan-a" as string]: "var(--bogolan-orange)",
-        ["--bogolan-b" as string]: "var(--bogolan-emerald)",
+        ["--bogolan-b" as string]: "var(--bogolan-accent)",
       }}
     />
   );

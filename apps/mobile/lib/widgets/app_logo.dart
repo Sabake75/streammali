@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../theme.dart';
 
 /// Same mark as the web header (apps/web/src/app/layout.tsx): a rounded
-/// orange-to-emerald badge with a play glyph, next to "Stream" + orange
+/// ocre-to-terracotta badge with a play glyph, next to "Stream" + orange
 /// "Mali". Kept as one widget so every screen's AppBar matches.
 class AppLogo extends StatelessWidget {
   final double badgeSize;
@@ -26,7 +26,7 @@ class AppLogo extends StatelessWidget {
             gradient: const LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [AppColors.orange500, AppColors.emerald600],
+              colors: [AppColors.orange500, AppColors.accent600],
             ),
             borderRadius: BorderRadius.circular(badgeSize * 0.28),
           ),

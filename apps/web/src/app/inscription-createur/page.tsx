@@ -54,7 +54,7 @@ export default function RegisterCreatorPage() {
   return (
     <main className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center px-4 py-16">
       <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-950 sm:p-8">
-        <span className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-orange-500 to-emerald-600 text-white">
+        <span className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-orange-500 to-accent-600 text-white">
           ▶
         </span>
         <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-50">
