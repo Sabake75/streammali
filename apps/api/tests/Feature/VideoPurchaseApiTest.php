@@ -84,4 +84,87 @@ class VideoPurchaseApiTest extends TestCase
             ])
             ->assertStatus(409);
     }
+
+    public function test_guest_cannot_list_purchases(): void
+    {
+        $this->getJson('/api/purchases')->assertUnauthorized();
+    }
+
+    public function test_viewer_library_only_lists_successfully_purchased_videos(): void
+    {
+        $viewer = User::factory()->create(['role' => UserRole::Viewer]);
+
+        $purchased = Video::factory()->approved()->create(['title' => 'Achetée']);
+        $purchased->payments()->create([
+            'buyer_id' => $viewer->id,
+            'amount' => $purchased->price,
+            'order_reference' => 'order-purchased',
+            'status' => PaymentStatus::Succeeded,
+            'confirmed_at' => now(),
+        ]);
+
+        $pending = Video::factory()->approved()->create(['title' => 'Paiement en attente']);
+        $pending->payments()->create([
+            'buyer_id' => $viewer->id,
+            'amount' => $pending->price,
+            'order_reference' => 'order-pending',
+            'status' => PaymentStatus::Pending,
+        ]);
+
+        $notPurchased = Video::factory()->approved()->create(['title' => 'Jamais achetée']);
+
+        $otherViewer = User::factory()->create(['role' => UserRole::Viewer]);
+        $someoneElses = Video::factory()->approved()->create(['title' => 'Achetée par un autre']);
+        $someoneElses->payments()->create([
+            'buyer_id' => $otherViewer->id,
+            'amount' => $someoneElses->price,
+            'order_reference' => 'order-other',
+            'status' => PaymentStatus::Succeeded,
+            'confirmed_at' => now(),
+        ]);
+
+        $response = $this->actingAs($viewer, 'sanctum')
+            ->getJson('/api/purchases')
+            ->assertOk();
+
+        $response->assertJsonCount(1, 'data');
+        $response->assertJsonPath('data.0.id', $purchased->id);
+        $response->assertJsonPath('data.0.purchased', true);
+    }
+
+    public function test_viewer_library_orders_by_purchase_date_not_video_creation_date(): void
+    {
+        $viewer = User::factory()->create(['role' => UserRole::Viewer]);
+
+        $olderVideoBoughtRecently = Video::factory()->approved()->create([
+            'title' => 'Vieux film, acheté aujourd\'hui',
+            'created_at' => now()->subYear(),
+        ]);
+        $olderVideoBoughtRecently->payments()->create([
+            'buyer_id' => $viewer->id,
+            'amount' => $olderVideoBoughtRecently->price,
+            'order_reference' => 'order-recent-purchase',
+            'status' => PaymentStatus::Succeeded,
+            'confirmed_at' => now(),
+        ]);
+
+        $newerVideoBoughtLongAgo = Video::factory()->approved()->create([
+            'title' => 'Film récent, acheté il y a longtemps',
+            'created_at' => now(),
+        ]);
+        $newerVideoBoughtLongAgo->payments()->create([
+            'buyer_id' => $viewer->id,
+            'amount' => $newerVideoBoughtLongAgo->price,
+            'order_reference' => 'order-old-purchase',
+            'status' => PaymentStatus::Succeeded,
+            'confirmed_at' => now()->subMonth(),
+        ]);
+
+        $response = $this->actingAs($viewer, 'sanctum')
+            ->getJson('/api/purchases')
+            ->assertOk();
+
+        $response->assertJsonPath('data.0.id', $olderVideoBoughtRecently->id);
+        $response->assertJsonPath('data.1.id', $newerVideoBoughtLongAgo->id);
+    }
 }

@@ -9,6 +9,7 @@ import '../widgets/app_logo.dart';
 import '../widgets/hero_banner.dart';
 import '../widgets/video_card.dart';
 import 'creator_screen.dart';
+import 'library_screen.dart';
 import 'login_screen.dart';
 import 'video_detail_screen.dart';
 
@@ -94,6 +95,15 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(user.name),
+                  IconButton(
+                    icon: const Icon(Icons.video_library_outlined),
+                    tooltip: 'Mes achats',
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => const LibraryScreen()),
+                      );
+                    },
+                  ),
                   IconButton(
                     icon: const Icon(Icons.video_call_outlined),
                     tooltip: 'Espace créateur',

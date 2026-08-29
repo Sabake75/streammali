@@ -91,6 +91,10 @@ export async function fetchMyVideos(): Promise<PaginatedResponse<CreatorVideo>> 
   return getJson("/creator/videos");
 }
 
+export async function fetchMyPurchases(): Promise<PaginatedResponse<VideoSummary>> {
+  return getJson("/purchases");
+}
+
 export async function favoriteVideo(videoId: number): Promise<{ favorited: boolean }> {
   return postJson(`/videos/${videoId}/favorite`, {}, { authenticated: true });
 }

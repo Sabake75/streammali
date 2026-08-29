@@ -20,6 +20,12 @@ export function AuthStatus() {
 
   return (
     <div className="flex items-center gap-3 text-sm">
+      <Link
+        href="/bibliotheque"
+        className="shrink-0 font-medium text-neutral-600 hover:text-orange-600 dark:text-neutral-400 dark:hover:text-orange-400"
+      >
+        Mes achats
+      </Link>
       <span className="max-w-24 truncate text-neutral-500 sm:max-w-none dark:text-neutral-400">{user.name}</span>
       <button
         type="button"

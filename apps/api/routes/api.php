@@ -61,6 +61,7 @@ Route::middleware(['auth:sanctum', 'account.active'])->group(function () {
         ->name('videos.favorite');
 
     Route::get('/favorites', [VideoFavoriteController::class, 'index'])->name('favorites.index');
+    Route::get('/purchases', [VideoPurchaseController::class, 'index'])->name('purchases.index');
 
     Route::prefix('creator')->name('creator.')->group(function () {
         Route::get('/videos', [CreatorVideoController::class, 'index'])->name('videos.index');

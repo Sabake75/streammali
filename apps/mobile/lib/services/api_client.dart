@@ -250,6 +250,20 @@ class ApiClient {
     return (json['data'] as List).map((e) => Video.fromJson(e as Map<String, dynamic>)).toList();
   }
 
+  Future<PaginatedResponse<Video>> fetchMyPurchases(String token) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/purchases'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+
+    if (response.statusCode != 200) {
+      throw ApiException(_extractErrorMessage(response));
+    }
+
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    return PaginatedResponse.fromJson(json, Video.fromJson);
+  }
+
   Future<List<CreatorVideo>> fetchMyVideos(String token) async {
     final response = await http.get(
       Uri.parse('$baseUrl/creator/videos'),
