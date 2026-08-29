@@ -1,11 +1,11 @@
 {
-    "name": "streammali_mobile",
-    "short_name": "streammali_mobile",
+    "name": "StreamMali",
+    "short_name": "StreamMali",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#F4F7FB",
+    "theme_color": "#0F2D52",
+    "description": "Films, clips et web-séries de créateurs maliens, 100 FCFA la vidéo.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
