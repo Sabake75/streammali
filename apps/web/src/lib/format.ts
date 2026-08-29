@@ -22,8 +22,8 @@ export function formatPrice(price: number): string {
  */
 const CATEGORY_PALETTE = [
   {
-    badge: "bg-sky-100 text-sky-800 dark:bg-sky-900/40 dark:text-sky-300",
-    tint: "from-sky-200 to-sky-50 dark:from-sky-950 dark:to-neutral-900",
+    badge: "bg-lime-100 text-lime-800 dark:bg-lime-900/40 dark:text-lime-300",
+    tint: "from-lime-200 to-lime-50 dark:from-lime-950 dark:to-neutral-900",
   },
   {
     badge: "bg-violet-100 text-violet-800 dark:bg-violet-900/40 dark:text-violet-300",

@@ -19,7 +19,7 @@ String formatPrice(int price) => '$price FCFA';
 /// everywhere without needing to know the category list in advance. Mirrors
 /// the same idea used on the web (apps/web/src/lib/format.ts).
 const _categoryPalette = [
-  [Color(0xFFBAE6FD), Color(0xFFF0F9FF)], // sky
+  [Color(0xFFD9F99D), Color(0xFFF7FEE7)], // lime
   [Color(0xFFDDD6FE), Color(0xFFF5F3FF)], // violet
   [Color(0xFFFECDD3), Color(0xFFFFF1F2)], // rose
   [Color(0xFFA7F3D0), Color(0xFFECFDF5)], // emerald
