@@ -7,6 +7,7 @@ use App\Domain\Moderation\Enums\VideoStatus;
 use App\Domain\Moderation\Models\Report;
 use App\Domain\Video\Enums\VideoSourceStatus;
 use App\Domain\Video\Models\Video;
+use App\Notifications\VideoStatusChanged;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
@@ -109,10 +110,13 @@ class VideosTable
                         ? "Le fichier vidéo n'est pas encore prêt."
                         : null)
                     ->requiresConfirmation()
-                    ->action(fn ($record) => $record->update([
-                        'status' => VideoStatus::Approved,
-                        'rejection_reason' => null,
-                    ])),
+                    ->action(function ($record) {
+                        $record->update([
+                            'status' => VideoStatus::Approved,
+                            'rejection_reason' => null,
+                        ]);
+                        $record->creator->notify(new VideoStatusChanged($record));
+                    }),
                 Action::make('reject')
                     ->label('Refuser')
                     ->icon('heroicon-o-x-circle')
@@ -123,10 +127,13 @@ class VideosTable
                             ->label('Motif du refus')
                             ->required(),
                     ])
-                    ->action(fn ($record, array $data) => $record->update([
-                        'status' => VideoStatus::Rejected,
-                        'rejection_reason' => $data['rejection_reason'],
-                    ])),
+                    ->action(function ($record, array $data) {
+                        $record->update([
+                            'status' => VideoStatus::Rejected,
+                            'rejection_reason' => $data['rejection_reason'],
+                        ]);
+                        $record->creator->notify(new VideoStatusChanged($record));
+                    }),
                 Action::make('toggle_featured')
                     ->label(fn ($record) => $record->featured_at ? 'Retirer de la mise en avant' : 'Mettre en avant')
                     ->icon('heroicon-o-star')

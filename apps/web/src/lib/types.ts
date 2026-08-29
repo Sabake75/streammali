@@ -113,6 +113,17 @@ export type CreatorStats = {
   timeseries: { date: string; revenue: number }[];
 };
 
+export type AppNotification = {
+  id: string;
+  data:
+    | { type: "video_status_changed"; video_id: number; video_title: string; status: "approved" | "rejected"; rejection_reason: string | null }
+    | { type: "new_moderator_message"; message_id: number; excerpt: string };
+  read: boolean;
+  created_at: string;
+};
+
+export type NotificationListResponse = PaginatedResponse<AppNotification> & { unread_count: number };
+
 export type PaginatedResponse<T> = {
   data: T[];
   meta: {

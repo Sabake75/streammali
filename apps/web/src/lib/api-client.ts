@@ -4,6 +4,7 @@ import type {
   CreatorStats,
   CreatorVideo,
   Message,
+  NotificationListResponse,
   PaginatedResponse,
   Payout,
   PayoutListResponse,
@@ -239,6 +240,18 @@ export async function fetchCreatorStats(): Promise<CreatorStats> {
 
 export async function fetchMyMessages(): Promise<{ data: Message[] }> {
   return getJson("/creator/messages");
+}
+
+export async function fetchNotifications(): Promise<NotificationListResponse> {
+  return getJson("/notifications");
+}
+
+export async function markNotificationRead(id: string): Promise<{ read: boolean }> {
+  return postJson(`/notifications/${id}/read`, {}, { authenticated: true });
+}
+
+export async function markAllNotificationsRead(): Promise<{ message: string }> {
+  return postJson("/notifications/read-all", {}, { authenticated: true });
 }
 
 export async function sendMessage(body: string): Promise<Message> {

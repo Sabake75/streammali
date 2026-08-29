@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import '../models/app_notification.dart';
 import '../models/creator_stats.dart';
 import '../models/creator_video.dart';
 import '../models/message.dart';
@@ -503,6 +504,47 @@ class ApiClient {
     }
 
     return Message.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+  }
+
+  Future<NotificationListResult> fetchNotifications(String token) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/notifications'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+
+    if (response.statusCode != 200) {
+      throw ApiException(_extractErrorMessage(response));
+    }
+
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    return NotificationListResult(
+      data: (json['data'] as List)
+          .map((item) => AppNotification.fromJson(item as Map<String, dynamic>))
+          .toList(),
+      unreadCount: json['unread_count'] as int,
+    );
+  }
+
+  Future<void> markNotificationRead({required String id, required String token}) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/notifications/$id/read'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+
+    if (response.statusCode != 200) {
+      throw ApiException(_extractErrorMessage(response));
+    }
+  }
+
+  Future<void> markAllNotificationsRead(String token) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/notifications/read-all'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+
+    if (response.statusCode != 200) {
+      throw ApiException(_extractErrorMessage(response));
+    }
   }
 
   Future<AuthResult> registerCreator({

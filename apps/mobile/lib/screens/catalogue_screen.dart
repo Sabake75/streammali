@@ -7,6 +7,7 @@ import '../services/auth_controller.dart';
 import '../theme.dart';
 import '../widgets/app_logo.dart';
 import '../widgets/hero_banner.dart';
+import '../widgets/notification_bell.dart';
 import '../widgets/video_card.dart';
 import 'creator_screen.dart';
 import 'library_screen.dart';
@@ -95,6 +96,7 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(user.name),
+                  const NotificationBell(),
                   IconButton(
                     icon: const Icon(Icons.video_library_outlined),
                     tooltip: 'Mes achats',

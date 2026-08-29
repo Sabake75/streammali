@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { NotificationBell } from "@/components/NotificationBell";
 import { logoutViewer } from "@/lib/api-client";
 import { clearSession } from "@/lib/auth-client";
 import { useAuthUser } from "@/lib/use-auth";
@@ -26,6 +27,7 @@ export function AuthStatus() {
       >
         Mes achats
       </Link>
+      <NotificationBell />
       <span className="max-w-24 truncate text-neutral-500 sm:max-w-none dark:text-neutral-400">{user.name}</span>
       <button
         type="button"

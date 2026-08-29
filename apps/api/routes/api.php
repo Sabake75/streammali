@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\Creator\PayoutController;
 use App\Http\Controllers\Api\Creator\StatsController;
 use App\Http\Controllers\Api\Creator\VideoController as CreatorVideoController;
 use App\Http\Controllers\Api\Creator\VideoSourceController;
+use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\OrangeMoneyWebhookController;
 use App\Http\Controllers\Api\PayDunyaWebhookController;
 use App\Http\Controllers\Api\VideoCatalogController;
@@ -62,6 +63,12 @@ Route::middleware(['auth:sanctum', 'account.active'])->group(function () {
 
     Route::get('/favorites', [VideoFavoriteController::class, 'index'])->name('favorites.index');
     Route::get('/purchases', [VideoPurchaseController::class, 'index'])->name('purchases.index');
+
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllRead'])
+        ->name('notifications.read-all');
+    Route::post('/notifications/{notification}/read', [NotificationController::class, 'markRead'])
+        ->name('notifications.read');
 
     Route::prefix('creator')->name('creator.')->group(function () {
         Route::get('/videos', [CreatorVideoController::class, 'index'])->name('videos.index');
