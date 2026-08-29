@@ -1,46 +1,46 @@
 @import "tailwindcss";
 
 /*
- * Palette proposée par l'utilisateur : vert forêt/menthe en couleur de
- * marque (primary/primary-light/dark), orange doré en accent secondaire,
- * fond écru. Redéfinit directement les échelles Tailwind `orange-*`
- * (marque — historiquement orange, tient maintenant le vert de marque) et
- * `accent-*` (secondaire) pour que chaque usage existant dans le code
- * prenne la nouvelle teinte sans devoir toucher chaque fichier. `emerald-*`
- * reste disponible tel quel : il sert aussi à distinguer les catégories
- * dans lib/format.ts, un usage sans lien avec la marque — la coïncidence
- * de nom avec la nouvelle couleur de marque (verte) est sans conséquence,
- * ce sont deux échelles Tailwind distinctes.
+ * Palette inspirée de PayDunya (paydunya.com) : bleu marine profond comme
+ * couleur de marque (logo, boutons, hero sombre) et bleu ciel vif en accent
+ * secondaire (titres de section, liens, badges), sur un fond gris-bleu très
+ * clair — leur identité fintech/corporate plutôt que les tons chauds
+ * essayés précédemment. Redéfinit directement les échelles Tailwind
+ * `orange-*` (marque) et `accent-*` (secondaire) pour que chaque usage
+ * existant dans le code prenne la nouvelle teinte sans devoir toucher
+ * chaque fichier. `emerald-*` reste disponible tel quel : il sert aussi à
+ * distinguer les catégories dans lib/format.ts, un usage sans lien avec la
+ * marque.
  */
 @theme {
-  --color-orange-50: #effaf6;
-  --color-orange-100: #d7f2e9;
-  --color-orange-200: #aee5d2;
-  --color-orange-300: #86d7bc;
-  --color-orange-400: #5dcaa5;
-  --color-orange-500: #369c7e;
-  --color-orange-600: #0f6e56;
-  --color-orange-700: #0c604c;
-  --color-orange-800: #0a5141;
-  --color-orange-900: #074337;
-  --color-orange-950: #04342c;
+  --color-orange-50: #f5f7fb;
+  --color-orange-100: #dbe6f7;
+  --color-orange-200: #b6cff1;
+  --color-orange-300: #8cb4eb;
+  --color-orange-400: #548be4;
+  --color-orange-500: #2f6fe0;
+  --color-orange-600: #0f2d52;
+  --color-orange-700: #0a1b33;
+  --color-orange-800: #08162b;
+  --color-orange-900: #071223;
+  --color-orange-950: #050d1a;
 
-  --color-accent-50: #fef7ee;
-  --color-accent-100: #fceed8;
-  --color-accent-200: #f9ddb3;
-  --color-accent-300: #f6ca88;
-  --color-accent-400: #f3b75d;
-  --color-accent-500: #f1ab42;
-  --color-accent-600: #ef9f27;
-  --color-accent-700: #c28120;
-  --color-accent-800: #966419;
-  --color-accent-900: #694611;
-  --color-accent-950: #3c280a;
+  --color-accent-50: #f0f9ff;
+  --color-accent-100: #e0f2fe;
+  --color-accent-200: #bae6fd;
+  --color-accent-300: #7dd3fc;
+  --color-accent-400: #38bdf8;
+  --color-accent-500: #0ea5e9;
+  --color-accent-600: #0284c7;
+  --color-accent-700: #0369a1;
+  --color-accent-800: #075985;
+  --color-accent-900: #0c4a6e;
+  --color-accent-950: #082f49;
 }
 
 :root {
-  --background: #f1efe8;
-  --foreground: #04342c;
+  --background: #f4f7fb;
+  --foreground: #0a1b33;
 }
 
 @theme inline {
@@ -52,8 +52,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a211c;
-    --foreground: #ecf6f1;
+    --background: #081428;
+    --foreground: #eaf2fc;
   }
 }
 
@@ -64,12 +64,13 @@ body {
 }
 
 @layer components {
+  /* Pilule entièrement arrondie, comme les CTA de paydunya.com. */
   .btn-primary {
-    @apply inline-flex items-center justify-center rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-orange-500 hover:shadow-md active:scale-[0.97] active:bg-orange-700 disabled:opacity-60 disabled:hover:bg-orange-600 disabled:hover:shadow-sm disabled:active:scale-100 dark:bg-orange-500 dark:hover:bg-orange-400 dark:active:bg-orange-600;
+    @apply inline-flex items-center justify-center rounded-full bg-orange-600 px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-orange-500 hover:shadow-md active:scale-[0.97] active:bg-orange-700 disabled:opacity-60 disabled:hover:bg-orange-600 disabled:hover:shadow-sm disabled:active:scale-100 dark:bg-orange-500 dark:hover:bg-orange-400 dark:active:bg-orange-600;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center rounded-lg border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-900 transition hover:border-orange-300 hover:bg-orange-50 active:scale-[0.97] active:bg-orange-100 disabled:opacity-60 disabled:active:scale-100 dark:border-neutral-700 dark:bg-neutral-950 dark:text-neutral-50 dark:hover:border-orange-800 dark:hover:bg-neutral-900 dark:active:bg-neutral-800;
+    @apply inline-flex items-center justify-center rounded-full border border-neutral-300 bg-white px-5 py-2 text-sm font-medium text-neutral-900 transition hover:border-orange-300 hover:bg-orange-50 active:scale-[0.97] active:bg-orange-100 disabled:opacity-60 disabled:active:scale-100 dark:border-neutral-700 dark:bg-neutral-950 dark:text-neutral-50 dark:hover:border-orange-800 dark:hover:bg-neutral-900 dark:active:bg-neutral-800;
   }
 
   .input-field {

@@ -1,30 +1,30 @@
 import 'package:flutter/material.dart';
 
 /// Mirrors the web app's design tokens (apps/web/src/app/globals.css) so
-/// both platforms read as the same product. User-supplied palette: forest/
-/// mint green as the brand tone (primary/primary-light/dark), golden orange
-/// as the secondary accent, on an écru background. `orange*` fields keep
-/// their names from the previous palette to avoid touching every consuming
-/// widget — they now hold green values.
+/// both platforms read as the same product. Palette inspired by paydunya.com:
+/// deep navy blue as the brand tone (logo, buttons, dark hero), sky blue as
+/// the secondary accent, on a very light blue-grey background. `orange*`
+/// fields keep their names from the previous palette to avoid touching every
+/// consuming widget — they now hold navy blue values.
 abstract final class AppColors {
-  static const orange700 = Color(0xFF0C604C);
-  static const orange600 = Color(0xFF0F6E56); // primary
-  static const orange500 = Color(0xFF369C7E);
-  static const orange400 = Color(0xFF5DCAA5); // primary-light
-  static const orange300 = Color(0xFF86D7BC);
-  static const orange100 = Color(0xFFD7F2E9);
-  static const orange50 = Color(0xFFEFFAF6);
-  static const accent600 = Color(0xFFEF9F27); // accent
-  static const dark = Color(0xFF04342C); // dark
-  static const background = Color(0xFFF1EFE8);
+  static const orange700 = Color(0xFF0A1B33);
+  static const orange600 = Color(0xFF0F2D52); // primary
+  static const orange500 = Color(0xFF2F6FE0);
+  static const orange400 = Color(0xFF548BE4);
+  static const orange300 = Color(0xFF8CB4EB);
+  static const orange100 = Color(0xFFDBE6F7);
+  static const orange50 = Color(0xFFF5F7FB);
+  static const accent600 = Color(0xFF0EA5E9); // accent
+  static const dark = Color(0xFF0A1B33); // dark
+  static const background = Color(0xFFF4F7FB);
   static const neutral900 = Color(0xFF171717);
   static const neutral300 = Color(0xFFD4D4D4);
 
   // Dark mode — mirrors apps/web/src/app/globals.css's
   // `@media (prefers-color-scheme: dark)` block and its neutral-800/900/950
   // border/surface pairing used throughout web's dark: classes.
-  static const darkBackground = Color(0xFF0A211C);
-  static const darkForeground = Color(0xFFECF6F1);
+  static const darkBackground = Color(0xFF081428);
+  static const darkForeground = Color(0xFFEAF2FC);
   static const darkSurface = Color(0xFF0A0A0A);
   static const darkInputSurface = Color(0xFF171717);
   static const darkBorder = Color(0xFF262626);
@@ -92,7 +92,7 @@ class AppTheme {
           backgroundColor: AppColors.orange600,
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 14),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
           textStyle: const TextStyle(fontWeight: FontWeight.w600),
         ),
       ),
@@ -102,7 +102,7 @@ class AppTheme {
           foregroundColor: Colors.white,
           elevation: 0,
           padding: const EdgeInsets.symmetric(vertical: 14),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
           textStyle: const TextStyle(fontWeight: FontWeight.w600),
         ),
       ),
@@ -111,7 +111,7 @@ class AppTheme {
           foregroundColor: AppColors.orange600,
           side: const BorderSide(color: AppColors.orange600),
           padding: const EdgeInsets.symmetric(vertical: 14),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
         ),
       ),
       textButtonTheme: TextButtonThemeData(
@@ -182,7 +182,7 @@ class AppTheme {
           backgroundColor: AppColors.orange500,
           foregroundColor: Colors.black,
           padding: const EdgeInsets.symmetric(vertical: 14),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
           textStyle: const TextStyle(fontWeight: FontWeight.w600),
         ),
       ),
@@ -192,7 +192,7 @@ class AppTheme {
           foregroundColor: Colors.black,
           elevation: 0,
           padding: const EdgeInsets.symmetric(vertical: 14),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
           textStyle: const TextStyle(fontWeight: FontWeight.w600),
         ),
       ),
@@ -201,14 +201,14 @@ class AppTheme {
           foregroundColor: AppColors.orange400,
           side: const BorderSide(color: AppColors.orange400),
           padding: const EdgeInsets.symmetric(vertical: 14),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
         ),
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(foregroundColor: AppColors.orange400),
       ),
       chipTheme: ChipThemeData(
-        backgroundColor: const Color(0xFF431407),
+        backgroundColor: AppColors.orange700,
         labelStyle: const TextStyle(color: AppColors.orange300, fontWeight: FontWeight.w600),
         side: BorderSide.none,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
