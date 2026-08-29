@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FavoriteButton } from "@/components/FavoriteButton";
@@ -5,10 +6,39 @@ import { PurchaseButton } from "@/components/PurchaseButton";
 import { RecordView } from "@/components/RecordView";
 import { ReportButton } from "@/components/ReportButton";
 import { Reviews } from "@/components/Reviews";
+import { ShareButton } from "@/components/ShareButton";
 import { VideoCard } from "@/components/VideoCard";
 import { VideoPlayer } from "@/components/VideoPlayer";
 import { fetchVideo, fetchVideos } from "@/lib/api";
 import { categoryStyle, formatDuration, formatPrice } from "@/lib/format";
+
+export async function generateMetadata(props: PageProps<"/videos/[id]">): Promise<Metadata> {
+  const { id } = await props.params;
+  const video = await fetchVideo(id);
+
+  if (!video) return {};
+
+  const description =
+    video.description ?? `${video.category.label} de ${video.creator.name}, ${formatPrice(video.price)} sur StreamMali.`;
+
+  return {
+    title: `${video.title} — StreamMali`,
+    description,
+    openGraph: {
+      title: video.title,
+      description,
+      url: `/videos/${video.id}`,
+      images: video.poster_path ? [{ url: video.poster_path }] : undefined,
+      type: "video.other",
+    },
+    twitter: {
+      card: video.poster_path ? "summary_large_image" : "summary",
+      title: video.title,
+      description,
+      images: video.poster_path ? [video.poster_path] : undefined,
+    },
+  };
+}
 
 export default async function VideoDetailPage(props: PageProps<"/videos/[id]">) {
   const { id } = await props.params;
@@ -90,6 +120,7 @@ export default async function VideoDetailPage(props: PageProps<"/videos/[id]">) 
             </span>
             <PurchaseButton videoId={video.id} />
             <FavoriteButton videoId={video.id} initialFavorited={Boolean(video.favorited)} />
+            <ShareButton title={video.title} />
           </div>
           <div className="mt-3 border-t border-neutral-100 pt-3 dark:border-neutral-900">
             <ReportButton videoId={video.id} />
