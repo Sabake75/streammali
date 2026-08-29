@@ -8,6 +8,7 @@ import '../theme.dart';
 import '../widgets/app_logo.dart';
 import '../widgets/hero_banner.dart';
 import '../widgets/notification_bell.dart';
+import '../widgets/onboarding_dialog.dart';
 import '../widgets/video_card.dart';
 import 'creator_screen.dart';
 import 'library_screen.dart';
@@ -46,6 +47,9 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
     }).catchError((_) {});
     AuthController.instance.addListener(_maybeLoadRecommended);
     _maybeLoadRecommended();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) showOnboardingIfNeeded(context);
+    });
   }
 
   @override

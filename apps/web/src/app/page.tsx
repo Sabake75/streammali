@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { fetchCategories, fetchFeaturedVideos, fetchVideos } from "@/lib/api";
 import { CatalogueFilters } from "@/components/CatalogueFilters";
+import { OnboardingModal } from "@/components/OnboardingModal";
 import { Pagination } from "@/components/Pagination";
 import { RecommendedVideos } from "@/components/RecommendedVideos";
 import { VideoCard } from "@/components/VideoCard";
@@ -19,6 +20,7 @@ export default async function CataloguePage(props: PageProps<"/">) {
 
   return (
     <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
+      <OnboardingModal />
       <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-orange-700 via-orange-600 to-orange-500 px-6 py-12 text-white shadow-lg sm:px-10 sm:py-16">
         <div className="hero-dots pointer-events-none absolute inset-0" />
         <div className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-accent-400/30 blur-3xl" />
