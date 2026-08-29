@@ -1,44 +1,46 @@
 @import "tailwindcss";
 
 /*
- * Palette "ocre & terre cuite" — inspirée des teintures bogolan maliennes
- * (ocre/moutarde + rouille sur fond écru) plutôt que l'orange vif/vert
- * générique utilisé avant. Redéfinit directement les échelles Tailwind
- * `orange-*` (marque) et une échelle `accent-*` (secondaire, remplace
- * l'ancien emerald-*) pour que chaque usage existant de `orange-*` dans le
- * code prenne la nouvelle teinte sans devoir toucher chaque fichier.
- * `emerald-*` reste disponible tel quel : il sert aussi à distinguer les
- * catégories dans lib/format.ts, un usage sans lien avec la marque.
+ * Palette proposée par l'utilisateur : vert forêt/menthe en couleur de
+ * marque (primary/primary-light/dark), orange doré en accent secondaire,
+ * fond écru. Redéfinit directement les échelles Tailwind `orange-*`
+ * (marque — historiquement orange, tient maintenant le vert de marque) et
+ * `accent-*` (secondaire) pour que chaque usage existant dans le code
+ * prenne la nouvelle teinte sans devoir toucher chaque fichier. `emerald-*`
+ * reste disponible tel quel : il sert aussi à distinguer les catégories
+ * dans lib/format.ts, un usage sans lien avec la marque — la coïncidence
+ * de nom avec la nouvelle couleur de marque (verte) est sans conséquence,
+ * ce sont deux échelles Tailwind distinctes.
  */
 @theme {
-  --color-orange-50: #fdf6ec;
-  --color-orange-100: #f9e8ce;
-  --color-orange-200: #f1ce9b;
-  --color-orange-300: #e6af66;
-  --color-orange-400: #d8933f;
-  --color-orange-500: #c67b24;
-  --color-orange-600: #b45309;
-  --color-orange-700: #954409;
-  --color-orange-800: #74350d;
-  --color-orange-900: #5c2b10;
-  --color-orange-950: #331708;
+  --color-orange-50: #effaf6;
+  --color-orange-100: #d7f2e9;
+  --color-orange-200: #aee5d2;
+  --color-orange-300: #86d7bc;
+  --color-orange-400: #5dcaa5;
+  --color-orange-500: #369c7e;
+  --color-orange-600: #0f6e56;
+  --color-orange-700: #0c604c;
+  --color-orange-800: #0a5141;
+  --color-orange-900: #074337;
+  --color-orange-950: #04342c;
 
-  --color-accent-50: #fbeee7;
-  --color-accent-100: #f3d6c4;
-  --color-accent-200: #e5b190;
-  --color-accent-300: #d48a5f;
-  --color-accent-400: #bc6738;
-  --color-accent-500: #a24c22;
-  --color-accent-600: #7c2d12;
-  --color-accent-700: #642508;
-  --color-accent-800: #4d1c08;
-  --color-accent-900: #3a1608;
-  --color-accent-950: #200b03;
+  --color-accent-50: #fef7ee;
+  --color-accent-100: #fceed8;
+  --color-accent-200: #f9ddb3;
+  --color-accent-300: #f6ca88;
+  --color-accent-400: #f3b75d;
+  --color-accent-500: #f1ab42;
+  --color-accent-600: #ef9f27;
+  --color-accent-700: #c28120;
+  --color-accent-800: #966419;
+  --color-accent-900: #694611;
+  --color-accent-950: #3c280a;
 }
 
 :root {
-  --background: #fbf3e7;
-  --foreground: #292118;
+  --background: #f1efe8;
+  --foreground: #04342c;
   --bogolan-orange: var(--color-orange-600);
   --bogolan-accent: var(--color-accent-600);
 }
@@ -52,8 +54,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #17110a;
-    --foreground: #f2e6d3;
+    --background: #0a211c;
+    --foreground: #ecf6f1;
   }
 }
 

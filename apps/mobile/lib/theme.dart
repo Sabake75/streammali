@@ -1,28 +1,30 @@
 import 'package:flutter/material.dart';
 
 /// Mirrors the web app's design tokens (apps/web/src/app/globals.css) so
-/// both platforms read as the same product. Palette "ocre & terre cuite" —
-/// ocre/moutarde as the brand tone, rouille/terre cuite as the secondary
-/// accent, on an écru background — closer to real bogolan mud-cloth dye
-/// tones than the earlier generic orange/emerald pairing.
+/// both platforms read as the same product. User-supplied palette: forest/
+/// mint green as the brand tone (primary/primary-light/dark), golden orange
+/// as the secondary accent, on an écru background. `orange*` fields keep
+/// their names from the previous palette to avoid touching every consuming
+/// widget — they now hold green values.
 abstract final class AppColors {
-  static const orange700 = Color(0xFF954409);
-  static const orange600 = Color(0xFFB45309);
-  static const orange500 = Color(0xFFC67B24);
-  static const orange400 = Color(0xFFD8933F);
-  static const orange300 = Color(0xFFE6AF66);
-  static const orange100 = Color(0xFFF9E8CE);
-  static const orange50 = Color(0xFFFDF6EC);
-  static const accent600 = Color(0xFF7C2D12);
-  static const background = Color(0xFFFBF3E7);
+  static const orange700 = Color(0xFF0C604C);
+  static const orange600 = Color(0xFF0F6E56); // primary
+  static const orange500 = Color(0xFF369C7E);
+  static const orange400 = Color(0xFF5DCAA5); // primary-light
+  static const orange300 = Color(0xFF86D7BC);
+  static const orange100 = Color(0xFFD7F2E9);
+  static const orange50 = Color(0xFFEFFAF6);
+  static const accent600 = Color(0xFFEF9F27); // accent
+  static const dark = Color(0xFF04342C); // dark
+  static const background = Color(0xFFF1EFE8);
   static const neutral900 = Color(0xFF171717);
   static const neutral300 = Color(0xFFD4D4D4);
 
   // Dark mode — mirrors apps/web/src/app/globals.css's
   // `@media (prefers-color-scheme: dark)` block and its neutral-800/900/950
   // border/surface pairing used throughout web's dark: classes.
-  static const darkBackground = Color(0xFF17110A);
-  static const darkForeground = Color(0xFFF2E6D3);
+  static const darkBackground = Color(0xFF0A211C);
+  static const darkForeground = Color(0xFFECF6F1);
   static const darkSurface = Color(0xFF0A0A0A);
   static const darkInputSurface = Color(0xFF171717);
   static const darkBorder = Color(0xFF262626);

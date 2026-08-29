@@ -39,7 +39,7 @@ class TermsCheckbox extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final uncheckedColor = Theme.of(context).inputDecorationTheme.fillColor ?? Theme.of(context).colorScheme.surface;
     final uncheckedBorder = isDark ? AppColors.darkInputBorder : AppColors.neutral300;
-    final checkedColor = isDark ? const Color(0xFF431407) : AppColors.orange50;
+    final checkedColor = isDark ? AppColors.dark : AppColors.orange50;
     final checkedBorder = isDark ? AppColors.orange700 : AppColors.orange100;
 
     return Container(
