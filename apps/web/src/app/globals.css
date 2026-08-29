@@ -41,8 +41,6 @@
 :root {
   --background: #f1efe8;
   --foreground: #04342c;
-  --bogolan-orange: var(--color-orange-600);
-  --bogolan-accent: var(--color-accent-600);
 }
 
 @theme inline {
