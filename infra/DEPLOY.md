@@ -17,7 +17,7 @@ Ces valeurs vont dans `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_BUCKET`
 ## 2. Render (API + PostgreSQL)
 
 1. Dashboard Render → New → Blueprint → connecter le repo GitHub `Sabake75/streammali`. Render détecte `render.yaml` à la racine.
-2. Confirmer le plan "Starter" pour la base PostgreSQL (payant, ~7$/mois — décision déjà actée, évite l'expiration à 90 jours du plan gratuit).
+2. Confirmer le plan `basic-256mb` pour la base PostgreSQL — Render a renommé/retiré l'ancien plan "Starter" pour les nouvelles instances, `basic-256mb` (payant, ~7$/mois) est désormais le plus petit disponible ; décision déjà actée d'éviter le plan gratuit (expiration à 90 jours).
 3. Une fois les services créés, remplir dans le dashboard Render (Environment) toutes les variables marquées `sync: false` dans `render.yaml` :
    - `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_BUCKET`, `AWS_ENDPOINT` (étape 1, R2).
    - `ORANGE_MONEY_CLIENT_ID`, `ORANGE_MONEY_CLIENT_SECRET`, `ORANGE_MONEY_MERCHANT_KEY`, `ORANGE_MONEY_RETURN_URL`, `ORANGE_MONEY_CANCEL_URL`, `ORANGE_MONEY_NOTIF_URL` — vides tant que le compte marchand Orange Developer Center n'existe pas (Phase 7 de la feuille de route).
