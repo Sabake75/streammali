@@ -4,8 +4,10 @@ namespace Tests\Feature;
 
 use App\Domain\Moderation\Enums\AccountStatus;
 use App\Enums\UserRole;
+use App\Filament\Resources\Users\Pages\ListUsers;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class ModerationAccountManagementTest extends TestCase
@@ -69,5 +71,55 @@ class ModerationAccountManagementTest extends TestCase
         $this->withHeader('Authorization', "Bearer {$token}")
             ->getJson('/api/user')
             ->assertOk();
+    }
+
+    public function test_moderator_can_reset_a_forgotten_pin(): void
+    {
+        $moderator = User::factory()->create(['role' => UserRole::Moderator]);
+        $viewer = User::factory()->create([
+            'role' => UserRole::Viewer,
+            'phone' => '+223 76 00 00 00',
+            'password' => '1234',
+        ]);
+
+        Livewire::actingAs($moderator)
+            ->test(ListUsers::class)
+            ->mountTableAction('reset_pin', $viewer)
+            ->setTableActionData(['new_pin' => '5678'])
+            ->callMountedTableAction();
+
+        $this->postJson('/api/login', [
+            'phone' => '+223 76 00 00 00',
+            'password' => '1234',
+        ])->assertStatus(422);
+
+        $this->postJson('/api/login', [
+            'phone' => '+223 76 00 00 00',
+            'password' => '5678',
+        ])->assertOk();
+    }
+
+    public function test_resetting_a_pin_revokes_the_accounts_existing_tokens(): void
+    {
+        $moderator = User::factory()->create(['role' => UserRole::Moderator]);
+        $viewer = User::factory()->create(['role' => UserRole::Viewer]);
+        $viewer->createToken('api');
+
+        $this->assertSame(1, $viewer->tokens()->count());
+
+        // Checked against DB state directly rather than round-tripping a
+        // revoked token through an actual HTTP request: Livewire::actingAs()
+        // leaves the web guard's session authenticated for the rest of the
+        // test, which — depending on Sanctum's stateful-domain fallback —
+        // can make a later `getJson()` call resolve the moderator's session
+        // instead of cleanly rejecting the dead token, a test-harness
+        // artifact rather than a real security gap.
+        Livewire::actingAs($moderator)
+            ->test(ListUsers::class)
+            ->mountTableAction('reset_pin', $viewer)
+            ->setTableActionData(['new_pin' => '5678'])
+            ->callMountedTableAction();
+
+        $this->assertSame(0, $viewer->fresh()->tokens()->count());
     }
 }

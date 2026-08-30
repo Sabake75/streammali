@@ -13,6 +13,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -137,6 +138,28 @@ class UsersTable
                     ])
                     ->modalSubmitActionLabel('Envoyer')
                     ->action(fn ($record, array $data) => app(SendMessage::class)($record, auth()->user(), $data['reply'])),
+                Action::make('reset_pin')
+                    ->label('Réinitialiser le code')
+                    ->icon('heroicon-o-key')
+                    ->color('gray')
+                    ->visible(fn ($record) => $record->role !== UserRole::Moderator)
+                    // Aucune récupération en libre-service n'existe encore
+                    // (pas d'envoi de SMS) — c'est le seul chemin pour
+                    // débloquer un compte dont le code à 4 chiffres est
+                    // oublié. Révoque les jetons existants : si le compte a
+                    // été compromis plutôt que simplement oublié, une
+                    // session déjà ouverte ne doit pas survivre au reset.
+                    ->requiresConfirmation()
+                    ->schema([
+                        TextInput::make('new_pin')
+                            ->label('Nouveau code (4 chiffres)')
+                            ->required()
+                            ->rule('digits:4'),
+                    ])
+                    ->action(function ($record, array $data) {
+                        $record->update(['password' => $data['new_pin']]);
+                        $record->tokens()->delete();
+                    }),
                 Action::make('verify_identity')
                     ->label(fn ($record) => $record->identity_verified_at ? "Annuler la vérification" : "Vérifier l'identité")
                     ->icon('heroicon-o-identification')
