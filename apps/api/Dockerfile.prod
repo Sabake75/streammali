@@ -24,7 +24,9 @@ COPY docker/entrypoint.prod.sh /usr/local/bin/entrypoint.prod.sh
 RUN chmod +x /usr/local/bin/entrypoint.prod.sh \
     && chown -R www-data:www-data storage bootstrap/cache
 
+# Documentation only — the actual bind port is decided at runtime by
+# entrypoint.prod.sh (Render provides $PORT, not necessarily 80).
 EXPOSE 80
 
 ENTRYPOINT ["entrypoint.prod.sh"]
-CMD ["frankenphp", "php-server", "--root", "public/", "--listen", ":80"]
+CMD ["frankenphp", "php-server", "--root", "public/"]

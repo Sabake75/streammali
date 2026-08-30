@@ -4,6 +4,10 @@ Ce document couvre le déploiement en production/staging — pour le dev local, 
 
 Contrairement au Dockerfile de dev, `apps/api/Dockerfile.prod` a été vérifié en local (build + connexion Postgres réelle + Filament) — voir historique de conversation. `render.yaml`, en revanche, n'a **jamais été testé contre un vrai compte Render** (même limite que les passerelles Orange Money/Cloudflare Stream) : la structure suit la doc Render documentée, mais peut nécessiter de petits ajustements au premier déploiement.
 
+Deux pièges déjà rencontrés lors du premier vrai déploiement Render (2026-08-30) :
+- Le plan `starter` pour la base PostgreSQL n'existe plus pour les nouvelles instances (renommé `basic-256mb`, même tarif ~7$/mois) — déjà corrigé dans `render.yaml`.
+- `frankenphp: Operation not permitted` au démarrage : le `CMD` du Dockerfile écoutait en dur sur `:80`, un port privilégié que le runtime sandboxé de Render refuse de laisser bind (root ou non). Render fournit son propre `$PORT` au runtime (10000 par défaut) et route le trafic vers celui-ci, pas vers 80. Corrigé en laissant `docker/entrypoint.prod.sh` (un script shell, donc `$PORT` s'y expanse correctement — impossible dans le `CMD` en forme exec du Dockerfile) ajouter `--listen ":${PORT:-80}"` à la commande, avec repli sur `:80` hors Render. Vérifié en local (`docker build` + `docker run -e PORT=10000 ...` → `/up` répond 200, log `"Caddy serving PHP app on :10000"`).
+
 ## 1. Cloudflare R2 (stockage des pièces d'identité)
 
 Les pièces d'identité des créateurs ne peuvent pas rester sur le disque du conteneur Render (éphémère, effacé à chaque déploiement — voir `apps/api/app/Domain/Creator/Actions/RegisterCreator.php`).
