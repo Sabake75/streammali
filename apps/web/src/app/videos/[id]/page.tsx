@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FavoriteButton } from "@/components/FavoriteButton";
@@ -73,11 +74,13 @@ export default async function VideoDetailPage(props: PageProps<"/videos/[id]">) 
         ) : canWatchPreview ? (
           <VideoPlayer src={video.preview_playback_url!} poster={video.poster_path} />
         ) : video.poster_path ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={video.poster_path}
             alt={video.title}
-            className="h-full w-full object-cover"
+            fill
+            sizes="(min-width: 1024px) 896px, 100vw"
+            priority
+            className="object-cover"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { categoryStyle, formatDuration, formatPrice } from "@/lib/format";
 import type { VideoSummary } from "@/lib/types";
@@ -14,11 +15,12 @@ export function VideoCard({ video }: { video: VideoSummary }) {
         className={`relative flex aspect-video items-center justify-center overflow-hidden bg-gradient-to-br ${style.tint}`}
       >
         {video.poster_path ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={video.poster_path}
             alt={video.title}
-            className="h-full w-full object-cover"
+            fill
+            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            className="object-cover"
           />
         ) : (
           <>

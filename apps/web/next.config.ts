@@ -43,6 +43,15 @@ const contentSecurityPolicy = [
 ].join("; ");
 
 const nextConfig: NextConfig = {
+  images: {
+    // Poster thumbnails come from Cloudflare Stream at a per-customer
+    // subdomain (see playback_url in the API response) — next/image
+    // refuses to optimize a remote host unless it's explicitly listed.
+    remotePatterns: [
+      { protocol: "https", hostname: "*.cloudflarestream.com" },
+      { protocol: "https", hostname: "cloudflarestream.com" },
+    ],
+  },
   async headers() {
     return [
       {
