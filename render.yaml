@@ -20,8 +20,18 @@ services:
         value: production
       - key: APP_DEBUG
         value: false
+      # generateValue: true produced a string Laravel's Encrypter rejected
+      # ("Unsupported cipher or incorrect key length") — Render's generic
+      # secret generator isn't aware of Laravel's expected format
+      # (base64: prefix + a 32-byte key for AES-256-CBC). Only broke
+      # anything that actually touches the encrypter (session/cookie
+      # encryption — Filament's /moderation login) since Sanctum's
+      # stateless API auth never needed it; that's why the rest of the
+      # API worked fine. Set manually: run `php artisan key:generate
+      # --show` (in this service's own Shell, so the key is never typed
+      # anywhere else) and paste the base64:... value here.
       - key: APP_KEY
-        generateValue: true
+        sync: false
       # Unknown until the first deploy assigns a *.onrender.com hostname —
       # set manually in the dashboard afterwards, then redeploy.
       - key: APP_URL
