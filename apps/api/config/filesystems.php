@@ -30,11 +30,21 @@ return [
 
     'disks' => [
 
+        // 'throw' => true on both disks actually written to by the app
+        // (identity documents, RegisterCreator/UpgradeToCreator): a
+        // failed Storage::put()/UploadedFile::store() call returns false
+        // by default instead of throwing, and neither action checks that
+        // return value — a storage failure (e.g. wrong R2 credentials)
+        // was silently saving identity_document_path as "0" (the string
+        // cast of false) while still returning 200/201, upgrading the
+        // account with no document actually stored anywhere. Confirmed
+        // in a real container with deliberately-wrong R2 credentials
+        // before this fix — 200 response, "0" in the database column.
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app/private'),
             'serve' => true,
-            'throw' => false,
+            'throw' => true,
             'report' => false,
         ],
 
@@ -56,7 +66,7 @@ return [
             'url' => env('AWS_URL'),
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
-            'throw' => false,
+            'throw' => true,
             'report' => false,
         ],
 

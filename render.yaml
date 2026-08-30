@@ -32,8 +32,13 @@ services:
         value: fr
       - key: BCRYPT_ROUNDS
         value: "12"
+      # "stack" defaults to the "single" channel (storage/logs/laravel.log,
+      # a file inside the ephemeral container) — invisible in Render's own
+      # Logs tab, which only captures stdout/stderr. stderr puts Laravel's
+      # own exceptions right alongside FrankenPHP's JSON logs Render
+      # already shows.
       - key: LOG_CHANNEL
-        value: stack
+        value: stderr
       - key: LOG_LEVEL
         value: warning
       - key: DB_CONNECTION

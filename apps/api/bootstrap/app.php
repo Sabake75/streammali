@@ -8,6 +8,7 @@ use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\Exceptions\PostTooLargeException;
 use Illuminate\Http\Request;
+use League\Flysystem\UnableToWriteFile;
 use Sentry\Laravel\Integration;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -51,6 +52,22 @@ return Application::configure(basePath: dirname(__DIR__))
                 return response()->json([
                     'message' => 'Le fichier envoyé est trop volumineux.',
                 ], 413);
+            }
+        });
+
+        // Same idea as the gateway errors above, for file storage
+        // (identity documents on R2). Requires 'throw' => true on the
+        // filesystem disks (config/filesystems.php) — off by default in
+        // Laravel, which silently returns false instead of throwing on a
+        // failed write. Confirmed in a real container with deliberately
+        // wrong R2 credentials: without 'throw' => true, this never fires
+        // at all — the request returns 200 with identity_document_path
+        // saved as "0" (the string cast of false).
+        $exceptions->render(function (UnableToWriteFile $e, Request $request) {
+            if ($request->is('api/*') || $request->expectsJson()) {
+                return response()->json([
+                    'message' => 'Le stockage est momentanément indisponible. Réessaie dans quelques instants.',
+                ], 502);
             }
         });
     })->create();
