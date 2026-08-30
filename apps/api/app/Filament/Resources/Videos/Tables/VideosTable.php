@@ -26,6 +26,15 @@ class VideosTable
     public static function configure(Table $table): Table
     {
         return $table
+            // Filament's default: clicking anywhere in a row that isn't
+            // itself an interactive control (a cell with no ->action()/
+            // ->url()) opens the record's edit page. Same class of
+            // surprise as the "En vedette" icon before its own ->action()
+            // — a moderator clicking "Statut" or "Signalements" expecting
+            // something related got dropped into the edit form instead.
+            // The explicit "Modifier" action in the "..." menu still
+            // opens it for anyone who actually wants to edit.
+            ->recordUrl(null)
             ->columns([
                 TextColumn::make('title')
                     ->label('Titre')
