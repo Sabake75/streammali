@@ -23,8 +23,12 @@ use App\Http\Controllers\Api\VideoReviewController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/register', [RegisterController::class, 'store'])->name('register');
-Route::post('/register/creator', [RegisterCreatorController::class, 'store'])->name('register.creator');
+Route::post('/register', [RegisterController::class, 'store'])
+    ->middleware('throttle:register')
+    ->name('register');
+Route::post('/register/creator', [RegisterCreatorController::class, 'store'])
+    ->middleware('throttle:register')
+    ->name('register.creator');
 Route::post('/login', [LoginController::class, 'store'])->middleware('throttle:login')->name('login');
 
 Route::match(['get', 'post'], '/webhooks/orange-money', OrangeMoneyWebhookController::class)
@@ -53,12 +57,16 @@ Route::middleware(['auth:sanctum', 'account.active'])->group(function () {
     Route::post('/logout', [LogoutController::class, 'store'])->name('logout');
 
     Route::post('/videos/{video}/purchase', [VideoPurchaseController::class, 'store'])
+        ->middleware('throttle:purchase')
         ->name('videos.purchase');
     Route::post('/videos/{video}/report', [VideoReportController::class, 'store'])
+        ->middleware('throttle:write-action')
         ->name('videos.report');
     Route::post('/videos/{video}/reviews', [VideoReviewController::class, 'store'])
+        ->middleware('throttle:write-action')
         ->name('videos.reviews.store');
     Route::post('/videos/{video}/favorite', [VideoFavoriteController::class, 'store'])
+        ->middleware('throttle:write-action')
         ->name('videos.favorite');
 
     Route::get('/favorites', [VideoFavoriteController::class, 'index'])->name('favorites.index');
@@ -78,10 +86,14 @@ Route::middleware(['auth:sanctum', 'account.active'])->group(function () {
 
         Route::get('/balance', [PayoutController::class, 'balance'])->name('balance');
         Route::get('/payouts', [PayoutController::class, 'index'])->name('payouts.index');
-        Route::post('/payouts', [PayoutController::class, 'store'])->name('payouts.store');
+        Route::post('/payouts', [PayoutController::class, 'store'])
+            ->middleware('throttle:write-action')
+            ->name('payouts.store');
 
         Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
-        Route::post('/messages', [MessageController::class, 'store'])->name('messages.store');
+        Route::post('/messages', [MessageController::class, 'store'])
+            ->middleware('throttle:write-action')
+            ->name('messages.store');
 
         Route::get('/stats', [StatsController::class, 'index'])->name('stats');
     });

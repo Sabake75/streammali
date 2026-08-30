@@ -35,5 +35,28 @@ class AppServiceProvider extends ServiceProvider
 
             return Limit::perMinute(5)->by($key);
         });
+
+        // Account creation was completely unthrottled — by IP (no user yet
+        // to key on) rather than phone, since the phone itself is what an
+        // abuser would be varying.
+        RateLimiter::for('register', function (Request $request) {
+            return Limit::perHour(5)->by($request->ip());
+        });
+
+        // Every purchase call hits PayDunya's real API to create an invoice
+        // — generous enough for a legitimate binge-buying session, tight
+        // enough to make hammering the payment gateway impractical.
+        RateLimiter::for('purchase', function (Request $request) {
+            return Limit::perMinute(10)->by($request->user()?->id ?: $request->ip());
+        });
+
+        // Shared ceiling for the rest of the authenticated write endpoints
+        // (reviews, reports, favorites, messages, payout requests) — none of
+        // these were throttled at all before. Generous enough that no real
+        // user ever notices it, tight enough that a compromised or scripted
+        // client can't hammer the API.
+        RateLimiter::for('write-action', function (Request $request) {
+            return Limit::perMinute(20)->by($request->user()?->id ?: $request->ip());
+        });
     }
 }
