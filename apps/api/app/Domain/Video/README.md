@@ -22,6 +22,10 @@ Endpoints créateur : `POST /api/creator/videos/{id}/source` (démarre l'upload)
 
 Une vidéo ne peut être **validée** par un modérateur que si `source_status = ready` (bouton désactivé sinon dans `/moderation/videos`) — inutile de valider une vidéo sans fichier exploitable.
 
+Le modérateur peut visionner la vidéo complète (pas juste l'aperçu 45s) avant de décider : action "Visionner" (`VideosTable::playerEmbedUrl()`, iframe Cloudflare Stream sur `playback_url`, pas `preview_playback_url`) — en bouton direct sur la ligne plutôt que dans le sous-menu "Actions", puisque c'est le premier geste attendu avant toute décision de modération, pas une action secondaire.
+
+Pas de suppression de vidéo côté modération (ni `DeleteBulkAction` sur la liste, ni `DeleteAction` sur la page d'édition — retirés délibérément) : l'outil de dépublication d'un modérateur est "Refuser" (`status = rejected`), qui ne touche à rien d'autre. Un vrai `DELETE` sur `videos` cascaderait sur `payments.video_id` (`cascadeOnDelete` dans la migration) et détruirait définitivement les paiements/achats réels associés — jamais un effet de bord qu'une action de modération devrait produire.
+
 L'URL de lecture (`playback_url`) n'est exposée dans `GET /api/videos/{id}` qu'aux viewers ayant acheté la vidéo **et** dont le fichier est prêt — c'est le "déverrouillage immédiat" du cahier des charges. `preview_playback_url`, lui, est toujours exposé (même aux invités) une fois l'aperçu créé — c'est un clip court à part, pas l'asset complet.
 
 Premier lecteur vidéo de l'app (web + mobile), construit avec l'aperçu gratuit puisqu'il fallait de toute façon en créer un — corrige au passage l'absence de lecture pour les vidéos déjà achetées. Web : `<video>` natif + `hls.js` (Safari lit le HLS nativement, les autres navigateurs non). Mobile : `video_player` + `chewie`. Ni l'un ni l'autre en autoplay — bouton play natif du lecteur = tap-to-play, cohérent avec la contrainte "faible consommation de données" du cahier des charges.

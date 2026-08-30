@@ -10,8 +10,6 @@ use App\Domain\Video\Models\Video;
 use App\Notifications\VideoStatusChanged;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Infolists\Components\TextEntry;
@@ -86,7 +84,10 @@ class VideosTable
                     ),
             ])
             ->recordActions([
-                ActionGroup::make([
+                // Hors du menu "Actions" (plutôt qu'à l'intérieur avec le
+                // reste) : c'est le premier geste attendu d'un modérateur
+                // avant de décider quoi que ce soit, pas une action
+                // secondaire à aller chercher dans un sous-menu.
                 Action::make('watch')
                     ->label('Visionner')
                     ->icon('heroicon-o-play-circle')
@@ -99,70 +100,66 @@ class VideosTable
                         View::make('filament.videos.player')
                             ->viewData(['src' => static::playerEmbedUrl($record)]),
                     ]),
-                Action::make('approve')
-                    ->label('Valider')
-                    ->icon('heroicon-o-check-circle')
-                    ->color('success')
-                    ->visible(fn ($record) => $record->status !== VideoStatus::Approved)
-                    // Rien à valider tant qu'il n'y a pas de fichier prêt à visionner.
-                    ->disabled(fn ($record) => $record->source_status !== VideoSourceStatus::Ready)
-                    ->tooltip(fn ($record) => $record->source_status !== VideoSourceStatus::Ready
-                        ? "Le fichier vidéo n'est pas encore prêt."
-                        : null)
-                    ->requiresConfirmation()
-                    ->action(function ($record) {
-                        $record->update([
-                            'status' => VideoStatus::Approved,
-                            'rejection_reason' => null,
-                        ]);
-                        $record->creator->notify(new VideoStatusChanged($record));
-                    }),
-                Action::make('reject')
-                    ->label('Refuser')
-                    ->icon('heroicon-o-x-circle')
-                    ->color('danger')
-                    ->visible(fn ($record) => $record->status !== VideoStatus::Rejected)
-                    ->schema([
-                        Textarea::make('rejection_reason')
-                            ->label('Motif du refus')
-                            ->required(),
-                    ])
-                    ->action(function ($record, array $data) {
-                        $record->update([
-                            'status' => VideoStatus::Rejected,
-                            'rejection_reason' => $data['rejection_reason'],
-                        ]);
-                        $record->creator->notify(new VideoStatusChanged($record));
-                    }),
-                Action::make('toggle_featured')
-                    ->label(fn ($record) => $record->featured_at ? 'Retirer de la mise en avant' : 'Mettre en avant')
-                    ->icon('heroicon-o-star')
-                    ->color('gray')
-                    ->visible(fn ($record) => $record->status === VideoStatus::Approved)
-                    ->action(fn ($record) => $record->update([
-                        'featured_at' => $record->featured_at ? null : now(),
-                    ])),
-                Action::make('reports')
-                    ->label('Signalements')
-                    ->icon('heroicon-o-flag')
-                    ->color('danger')
-                    ->visible(fn ($record) => static::pendingReportsCount($record) > 0)
-                    ->schema(fn ($record) => [
-                        TextEntry::make('reports_list')
-                            ->hiddenLabel()
-                            ->state(fn () => static::formatReports($record))
-                            ->html(),
-                    ])
-                    ->modalSubmitActionLabel('Marquer traités')
-                    ->action(fn ($record) => $record->reports()
-                        ->where('status', ReportStatus::Pending)
-                        ->update(['status' => ReportStatus::Dismissed])),
-                EditAction::make(),
-                ]),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                ActionGroup::make([
+                    Action::make('approve')
+                        ->label('Valider')
+                        ->icon('heroicon-o-check-circle')
+                        ->color('success')
+                        ->visible(fn ($record) => $record->status !== VideoStatus::Approved)
+                        // Rien à valider tant qu'il n'y a pas de fichier prêt à visionner.
+                        ->disabled(fn ($record) => $record->source_status !== VideoSourceStatus::Ready)
+                        ->tooltip(fn ($record) => $record->source_status !== VideoSourceStatus::Ready
+                            ? "Le fichier vidéo n'est pas encore prêt."
+                            : null)
+                        ->requiresConfirmation()
+                        ->action(function ($record) {
+                            $record->update([
+                                'status' => VideoStatus::Approved,
+                                'rejection_reason' => null,
+                            ]);
+                            $record->creator->notify(new VideoStatusChanged($record));
+                        }),
+                    Action::make('reject')
+                        ->label('Refuser')
+                        ->icon('heroicon-o-x-circle')
+                        ->color('danger')
+                        ->visible(fn ($record) => $record->status !== VideoStatus::Rejected)
+                        ->schema([
+                            Textarea::make('rejection_reason')
+                                ->label('Motif du refus')
+                                ->required(),
+                        ])
+                        ->action(function ($record, array $data) {
+                            $record->update([
+                                'status' => VideoStatus::Rejected,
+                                'rejection_reason' => $data['rejection_reason'],
+                            ]);
+                            $record->creator->notify(new VideoStatusChanged($record));
+                        }),
+                    Action::make('toggle_featured')
+                        ->label(fn ($record) => $record->featured_at ? 'Retirer de la mise en avant' : 'Mettre en avant')
+                        ->icon('heroicon-o-star')
+                        ->color('gray')
+                        ->visible(fn ($record) => $record->status === VideoStatus::Approved)
+                        ->action(fn ($record) => $record->update([
+                            'featured_at' => $record->featured_at ? null : now(),
+                        ])),
+                    Action::make('reports')
+                        ->label('Signalements')
+                        ->icon('heroicon-o-flag')
+                        ->color('danger')
+                        ->visible(fn ($record) => static::pendingReportsCount($record) > 0)
+                        ->schema(fn ($record) => [
+                            TextEntry::make('reports_list')
+                                ->hiddenLabel()
+                                ->state(fn () => static::formatReports($record))
+                                ->html(),
+                        ])
+                        ->modalSubmitActionLabel('Marquer traités')
+                        ->action(fn ($record) => $record->reports()
+                            ->where('status', ReportStatus::Pending)
+                            ->update(['status' => ReportStatus::Dismissed])),
+                    EditAction::make(),
                 ]),
             ]);
     }
