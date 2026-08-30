@@ -64,6 +64,17 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             </span>
             <span>Films, clips et web-séries de créateurs maliens · 100 FCFA la vidéo · Paiement Mobile Money</span>
           </div>
+          <div className="mx-auto flex max-w-6xl flex-wrap gap-x-4 gap-y-1 px-4 pb-8 text-xs text-neutral-400 sm:px-6 lg:px-8 dark:text-neutral-500">
+            <Link href="/politique-de-confidentialite" className="hover:text-orange-600 dark:hover:text-orange-400">
+              Politique de confidentialité
+            </Link>
+            <Link href="/cgu-spectateur" className="hover:text-orange-600 dark:hover:text-orange-400">
+              CGU spectateur
+            </Link>
+            <Link href="/cgu-createur" className="hover:text-orange-600 dark:hover:text-orange-400">
+              CGU créateur
+            </Link>
+          </div>
         </footer>
       </body>
     </html>
