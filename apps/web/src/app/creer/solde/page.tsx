@@ -1,7 +1,10 @@
-"use client";
-
+import type { Metadata } from "next";
 import Link from "next/link";
 import { BalanceAndPayouts } from "@/components/creator/BalanceAndPayouts";
+
+export const metadata: Metadata = {
+  title: "Solde et retraits — StreamMali",
+};
 
 export default function BalancePage() {
   return (

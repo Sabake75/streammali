@@ -66,7 +66,11 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> with WidgetsBindi
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: _lastLoadedVideo != null
+            ? Text(_lastLoadedVideo!.title, overflow: TextOverflow.ellipsis)
+            : null,
+      ),
       body: FutureBuilder<Video?>(
         future: _future,
         builder: (context, snapshot) {

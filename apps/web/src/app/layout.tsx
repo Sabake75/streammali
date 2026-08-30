@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import { AuthStatus } from "@/components/AuthStatus";
+import { NavLink } from "@/components/NavLink";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -43,12 +44,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                   Stream<span className="text-orange-600 dark:text-orange-400">Mali</span>
                 </span>
               </Link>
-              <Link
+              <NavLink
                 href="/creer"
                 className="shrink-0 text-sm font-medium text-neutral-600 transition hover:text-orange-600 dark:text-neutral-400 dark:hover:text-orange-400"
+                activeClassName="text-orange-600 dark:text-orange-400"
               >
                 Espace créateur
-              </Link>
+              </NavLink>
             </div>
             <AuthStatus />
           </div>

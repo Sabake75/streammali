@@ -1,7 +1,10 @@
-"use client";
-
+import type { Metadata } from "next";
 import Link from "next/link";
 import { NewVideoForm } from "@/components/creator/NewVideoForm";
+
+export const metadata: Metadata = {
+  title: "Nouvelle vidéo — StreamMali",
+};
 
 export default function NewVideoPage() {
   return (
@@ -17,7 +20,7 @@ export default function NewVideoPage() {
         Nouvelle vidéo
       </h1>
       <div className="mt-6">
-        <NewVideoForm onCreated={() => {}} />
+        <NewVideoForm />
       </div>
     </main>
   );

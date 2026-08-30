@@ -15,7 +15,7 @@ const POLL_INTERVAL_MS = 5000;
 
 type Phase = "form" | "creating" | "uploading" | "processing" | "ready" | "failed";
 
-export function NewVideoForm({ onCreated }: { onCreated: () => void }) {
+export function NewVideoForm({ onCreated = () => {} }: { onCreated?: () => void }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [categories, setCategories] = useState<VideoCategory[]>([]);

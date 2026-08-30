@@ -64,6 +64,8 @@ Mon compte (`lib/screens/account_screen.dart`, accessible en tapant son nom dans
 
 Accessibilité : les étoiles de notation (`review_section.dart`) n'avaient pas de `tooltip` — seul point réellement muet pour TalkBack/VoiceOver trouvé côté mobile, le reste (`IconButton` de l'AppBar, `Tooltip` par barre sur le graphique de revenus) l'avait déjà.
 
+Titre d'écran manquant sur `video_detail_screen.dart` : `AppBar()` était vide (juste la flèche retour), seul écran de l'app sans titre — corrigé en affichant le titre de la vidéo une fois chargée (équivalent mobile du titre d'onglet par page côté web).
+
 `flutter analyze`, `flutter test` (couvre la validation du formulaire de connexion) et `flutter build web` passent tous sans erreur.
 
 ```

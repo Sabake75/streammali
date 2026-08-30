@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { NavLink } from "@/components/NavLink";
 import { NotificationBell } from "@/components/NotificationBell";
 import { logoutViewer } from "@/lib/api-client";
 import { clearSession } from "@/lib/auth-client";
@@ -21,25 +22,31 @@ export function AuthStatus() {
 
   return (
     <div className="flex items-center gap-3 text-sm">
-      <Link
+      <NavLink
         href="/favoris"
+        exact
         className="shrink-0 font-medium text-neutral-600 hover:text-orange-600 dark:text-neutral-400 dark:hover:text-orange-400"
+        activeClassName="text-orange-600 dark:text-orange-400"
       >
         Favoris
-      </Link>
-      <Link
+      </NavLink>
+      <NavLink
         href="/bibliotheque"
+        exact
         className="shrink-0 font-medium text-neutral-600 hover:text-orange-600 dark:text-neutral-400 dark:hover:text-orange-400"
+        activeClassName="text-orange-600 dark:text-orange-400"
       >
         Mes achats
-      </Link>
+      </NavLink>
       <NotificationBell />
-      <Link
+      <NavLink
         href="/compte"
+        exact
         className="max-w-24 truncate text-neutral-500 hover:text-orange-600 sm:max-w-none dark:text-neutral-400 dark:hover:text-orange-400"
+        activeClassName="text-orange-600 dark:text-orange-400"
       >
         {user.name}
-      </Link>
+      </NavLink>
       <button
         type="button"
         onClick={async () => {

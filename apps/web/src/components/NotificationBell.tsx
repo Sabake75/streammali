@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
+import { NavLink } from "@/components/NavLink";
 import { fetchNotifications } from "@/lib/api-client";
 import { useAuthToken } from "@/lib/use-auth";
 
@@ -35,9 +35,11 @@ export function NotificationBell() {
   if (!token) return null;
 
   return (
-    <Link
+    <NavLink
       href="/notifications"
+      exact
       className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-neutral-600 transition hover:bg-orange-50 hover:text-orange-600 dark:text-neutral-400 dark:hover:bg-neutral-900 dark:hover:text-orange-400"
+      activeClassName="bg-orange-50 text-orange-600 dark:bg-neutral-900 dark:text-orange-400"
       aria-label={unreadCount > 0 ? `Notifications (${unreadCount} non lues)` : "Notifications"}
     >
       <BellIcon />
@@ -46,7 +48,7 @@ export function NotificationBell() {
           {unreadCount > 9 ? "9+" : unreadCount}
         </span>
       )}
-    </Link>
+    </NavLink>
   );
 }
 

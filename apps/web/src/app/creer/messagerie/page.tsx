@@ -1,7 +1,10 @@
-"use client";
-
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Messaging } from "@/components/creator/Messaging";
+
+export const metadata: Metadata = {
+  title: "Messagerie — StreamMali",
+};
 
 export default function MessagingPage() {
   return (

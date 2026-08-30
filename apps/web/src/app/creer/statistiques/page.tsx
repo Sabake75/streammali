@@ -1,7 +1,10 @@
-"use client";
-
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Stats } from "@/components/creator/Stats";
+
+export const metadata: Metadata = {
+  title: "Statistiques — StreamMali",
+};
 
 export default function StatisticsPage() {
   return (
