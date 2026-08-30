@@ -8,9 +8,7 @@ use App\Domain\Video\Models\Video;
 
 class RefreshVideoSourceStatus
 {
-    public function __construct(private readonly VideoStorageGateway $gateway)
-    {
-    }
+    public function __construct(private readonly VideoStorageGateway $gateway) {}
 
     public function __invoke(Video $video): Video
     {
@@ -27,6 +25,11 @@ class RefreshVideoSourceStatus
             // done — don't clobber an already-known duration with null on a
             // refresh that didn't get one back.
             'duration_seconds' => $state->durationSeconds ?? $video->duration_seconds,
+            // Cloudflare's auto-generated thumbnail is only a default —
+            // never overwrite a poster already set (nothing sets one today,
+            // but this keeps room for a creator/moderator override later
+            // without this refresh silently reverting it).
+            'poster_path' => $video->poster_path ?: $state->posterUrl,
         ]);
 
         return $video->fresh();

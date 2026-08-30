@@ -68,6 +68,10 @@ class CloudflareStreamGateway implements VideoStorageGateway
             },
             playbackUrl: $result['playback']['hls'] ?? null,
             durationSeconds: is_numeric($duration) && $duration > 0 ? (int) round($duration) : null,
+            // Cloudflare auto-generates this for every video (a frame
+            // grabbed from partway through, no separate upload needed) —
+            // same response as the rest of this method, no extra call.
+            posterUrl: $result['thumbnail'] ?? null,
         );
     }
 

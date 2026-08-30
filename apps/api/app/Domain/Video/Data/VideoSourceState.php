@@ -10,6 +10,6 @@ final readonly class VideoSourceState
         public VideoSourceStatus $status,
         public ?string $playbackUrl,
         public ?int $durationSeconds = null,
-    ) {
-    }
+        public ?string $posterUrl = null,
+    ) {}
 }
