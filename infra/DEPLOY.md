@@ -1,8 +1,10 @@
-# Déploiement (Render + Vercel)
+# Déploiement (Render)
 
 Ce document couvre le déploiement en production/staging — pour le dev local, voir `infra/README.md`.
 
 Contrairement au Dockerfile de dev, `apps/api/Dockerfile.prod` a été vérifié en local (build + connexion Postgres réelle + Filament) — voir historique de conversation. `render.yaml`, en revanche, n'a **jamais été testé contre un vrai compte Render** (même limite que les passerelles Orange Money/Cloudflare Stream) : la structure suit la doc Render documentée, mais peut nécessiter de petits ajustements au premier déploiement.
+
+Web déployé sur Render aussi (pas Vercel — bloqué sur un 404 persistant sur `/` en production malgré un `app/page.tsx` bien présent et un build local systématiquement correct ; `next start` gère nativement `$PORT`, contrairement à FrankenPHP, donc rien à bricoler côté API).
 
 Pièges déjà rencontrés lors du premier vrai déploiement Render (2026-08-30) :
 - Le plan `starter` pour la base PostgreSQL n'existe plus pour les nouvelles instances (renommé `basic-256mb`, même tarif ~7$/mois) — déjà corrigé dans `render.yaml`.
@@ -19,33 +21,28 @@ Les pièces d'identité des créateurs ne peuvent pas rester sur le disque du co
 
 Ces valeurs vont dans `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_BUCKET`, `AWS_ENDPOINT` sur Render (étape 3).
 
-## 2. Render (API + PostgreSQL)
+## 2. Render (API + web + PostgreSQL)
 
-1. Dashboard Render → New → Blueprint → connecter le repo GitHub `Sabake75/streammali`. Render détecte `render.yaml` à la racine.
+`render.yaml` déclare trois ressources : la base Postgres, `streammali-api` (Docker/FrankenPHP) et `streammali-web` (Next.js, runtime Node natif — `buildCommand: npm install && npm run build`, `startCommand: npm run start`, `rootDir: apps/web`).
+
+1. Dashboard Render → New → Blueprint → connecter le repo GitHub `Sabake75/streammali`. Render détecte `render.yaml` à la racine et propose les trois ressources.
 2. Confirmer le plan `basic-256mb` pour la base PostgreSQL — Render a renommé/retiré l'ancien plan "Starter" pour les nouvelles instances, `basic-256mb` (payant, ~7$/mois) est désormais le plus petit disponible ; décision déjà actée d'éviter le plan gratuit (expiration à 90 jours).
-3. Une fois les services créés, remplir dans le dashboard Render (Environment) toutes les variables marquées `sync: false` dans `render.yaml` :
+3. Une fois les services créés, remplir dans le dashboard Render (Environment) toutes les variables marquées `sync: false` dans `render.yaml`, pour `streammali-api` :
    - `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_BUCKET`, `AWS_ENDPOINT` (étape 1, R2).
    - `ORANGE_MONEY_CLIENT_ID`, `ORANGE_MONEY_CLIENT_SECRET`, `ORANGE_MONEY_MERCHANT_KEY`, `ORANGE_MONEY_RETURN_URL`, `ORANGE_MONEY_CANCEL_URL`, `ORANGE_MONEY_NOTIF_URL` — vides tant que le compte marchand Orange Developer Center n'existe pas (Phase 7 de la feuille de route).
-   - `CLOUDFLARE_STREAM_ACCOUNT_ID`, `CLOUDFLARE_STREAM_API_TOKEN` — idem, en attente du compte Cloudflare Stream.
-4. Après le premier déploiement, Render assigne une URL (`https://streammali-api-xxxx.onrender.com`) : la reporter dans la variable `APP_URL`, puis redéployer manuellement.
-5. `CORS_ALLOWED_ORIGINS` : à renseigner une fois l'URL Vercel connue (étape 3).
+   - `PAYDUNYA_MASTER_KEY`, `PAYDUNYA_PRIVATE_KEY`, `PAYDUNYA_PUBLIC_KEY`, `PAYDUNYA_TOKEN` — gateway de paiement actif, voir `AppServiceProvider`.
+   - `CLOUDFLARE_STREAM_ACCOUNT_ID`, `CLOUDFLARE_STREAM_API_TOKEN`.
+4. Après le premier déploiement de chaque service, Render assigne une URL `*.onrender.com` :
+   - Côté `streammali-api` : la reporter dans `APP_URL`, puis redéployer manuellement.
+   - Côté `streammali-web` : la reporter dans `NEXT_PUBLIC_SITE_URL`, puis redéployer manuellement.
+5. Une fois les deux URLs connues, revenir sur `streammali-api` pour renseigner `CORS_ALLOWED_ORIGINS` (l'URL de `streammali-web`) et `PAYDUNYA_RETURN_URL`/`PAYDUNYA_CANCEL_URL`/`PAYDUNYA_CALLBACK_URL`, puis redéployer.
 
-Les migrations tournent automatiquement via le "Pre-Deploy Command" (`php artisan migrate --force`), avant que le nouveau conteneur ne prenne le trafic.
+Les migrations tournent automatiquement via le "Pre-Deploy Command" (`php artisan migrate --force`) sur `streammali-api`, avant que le nouveau conteneur ne prenne le trafic. Déploiement automatique ensuite à chaque push sur `master` pour les deux services, nativement, sans job GitHub Actions dédié.
 
-## 3. Vercel (web Next.js)
-
-1. Dashboard Vercel → Add New → Project → importer le repo GitHub.
-2. Root Directory : `apps/web`. Framework détecté automatiquement (Next.js).
-3. Variables d'environnement :
-   - `NEXT_PUBLIC_API_URL` = `https://<url-render>/api`
-4. Déployer. Reporter l'URL assignée par Vercel dans `CORS_ALLOWED_ORIGINS` côté Render (étape 2), puis redéployer l'API.
-
-Déploiement automatique ensuite à chaque push sur `master` (+ preview par pull request), nativement, sans job GitHub Actions dédié.
-
-## 4. Mobile
+## 3. Mobile
 
 La CI (`.github/workflows/ci.yml`) construit un APK release à chaque push sur `master` (signé avec la config de debug — suffisant pour tester, pas pour le Play Store) et le publie comme artefact GitHub Actions téléchargeable, 30 jours de rétention. Publication sur le Play Store hors scope pour l'instant (compte développeur payant, externe).
 
-## 5. Recommandé (à faire manuellement)
+## 4. Recommandé (à faire manuellement)
 
 GitHub → Settings → Branches → règle de protection sur `master` exigeant que les 3 jobs CI (`API`, `Web`, `Mobile`) passent avant un merge.

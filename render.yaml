@@ -86,7 +86,8 @@ services:
         sync: false
       - key: AWS_USE_PATH_STYLE_ENDPOINT
         value: "true"
-      # Set once the Vercel deployment URL is known.
+      # Set once the streammali-web deployment URL is known (see that
+      # service below — no Vercel here, same platform for both services).
       - key: CORS_ALLOWED_ORIGINS
         sync: false
       - key: PLATFORM_COMMISSION_RATE
@@ -122,7 +123,7 @@ services:
         sync: false
       - key: PAYDUNYA_TOKEN
         sync: false
-      # Renseigner une fois l'URL Vercel connue (comme CORS_ALLOWED_ORIGINS).
+      # Renseigner une fois l'URL streammali-web connue (comme CORS_ALLOWED_ORIGINS).
       - key: PAYDUNYA_RETURN_URL
         sync: false
       - key: PAYDUNYA_CANCEL_URL
@@ -139,3 +140,29 @@ services:
         sync: false
       - key: CLOUDFLARE_STREAM_MAX_DURATION_SECONDS
         value: "7200"
+
+  # Web (Next.js) — sur Render plutôt que Vercel : même compte déjà en
+  # place, et `next start` gère nativement le $PORT que Render assigne
+  # (contrairement à FrankenPHP côté API, aucun bricolage nécessaire ici).
+  - type: web
+    name: streammali-web
+    runtime: node
+    rootDir: apps/web
+    plan: starter
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NEXT_PUBLIC_API_URL
+        value: https://streammali-api.onrender.com/api
+      # Unknown until the first deploy assigns a *.onrender.com hostname —
+      # set manually in the dashboard afterwards, then redeploy (same as
+      # APP_URL for the API service above).
+      - key: NEXT_PUBLIC_SITE_URL
+        sync: false
+      # Optionnel : laissés vides, le SDK Sentry reste inactif tant que non définis.
+      - key: NEXT_PUBLIC_SENTRY_DSN
+        sync: false
+      - key: SENTRY_DSN
+        sync: false
