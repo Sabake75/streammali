@@ -1,10 +1,12 @@
 <?php
 
+use App\Http\Middleware\EnsureAccountIsActive;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
+use Illuminate\Http\Exceptions\PostTooLargeException;
 use Illuminate\Http\Request;
 use Sentry\Laravel\Integration;
 
@@ -17,7 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'account.active' => \App\Http\Middleware\EnsureAccountIsActive::class,
+            'account.active' => EnsureAccountIsActive::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
@@ -38,6 +40,17 @@ return Application::configure(basePath: dirname(__DIR__))
                 return response()->json([
                     'message' => 'Un service externe est momentanément indisponible. Réessaie dans quelques instants.',
                 ], 502);
+            }
+        });
+
+        // Message hardcoded in English inside Laravel's own
+        // ValidatePostSize middleware — not a lang/ key, so it can't be
+        // translated via lang/fr/validation.php like everything else.
+        $exceptions->render(function (PostTooLargeException $e, Request $request) {
+            if ($request->is('api/*') || $request->expectsJson()) {
+                return response()->json([
+                    'message' => 'Le fichier envoyé est trop volumineux.',
+                ], 413);
             }
         });
     })->create();

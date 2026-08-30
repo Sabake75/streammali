@@ -3,6 +3,29 @@ FROM dunglas/frankenphp:php8.3
 RUN install-php-extensions pdo_pgsql pgsql gd zip intl \
     && echo "opcache.enable=1" > "$PHP_INI_DIR/conf.d/opcache-enable.ini"
 
+# PHP's own defaults (upload_max_filesize=2M) silently reject a file
+# before Laravel's validation ever runs — RegisterCreator's own rule
+# already allows up to 10MB (identity_document, max:10240), but that
+# rule was unreachable for any phone-camera photo above 2MB. Confirmed
+# in production: a real ID photo upload failed with the generic
+# "uploaded" validation rule (see lang/fr/validation.php) rather than
+# Laravel's own max:10240 message. post_max_size must exceed
+# upload_max_filesize (it wraps the whole multipart body, not just the
+# file) — memory_limit (128M default) already has plenty of headroom.
+RUN echo "upload_max_filesize=12M" > "$PHP_INI_DIR/conf.d/uploads.ini" \
+    && echo "post_max_size=13M" >> "$PHP_INI_DIR/conf.d/uploads.ini"
+
+# Base image default is display_errors=STDOUT with log_errors=Off — found
+# while testing the upload limits above: a request that still exceeds
+# post_max_size makes PHP itself (not Laravel) emit a raw HTML warning
+# straight into the HTTP response body, before Laravel's own JSON error
+# handling ever runs. display_errors=Off stops that leak; log_errors=On
+# (to stderr, alongside FrankenPHP's own JSON logs Render already
+# captures) means these PHP-level failures aren't silently dropped.
+RUN echo "display_errors=Off" > "$PHP_INI_DIR/conf.d/errors.ini" \
+    && echo "log_errors=On" >> "$PHP_INI_DIR/conf.d/errors.ini" \
+    && echo "error_log=/dev/stderr" >> "$PHP_INI_DIR/conf.d/errors.ini"
+
 # The base image grants frankenphp cap_net_bind_service via a Linux file
 # capability (setcap) so it can bind :80 without running as root. Render's
 # sandboxed runtime (gVisor) refuses to exec a binary carrying that
