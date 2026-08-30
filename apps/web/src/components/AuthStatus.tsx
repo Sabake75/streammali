@@ -34,7 +34,12 @@ export function AuthStatus() {
         Mes achats
       </Link>
       <NotificationBell />
-      <span className="max-w-24 truncate text-neutral-500 sm:max-w-none dark:text-neutral-400">{user.name}</span>
+      <Link
+        href="/compte"
+        className="max-w-24 truncate text-neutral-500 hover:text-orange-600 sm:max-w-none dark:text-neutral-400 dark:hover:text-orange-400"
+      >
+        {user.name}
+      </Link>
       <button
         type="button"
         onClick={async () => {

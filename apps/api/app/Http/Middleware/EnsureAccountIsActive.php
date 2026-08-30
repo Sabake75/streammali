@@ -16,6 +16,7 @@ class EnsureAccountIsActive
             abort(403, match ($user->account_status?->value) {
                 'suspended' => 'Votre compte est suspendu.',
                 'blocked' => 'Votre compte est bloqué.',
+                'deleted' => 'Ce compte a été supprimé.',
                 default => 'Votre compte n\'est pas actif.',
             });
         }

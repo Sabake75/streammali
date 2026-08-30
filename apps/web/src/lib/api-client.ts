@@ -262,6 +262,46 @@ export async function sendMessage(body: string): Promise<Message> {
   return postJson("/creator/messages", { body }, { authenticated: true });
 }
 
+/**
+ * Downloads the JSON export in the browser (Content-Disposition needs the
+ * Bearer token in a header, so a plain `<a href>` link can't hit this
+ * endpoint directly — fetch it as a blob and trigger the save ourselves).
+ */
+export async function exportAccountData(): Promise<void> {
+  const token = getToken();
+  if (!token) throw new Error("Vous devez être connecté.");
+
+  const response = await fetch(`${API_BASE_URL}/account/export`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!response.ok) {
+    throw new Error(await extractErrorMessage(response));
+  }
+
+  const blob = await response.blob();
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "streammali-donnees.json";
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+export async function deleteAccount(): Promise<void> {
+  const token = getToken();
+  if (!token) throw new Error("Vous devez être connecté.");
+
+  const response = await fetch(`${API_BASE_URL}/account`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!response.ok) {
+    throw new Error(await extractErrorMessage(response));
+  }
+}
+
 async function getJson<T>(path: string): Promise<T> {
   const token = getToken();
   if (!token) throw new Error("Vous devez être connecté.");

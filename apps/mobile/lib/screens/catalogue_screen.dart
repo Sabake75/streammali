@@ -10,6 +10,7 @@ import '../widgets/hero_banner.dart';
 import '../widgets/notification_bell.dart';
 import '../widgets/onboarding_dialog.dart';
 import '../widgets/video_card.dart';
+import 'account_screen.dart';
 import 'creator_screen.dart';
 import 'favorites_screen.dart';
 import 'library_screen.dart';
@@ -101,7 +102,14 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
               return Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(user.name),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => const AccountScreen()),
+                      );
+                    },
+                    child: Text(user.name),
+                  ),
                   const NotificationBell(),
                   IconButton(
                     icon: const Icon(Icons.favorite_border),

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AccountController;
 use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\LogoutController;
 use App\Http\Controllers\Api\Auth\RegisterController;
@@ -55,6 +56,11 @@ Route::middleware(['auth:sanctum', 'account.active'])->group(function () {
     });
 
     Route::post('/logout', [LogoutController::class, 'store'])->name('logout');
+
+    Route::get('/account/export', [AccountController::class, 'export'])->name('account.export');
+    Route::delete('/account', [AccountController::class, 'destroy'])
+        ->middleware('throttle:write-action')
+        ->name('account.destroy');
 
     Route::post('/videos/{video}/purchase', [VideoPurchaseController::class, 'store'])
         ->middleware('throttle:purchase')

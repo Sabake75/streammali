@@ -7,6 +7,9 @@ enum AccountStatus: string
     case Active = 'active';
     case Suspended = 'suspended';
     case Blocked = 'blocked';
+    // Distinct from Blocked (moderator-initiated) — set only by the user's
+    // own self-service account deletion (Domain\Account\Actions\DeleteAccount).
+    case Deleted = 'deleted';
 
     public function label(): string
     {
@@ -14,6 +17,7 @@ enum AccountStatus: string
             self::Active => 'Actif',
             self::Suspended => 'Suspendu',
             self::Blocked => 'Bloqué',
+            self::Deleted => 'Supprimé',
         };
     }
 
@@ -23,6 +27,7 @@ enum AccountStatus: string
             self::Active => 'success',
             self::Suspended => 'warning',
             self::Blocked => 'danger',
+            self::Deleted => 'gray',
         };
     }
 }

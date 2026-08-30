@@ -138,6 +138,33 @@ class ApiClient {
         .catchError((_) => http.Response('', 0));
   }
 
+  /// Raw JSON text — the account screen shows it directly (copy to
+  /// clipboard) rather than writing a file, to avoid a file-system/share
+  /// plugin dependency for a rarely-used export button.
+  Future<String> exportAccountData(String token) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/account/export'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+
+    if (response.statusCode != 200) {
+      throw ApiException(_extractErrorMessage(response));
+    }
+
+    return response.body;
+  }
+
+  Future<void> deleteAccount(String token) async {
+    final response = await http.delete(
+      Uri.parse('$baseUrl/account'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+
+    if (response.statusCode != 200) {
+      throw ApiException(_extractErrorMessage(response));
+    }
+  }
+
   Future<PurchaseResult> purchaseVideo({
     required int videoId,
     required String payerMsisdn,
