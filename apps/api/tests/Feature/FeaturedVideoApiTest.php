@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Domain\Moderation\Enums\VideoStatus;
 use App\Domain\Video\Models\Video;
 use App\Enums\UserRole;
 use App\Filament\Resources\Videos\Pages\ListVideos;
@@ -59,6 +60,43 @@ class FeaturedVideoApiTest extends TestCase
             ->test(ListVideos::class)
             ->mountTableAction('toggle_featured', $video)
             ->callMountedTableAction();
+
+        $this->assertNull($video->fresh()->featured_at);
+    }
+
+    /**
+     * The "En vedette" column itself is clickable (not just the
+     * "toggle_featured" row action tucked in the "..." menu) — without a
+     * dedicated column action, clicking it just opened the edit page
+     * (Filament's default row-click behavior), which is what a moderator
+     * actually hit in practice.
+     */
+    public function test_moderator_can_toggle_featured_by_clicking_the_column_icon(): void
+    {
+        $moderator = User::factory()->create(['role' => UserRole::Moderator]);
+        $video = Video::factory()->approved()->create();
+
+        Livewire::actingAs($moderator)
+            ->test(ListVideos::class)
+            ->callTableColumnAction('featured_at', $video);
+
+        $this->assertNotNull($video->fresh()->featured_at);
+
+        Livewire::actingAs($moderator)
+            ->test(ListVideos::class)
+            ->callTableColumnAction('featured_at', $video);
+
+        $this->assertNull($video->fresh()->featured_at);
+    }
+
+    public function test_clicking_the_featured_column_on_a_non_approved_video_does_nothing(): void
+    {
+        $moderator = User::factory()->create(['role' => UserRole::Moderator]);
+        $video = Video::factory()->create(['status' => VideoStatus::Pending]);
+
+        Livewire::actingAs($moderator)
+            ->test(ListVideos::class)
+            ->callTableColumnAction('featured_at', $video);
 
         $this->assertNull($video->fresh()->featured_at);
     }

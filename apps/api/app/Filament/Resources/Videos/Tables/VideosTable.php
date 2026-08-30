@@ -13,6 +13,7 @@ use Filament\Actions\ActionGroup;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Notifications\Notification;
 use Filament\Schemas\Components\View;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -50,10 +51,36 @@ class VideosTable
                     ->badge()
                     ->color(fn (VideoSourceStatus $state) => $state->color())
                     ->formatStateUsing(fn (VideoSourceStatus $state) => $state->label()),
+                // ->boolean()'s stock icons (check-circle/x-circle,
+                // success/danger) read as "OK vs. error" — wrong for a
+                // status that's just off by default, not a problem.
+                // Étoile pleine/vide, comme l'icône de l'action "Mettre
+                // en avant" plus bas, pour rester cohérent visuellement.
+                // ->action() rend l'icône elle-même cliquable pour
+                // basculer directement, sans passer par le sous-menu —
+                // sans ça, cliquer dessus ne fait rien d'autre
+                // qu'ouvrir la page d'édition (comportement par défaut
+                // de Filament au clic sur une ligne).
                 IconColumn::make('featured_at')
                     ->label('En vedette')
                     ->boolean()
-                    ->getStateUsing(fn ($record) => $record->featured_at !== null),
+                    ->trueIcon('heroicon-s-star')
+                    ->falseIcon('heroicon-o-star')
+                    ->trueColor('warning')
+                    ->falseColor('gray')
+                    ->getStateUsing(fn ($record) => $record->featured_at !== null)
+                    ->action(function ($record) {
+                        if ($record->status !== VideoStatus::Approved) {
+                            Notification::make()
+                                ->title('Seules les vidéos validées peuvent être mises en avant.')
+                                ->warning()
+                                ->send();
+
+                            return;
+                        }
+
+                        $record->update(['featured_at' => $record->featured_at ? null : now()]);
+                    }),
                 TextColumn::make('created_at')
                     ->label('Soumis le')
                     ->dateTime('d/m/Y H:i')
