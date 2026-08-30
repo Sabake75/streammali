@@ -3,6 +3,15 @@ FROM dunglas/frankenphp:php8.3
 RUN install-php-extensions pdo_pgsql pgsql gd zip intl \
     && echo "opcache.enable=1" > "$PHP_INI_DIR/conf.d/opcache-enable.ini"
 
+# The base image grants frankenphp cap_net_bind_service via a Linux file
+# capability (setcap) so it can bind :80 without running as root. Render's
+# sandboxed runtime (gVisor) refuses to exec a binary carrying that
+# capability at all — even as root — and fails with a bare "Operation not
+# permitted" (confirmed: getcap showed cap_net_bind_service=ep on this
+# binary; this container never drops to a non-root user, so it doesn't
+# need the capability in the first place — root can already bind any port).
+RUN setcap -r /usr/local/bin/frankenphp
+
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
