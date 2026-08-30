@@ -22,6 +22,12 @@ export function AuthStatus() {
   return (
     <div className="flex items-center gap-3 text-sm">
       <Link
+        href="/favoris"
+        className="shrink-0 font-medium text-neutral-600 hover:text-orange-600 dark:text-neutral-400 dark:hover:text-orange-400"
+      >
+        Favoris
+      </Link>
+      <Link
         href="/bibliotheque"
         className="shrink-0 font-medium text-neutral-600 hover:text-orange-600 dark:text-neutral-400 dark:hover:text-orange-400"
       >

@@ -96,6 +96,10 @@ export async function fetchMyPurchases(): Promise<PaginatedResponse<VideoSummary
   return getJson("/purchases");
 }
 
+export async function fetchMyFavorites(): Promise<PaginatedResponse<VideoSummary>> {
+  return getJson("/favorites");
+}
+
 /**
  * Authenticated fetch of a single video — unlike the SSR helper in
  * lib/api.ts (no auth header, so `purchased` always reads false there),

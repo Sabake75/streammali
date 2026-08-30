@@ -11,6 +11,7 @@ import '../widgets/notification_bell.dart';
 import '../widgets/onboarding_dialog.dart';
 import '../widgets/video_card.dart';
 import 'creator_screen.dart';
+import 'favorites_screen.dart';
 import 'library_screen.dart';
 import 'login_screen.dart';
 import 'video_detail_screen.dart';
@@ -102,6 +103,15 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
                 children: [
                   Text(user.name),
                   const NotificationBell(),
+                  IconButton(
+                    icon: const Icon(Icons.favorite_border),
+                    tooltip: 'Mes favoris',
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => const FavoritesScreen()),
+                      );
+                    },
+                  ),
                   IconButton(
                     icon: const Icon(Icons.video_library_outlined),
                     tooltip: 'Mes achats',
