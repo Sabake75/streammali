@@ -81,7 +81,7 @@ class _CreatorScreenState extends State<CreatorScreen> {
                           MaterialPageRoute(builder: (context) => const RegisterCreatorScreen()),
                         );
                       },
-                      child: const Text('Créer un compte créateur'),
+                      child: const Text('Devenir créateur'),
                     ),
                   ],
                 ),

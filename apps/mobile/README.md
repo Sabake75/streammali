@@ -27,7 +27,7 @@ Auth + achat, même flux token Bearer Sanctum que le web (`apps/web/src/lib/{aut
 
 Important : CORS ne s'applique qu'à Flutter **Web** (Android/iOS/desktop ne sont pas concernés). Pour tester sur Chrome, ajouter l'origine du serveur de dev Flutter (`flutter run -d chrome --web-port=...`) à `CORS_ALLOWED_ORIGINS` côté API.
 
-Inscription créateur (`lib/screens/register_creator_screen.dart`, liée depuis l'inscription standard et depuis l'espace créateur) : formulaire avec sélection de pièce d'identité (`file_picker`, jpg/jpeg/png/pdf) puis upload multipart (`http.MultipartRequest`) vers `POST /api/register/creator`.
+Inscription créateur (`lib/screens/register_creator_screen.dart`, liée depuis l'inscription standard et depuis l'espace créateur) : formulaire avec sélection de pièce d'identité (`file_picker`, jpg/jpeg/png/pdf) puis upload multipart (`http.MultipartRequest`) vers `POST /api/register/creator`. Si un viewer est déjà connecté, l'écran affiche un formulaire court à la place (pièce d'identité + CGU seulement, `POST /api/creator/upgrade`) qui fait évoluer son compte existant — avant ça, un viewer connecté tombait systématiquement sur l'échec de la contrainte `unique` du téléphone en tentant de recréer un compte avec le même numéro.
 
 Upload vidéo côté créateur (`lib/screens/creator_screen.dart`, accessible via l'icône dans l'AppBar du catalogue) :
 - Réservé aux comptes `role=creator` (bouton vers l'inscription créateur sinon).

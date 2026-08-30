@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\CloudflareStreamWebhookController;
 use App\Http\Controllers\Api\Creator\MessageController;
 use App\Http\Controllers\Api\Creator\PayoutController;
 use App\Http\Controllers\Api\Creator\StatsController;
+use App\Http\Controllers\Api\Creator\UpgradeController;
 use App\Http\Controllers\Api\Creator\VideoController as CreatorVideoController;
 use App\Http\Controllers\Api\Creator\VideoSourceController;
 use App\Http\Controllers\Api\NotificationController;
@@ -85,6 +86,10 @@ Route::middleware(['auth:sanctum', 'account.active'])->group(function () {
         ->name('notifications.read');
 
     Route::prefix('creator')->name('creator.')->group(function () {
+        Route::post('/upgrade', [UpgradeController::class, 'store'])
+            ->middleware('throttle:write-action')
+            ->name('upgrade');
+
         Route::get('/videos', [CreatorVideoController::class, 'index'])->name('videos.index');
         Route::post('/videos', [CreatorVideoController::class, 'store'])->name('videos.store');
         Route::post('/videos/{video}/source', [VideoSourceController::class, 'store'])->name('videos.source.store');

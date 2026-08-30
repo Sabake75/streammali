@@ -27,7 +27,7 @@ export default function CreatorLayout({ children }: { children: React.ReactNode 
       <CenteredMessage>
         Cet espace est réservé aux comptes créateur.{" "}
         <Link href="/inscription-createur" className="font-medium text-orange-600 hover:underline dark:text-orange-400">
-          En créer un
+          Devenir créateur
         </Link>{" "}
         (pièce d&apos;identité requise).
       </CenteredMessage>

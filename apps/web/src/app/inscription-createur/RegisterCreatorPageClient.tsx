@@ -2,17 +2,130 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FilePicker } from "@/components/FilePicker";
 import { FormField } from "@/components/FormField";
 import { PhoneNumberField } from "@/components/PhoneNumberField";
 import { PinCodeField } from "@/components/PinCodeField";
 import { CreatorTermsContent } from "@/components/legal/CreatorTermsContent";
 import { TermsModal } from "@/components/legal/TermsModal";
-import { registerCreator } from "@/lib/api-client";
-import { setSession } from "@/lib/auth-client";
+import { registerCreator, upgradeToCreator } from "@/lib/api-client";
+import { getToken, setSession, type StoredUser } from "@/lib/auth-client";
+import { useAuthUser } from "@/lib/use-auth";
 
 export function RegisterCreatorPageClient() {
+  const router = useRouter();
+  const user = useAuthUser();
+
+  // Already a creator — nothing to do here, send them where this page
+  // would otherwise lead.
+  useEffect(() => {
+    if (user?.role === "creator") router.replace("/creer");
+  }, [user, router]);
+
+  if (user?.role === "creator") return null;
+
+  // Logged in as a viewer: upgrade their own account in place (same
+  // phone/id/purchase history) instead of the full form below, which
+  // would just fail on the phone's uniqueness constraint — the account
+  // already exists.
+  if (user) return <UpgradeForm user={user} />;
+
+  return <FullRegistrationForm />;
+}
+
+function UpgradeForm({ user }: { user: StoredUser }) {
+  const router = useRouter();
+
+  const [identityDocument, setIdentityDocument] = useState<File | null>(null);
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [termsModalOpen, setTermsModalOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleSubmit(event: React.FormEvent) {
+    event.preventDefault();
+    if (!identityDocument) {
+      setError("La pièce d'identité est requise.");
+      return;
+    }
+
+    setSubmitting(true);
+    setError(null);
+
+    try {
+      const { user: upgraded } = await upgradeToCreator({ identityDocument, terms_accepted: termsAccepted });
+      const token = getToken();
+      if (token) setSession(token, upgraded);
+      router.push("/creer");
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Une erreur est survenue.");
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <main className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center px-4 py-16">
+      <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-950 sm:p-8">
+        <span className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-orange-500 to-accent-600 text-white">
+          ▶
+        </span>
+        <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-50">Devenir créateur</h1>
+        <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+          Connecté en tant que {user.name}. Plus qu&apos;une pièce d&apos;identité pour publier tes vidéos.
+        </p>
+        <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
+          <FilePicker
+            id="identity_document"
+            label="Pièce d'identité (JPG, PNG ou PDF)"
+            accept="image/jpeg,image/png,application/pdf"
+            file={identityDocument}
+            onChange={setIdentityDocument}
+            placeholder="Choisir la pièce d'identité"
+          />
+          <label className="flex items-start gap-2 text-sm text-neutral-600 dark:text-neutral-400">
+            <input
+              type="checkbox"
+              required
+              checked={termsAccepted}
+              onChange={(event) => setTermsAccepted(event.target.checked)}
+              className="mt-0.5 h-4 w-4 shrink-0 accent-orange-600"
+            />
+            <span>
+              J&apos;ai lu et j&apos;accepte les{" "}
+              <button
+                type="button"
+                onClick={() => setTermsModalOpen(true)}
+                className="font-medium text-orange-600 underline hover:no-underline dark:text-orange-400"
+              >
+                CGU créateur
+              </button>
+            </span>
+          </label>
+          {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
+          <button type="submit" disabled={submitting} className="btn-primary">
+            {submitting ? "Passage en créateur…" : "Devenir créateur"}
+          </button>
+        </form>
+
+        <TermsModal
+          open={termsModalOpen}
+          title="Conditions générales d'utilisation — Créateur"
+          onClose={() => setTermsModalOpen(false)}
+          onAccept={() => {
+            setTermsAccepted(true);
+            setTermsModalOpen(false);
+          }}
+        >
+          <CreatorTermsContent />
+        </TermsModal>
+      </div>
+    </main>
+  );
+}
+
+function FullRegistrationForm() {
   const router = useRouter();
 
   const [name, setName] = useState("");
@@ -91,8 +204,7 @@ export function RegisterCreatorPageClient() {
                 className="font-medium text-orange-600 underline hover:no-underline dark:text-orange-400"
               >
                 CGU créateur
-              </button>{" "}
-              (dont la répartition des revenus : 75 % pour moi, 25 % pour StreamMali)
+              </button>
             </span>
           </label>
           {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}

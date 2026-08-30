@@ -56,6 +56,37 @@ export async function registerCreator(input: {
   return response.json();
 }
 
+/**
+ * Turns the signed-in viewer's own account into a creator account —
+ * same phone/id/purchase history, not a second disconnected account
+ * (registerCreator above always creates a brand-new user, which used to
+ * be the only option even for an already-logged-in viewer and just
+ * failed on the phone's `unique` constraint).
+ */
+export async function upgradeToCreator(input: {
+  identityDocument: File;
+  terms_accepted: boolean;
+}): Promise<{ user: StoredUser }> {
+  const token = getToken();
+  if (!token) throw new Error("Vous devez être connecté.");
+
+  const formData = new FormData();
+  formData.set("identity_document", input.identityDocument);
+  formData.set("terms_accepted", input.terms_accepted ? "1" : "0");
+
+  const response = await fetch(`${API_BASE_URL}/creator/upgrade`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error(await extractErrorMessage(response));
+  }
+
+  return response.json();
+}
+
 export async function loginViewer(input: { phone: string; password: string }): Promise<AuthResponse> {
   return postJson("/login", input);
 }

@@ -28,7 +28,7 @@ Auth + achat côté client (Bearer token Sanctum, pas de cookies/CSRF — voir `
 
 Vérifié en conditions réelles (requêtes cross-origin avec `Origin: http://localhost:3000` contre l'API) : le flux passe l'auth/CORS/validation de bout en bout ; l'échec final vient uniquement de l'absence de vrais credentials Orange Money côté API (déjà documenté), pas d'un problème CORS/Sanctum.
 
-Inscription créateur (`/inscription-createur`, liée depuis `/inscription` et depuis `/creer`) : formulaire avec upload de pièce d'identité (`multipart/form-data`, `POST /api/register/creator`), redirige vers `/creer` après création du compte.
+Inscription créateur (`/inscription-createur`, liée depuis `/inscription` et depuis `/creer`) : formulaire avec upload de pièce d'identité (`multipart/form-data`, `POST /api/register/creator`), redirige vers `/creer` après création du compte. Si un viewer est déjà connecté, `RegisterCreatorPageClient.tsx` affiche un formulaire court à la place (pièce d'identité + CGU seulement, `POST /api/creator/upgrade`) qui fait évoluer son compte existant plutôt que d'échouer sur la contrainte `unique` du téléphone en tentant d'en créer un second.
 
 Upload vidéo côté créateur (`/creer`, lien dans le header) :
 - Réservé aux comptes `role=creator` (lien vers l'inscription créateur sinon).

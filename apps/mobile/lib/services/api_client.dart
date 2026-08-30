@@ -620,6 +620,32 @@ class ApiClient {
     );
   }
 
+  /// Turns the signed-in viewer's own account into a creator account —
+  /// same phone/id/purchase history, not a second disconnected account
+  /// (registerCreator above always creates a brand-new user, which used
+  /// to be the only option even for an already-logged-in viewer and just
+  /// failed on the phone's uniqueness constraint).
+  Future<StoredUser> upgradeToCreator({
+    required String identityDocumentPath,
+    required bool termsAccepted,
+    required String token,
+  }) async {
+    final request = http.MultipartRequest('POST', Uri.parse('$baseUrl/creator/upgrade'))
+      ..headers['Authorization'] = 'Bearer $token'
+      ..fields['terms_accepted'] = termsAccepted.toString()
+      ..files.add(await http.MultipartFile.fromPath('identity_document', identityDocumentPath));
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
+    if (response.statusCode != 200) {
+      throw ApiException(_extractErrorMessage(response));
+    }
+
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    return StoredUser.fromJson(json['user'] as Map<String, dynamic>);
+  }
+
   Future<AuthResult> _postAuth(String path, Map<String, dynamic> body) async {
     final response = await http.post(
       Uri.parse('$baseUrl$path'),
