@@ -25,16 +25,16 @@ export function AuthStatus() {
       <NavLink
         href="/favoris"
         exact
-        className="shrink-0 font-medium text-neutral-600 hover:text-orange-600 dark:text-neutral-400 dark:hover:text-orange-400"
-        activeClassName="text-orange-600 dark:text-orange-400"
+        className="shrink-0 rounded-full px-2.5 py-1 font-medium text-neutral-600 hover:text-orange-600 dark:text-neutral-400 dark:hover:text-orange-400"
+        activeClassName="bg-orange-50 text-orange-600 shadow-sm dark:bg-orange-950/40 dark:text-orange-400"
       >
         Favoris
       </NavLink>
       <NavLink
         href="/bibliotheque"
         exact
-        className="shrink-0 font-medium text-neutral-600 hover:text-orange-600 dark:text-neutral-400 dark:hover:text-orange-400"
-        activeClassName="text-orange-600 dark:text-orange-400"
+        className="shrink-0 rounded-full px-2.5 py-1 font-medium text-neutral-600 hover:text-orange-600 dark:text-neutral-400 dark:hover:text-orange-400"
+        activeClassName="bg-orange-50 text-orange-600 shadow-sm dark:bg-orange-950/40 dark:text-orange-400"
       >
         Mes achats
       </NavLink>
@@ -42,8 +42,8 @@ export function AuthStatus() {
       <NavLink
         href="/compte"
         exact
-        className="max-w-24 truncate text-neutral-500 hover:text-orange-600 sm:max-w-none dark:text-neutral-400 dark:hover:text-orange-400"
-        activeClassName="text-orange-600 dark:text-orange-400"
+        className="max-w-24 truncate rounded-full px-2.5 py-1 text-neutral-500 hover:text-orange-600 sm:max-w-none dark:text-neutral-400 dark:hover:text-orange-400"
+        activeClassName="bg-orange-50 text-orange-600 shadow-sm dark:bg-orange-950/40 dark:text-orange-400"
       >
         {user.name}
       </NavLink>
