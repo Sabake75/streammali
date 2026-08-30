@@ -58,6 +58,8 @@ Favoris/recommandations : `lib/widgets/favorite_button.dart` (fiche vidéo, masq
 
 Mise en avant (`catalogue_screen.dart`, rangée "En vedette") : `fetchFeaturedVideos()`, public, chargée directement dans `initState()` (pas besoin d'attendre l'auth contrairement à "Recommandé pour vous").
 
+Suivi d'erreurs (`lib/main.dart`) : `SentryFlutter.init` enveloppe `runApp`, DSN vide par défaut (aucun compte Sentry lié au projet pour l'instant) — le SDK reste inactif tant qu'on n'active pas via `--dart-define=SENTRY_DSN=...`, même convention que `API_BASE_URL`.
+
 `flutter analyze`, `flutter test` (couvre la validation du formulaire de connexion) et `flutter build web` passent tous sans erreur.
 
 ```

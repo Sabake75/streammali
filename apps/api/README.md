@@ -92,7 +92,9 @@ Favoris/recommandations (détail dans `app/Domain/Viewer/README.md`) : `POST /ap
 
 Mise en avant : `videos.featured_at` (nullable), bascule via l'action Filament "Mettre en avant"/"Retirer" sur `/moderation/videos` (uniquement pour une vidéo déjà validée). `GET /api/videos/featured` (public, triées par mise en avant la plus récente).
 
-Testé via `tests/Feature/` (`php artisan test`) — 99/99 au dernier passage, vérifié aussi manuellement contre PostgreSQL (inscription créateur avec vrai upload multipart, upload vidéo/lecture, calcul de commission, réservation du solde, échange de messages créateur/modérateur, signalement d'une vidéo, comptage de vues et statistiques, avis/notation, favoris/recommandations, mise en avant). Le comptage de vues a été vérifié à la fois en dev (`next dev`) et en build de production (`next build && next start`) : React Strict Mode double-invoque l'effet côté web en dev (2 requêtes `/view` par visite, artefact connu et documenté de React, sans impact en production où une visite produit bien une seule requête).
+Suivi d'erreurs (`bootstrap/app.php`) : `Integration::handles($exceptions)` (`sentry/sentry-laravel`), DSN vide par défaut (aucun compte Sentry lié au projet pour l'instant) — reste inactif tant que `SENTRY_LARAVEL_DSN` n'est pas défini dans `.env`.
+
+Testé via `tests/Feature/` (`php artisan test`) — 131/131 au dernier passage, vérifié aussi manuellement contre PostgreSQL (inscription créateur avec vrai upload multipart, upload vidéo/lecture, calcul de commission, réservation du solde, échange de messages créateur/modérateur, signalement d'une vidéo, comptage de vues et statistiques, avis/notation, favoris/recommandations, mise en avant). Le comptage de vues a été vérifié à la fois en dev (`next dev`) et en build de production (`next build && next start`) : React Strict Mode double-invoque l'effet côté web en dev (2 requêtes `/view` par visite, artefact connu et documenté de React, sans impact en production où une visite produit bien une seule requête).
 
 Créer un utilisateur modérateur de test :
 

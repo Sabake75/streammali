@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs";
 
 const isProd = process.env.NODE_ENV === "production";
 
@@ -77,4 +78,11 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+// No Sentry account exists for this project yet, so org/project/authToken
+// are all unset — the plugin just skips source map upload gracefully
+// (confirmed by building with this exact config) rather than failing the
+// build. Runtime error reporting (instrumentation.ts/instrumentation-client.ts)
+// is separately inert until a DSN is configured.
+export default withSentryConfig(nextConfig, {
+  silent: true,
+});

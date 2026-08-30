@@ -59,7 +59,11 @@ Favoris/recommandations : `src/components/FavoriteButton.tsx` (fiche vidéo, `PO
 
 Mise en avant (accueil, section "En vedette") : `fetchFeaturedVideos()` (`src/lib/api.ts`, SSR, `GET /api/videos/featured`) — contrairement à "Recommandé pour vous", public et donc server-rendable directement, pas besoin d'un composant client.
 
-Pas encore fait : jaquettes via `next/image` (actuellement `<img>` brut le temps de choisir un hébergement d'images).
+Jaquettes vidéo via `next/image` (`VideoCard.tsx`, fiche vidéo) — domaine Cloudflare Stream autorisé dans `images.remotePatterns` (`next.config.ts`).
+
+En-têtes de sécurité (`next.config.ts`) : CSP, HSTS, X-Frame-Options — CSP/HSTS uniquement en production (le serveur de dev a besoin d'`unsafe-eval`/d'un connect-src websocket qu'un vrai build n'a pas). `script-src`/`style-src` incluent `'unsafe-inline'` : Next.js injecte des scripts d'hydratation en ligne sur chaque page, l'alternative stricte (nonce) impose de rendre toutes les pages dynamiquement.
+
+Suivi d'erreurs (`instrumentation.ts`, `instrumentation-client.ts`, `next.config.ts`) : SDK Sentry, DSN vide par défaut (aucun compte Sentry lié au projet pour l'instant) — reste inactif tant que `SENTRY_DSN`/`NEXT_PUBLIC_SENTRY_DSN` ne sont pas définis. Penser à aussi ajouter le domaine d'ingestion Sentry à la CSP au moment de l'activer.
 
 ```
 npm run dev     # dev server
