@@ -26,24 +26,24 @@ export function formatDate(isoDate: string): string {
  */
 const CATEGORY_PALETTE = [
   {
-    badge: "bg-lime-100 text-lime-800 dark:bg-lime-900/40 dark:text-lime-300",
-    tint: "from-lime-200 to-lime-50 dark:from-lime-950 dark:to-neutral-900",
+    badge: "bg-sky-100 text-sky-800 dark:bg-sky-900/40 dark:text-sky-300",
+    tint: "from-sky-200 to-sky-50 dark:from-sky-950 dark:to-neutral-900",
   },
   {
     badge: "bg-violet-100 text-violet-800 dark:bg-violet-900/40 dark:text-violet-300",
     tint: "from-violet-200 to-violet-50 dark:from-violet-950 dark:to-neutral-900",
   },
   {
-    badge: "bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-300",
-    tint: "from-rose-200 to-rose-50 dark:from-rose-950 dark:to-neutral-900",
+    badge: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/40 dark:text-indigo-300",
+    tint: "from-indigo-200 to-indigo-50 dark:from-indigo-950 dark:to-neutral-900",
   },
   {
-    badge: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300",
-    tint: "from-emerald-200 to-emerald-50 dark:from-emerald-950 dark:to-neutral-900",
+    badge: "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/40 dark:text-cyan-300",
+    tint: "from-cyan-200 to-cyan-50 dark:from-cyan-950 dark:to-neutral-900",
   },
   {
-    badge: "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300",
-    tint: "from-amber-200 to-amber-50 dark:from-amber-950 dark:to-neutral-900",
+    badge: "bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300",
+    tint: "from-blue-200 to-blue-50 dark:from-blue-950 dark:to-neutral-900",
   },
   {
     badge: "bg-teal-100 text-teal-800 dark:bg-teal-900/40 dark:text-teal-300",

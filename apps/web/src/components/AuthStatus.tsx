@@ -26,7 +26,7 @@ export function AuthStatus() {
         href="/favoris"
         exact
         className="shrink-0 rounded-full px-2.5 py-1 font-medium text-neutral-600 hover:text-orange-600 dark:text-neutral-400 dark:hover:text-orange-400"
-        activeClassName="bg-orange-50 text-orange-600 shadow-sm dark:bg-orange-950/40 dark:text-orange-400"
+        activeClassName="bg-orange-600 text-white shadow-sm hover:text-white dark:bg-orange-500"
       >
         Favoris
       </NavLink>
@@ -34,7 +34,7 @@ export function AuthStatus() {
         href="/bibliotheque"
         exact
         className="shrink-0 rounded-full px-2.5 py-1 font-medium text-neutral-600 hover:text-orange-600 dark:text-neutral-400 dark:hover:text-orange-400"
-        activeClassName="bg-orange-50 text-orange-600 shadow-sm dark:bg-orange-950/40 dark:text-orange-400"
+        activeClassName="bg-orange-600 text-white shadow-sm hover:text-white dark:bg-orange-500"
       >
         Mes achats
       </NavLink>
@@ -43,7 +43,7 @@ export function AuthStatus() {
         href="/compte"
         exact
         className="max-w-24 truncate rounded-full px-2.5 py-1 text-neutral-500 hover:text-orange-600 sm:max-w-none dark:text-neutral-400 dark:hover:text-orange-400"
-        activeClassName="bg-orange-50 text-orange-600 shadow-sm dark:bg-orange-950/40 dark:text-orange-400"
+        activeClassName="bg-orange-600 text-white shadow-sm hover:text-white dark:bg-orange-500"
       >
         {user.name}
       </NavLink>

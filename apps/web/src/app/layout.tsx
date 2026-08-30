@@ -47,7 +47,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               <NavLink
                 href="/creer"
                 className="shrink-0 rounded-full px-3 py-1 text-sm font-medium text-neutral-600 transition hover:text-orange-600 dark:text-neutral-400 dark:hover:text-orange-400"
-                activeClassName="bg-orange-50 text-orange-600 shadow-sm dark:bg-orange-950/40 dark:text-orange-400"
+                activeClassName="bg-orange-600 text-white shadow-sm hover:text-white dark:bg-orange-500"
               >
                 Espace créateur
               </NavLink>
