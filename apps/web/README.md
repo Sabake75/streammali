@@ -65,6 +65,10 @@ En-têtes de sécurité (`next.config.ts`) : CSP, HSTS, X-Frame-Options — CSP/
 
 Suivi d'erreurs (`instrumentation.ts`, `instrumentation-client.ts`, `next.config.ts`) : SDK Sentry, DSN vide par défaut (aucun compte Sentry lié au projet pour l'instant) — reste inactif tant que `SENTRY_DSN`/`NEXT_PUBLIC_SENTRY_DSN` ne sont pas définis. Penser à aussi ajouter le domaine d'ingestion Sentry à la CSP au moment de l'activer.
 
+Suppression/export de compte (`/compte`, lien = nom dans le header) : `exportAccountData`/`deleteAccount` (`src/lib/api-client.ts`), `GET/DELETE /api/account`.
+
+Accessibilité : labels manquants ajoutés sur les champs texte/textarea qui ne s'appuyaient que sur leur `placeholder` (`NewVideoForm`, `Messaging`, `Reviews` — `sr-only` là où un label visible casserait la mise en page), graphique de revenus (`creator/Stats.tsx`) exposé comme une seule image avec un résumé textuel plutôt que des barres muettes pour un lecteur d'écran. Le reste du site labellisait déjà correctement (`aria-label` sur les boutons icône, `role="dialog"`/`aria-modal` sur les modales).
+
 ```
 npm run dev     # dev server
 npm run lint    # eslint

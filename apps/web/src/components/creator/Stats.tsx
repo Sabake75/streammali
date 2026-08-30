@@ -42,10 +42,17 @@ export function Stats() {
         </p>
       ) : (
         <>
-          <div className="mt-2 flex h-24 items-end gap-1">
+          <div
+            role="img"
+            aria-label={`Revenus par jour : ${stats.timeseries
+              .map((point) => `${point.date} ${formatPrice(point.revenue)}`)
+              .join(", ")}`}
+            className="mt-2 flex h-24 items-end gap-1"
+          >
             {stats.timeseries.map((point) => (
               <div
                 key={point.date}
+                aria-hidden="true"
                 title={`${point.date} : ${formatPrice(point.revenue)}`}
                 className="flex-1 rounded-t bg-gradient-to-t from-orange-600 to-orange-400 dark:from-orange-500 dark:to-orange-300"
                 style={{ height: `${Math.max(4, (point.revenue / maxRevenue) * 100)}%` }}

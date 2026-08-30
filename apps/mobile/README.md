@@ -62,6 +62,8 @@ Suivi d'erreurs (`lib/main.dart`) : `SentryFlutter.init` enveloppe `runApp`, DSN
 
 Mon compte (`lib/screens/account_screen.dart`, accessible en tapant son nom dans l'AppBar du catalogue) : export de données (`GET /api/account/export`, affiché dans une boîte de dialogue avec copie presse-papiers plutôt qu'un fichier — évite une dépendance file-system/partage pour un bouton peu utilisé) et suppression de compte (`DELETE /api/account`, confirmation obligatoire).
 
+Accessibilité : les étoiles de notation (`review_section.dart`) n'avaient pas de `tooltip` — seul point réellement muet pour TalkBack/VoiceOver trouvé côté mobile, le reste (`IconButton` de l'AppBar, `Tooltip` par barre sur le graphique de revenus) l'avait déjà.
+
 `flutter analyze`, `flutter test` (couvre la validation du formulaire de connexion) et `flutter build web` passent tous sans erreur.
 
 ```

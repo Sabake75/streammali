@@ -132,7 +132,11 @@ export function NewVideoForm({ onCreated }: { onCreated: () => void }) {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+      <label htmlFor="video-title" className="sr-only">
+        Titre
+      </label>
       <input
+        id="video-title"
         type="text"
         required
         value={title}
@@ -140,14 +144,22 @@ export function NewVideoForm({ onCreated }: { onCreated: () => void }) {
         placeholder="Titre"
         className="input-field"
       />
+      <label htmlFor="video-description" className="sr-only">
+        Description
+      </label>
       <textarea
+        id="video-description"
         value={description}
         onChange={(event) => setDescription(event.target.value)}
         placeholder="Description (optionnel)"
         className="input-field"
       />
       <div className="flex flex-wrap gap-3">
+        <label htmlFor="video-category" className="sr-only">
+          Catégorie
+        </label>
         <select
+          id="video-category"
           value={category}
           onChange={(event) => setCategory(event.target.value as VideoCategoryValue)}
           className="input-field"
@@ -158,7 +170,11 @@ export function NewVideoForm({ onCreated }: { onCreated: () => void }) {
             </option>
           ))}
         </select>
+        <label htmlFor="video-price" className="sr-only">
+          Prix (FCFA)
+        </label>
         <input
+          id="video-price"
           type="number"
           min={0}
           value={price}

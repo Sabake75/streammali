@@ -80,6 +80,7 @@ class _ReviewSectionState extends State<ReviewSection> {
               final value = index + 1;
               return IconButton(
                 onPressed: () => setState(() => _rating = value),
+                tooltip: '$value étoile${value > 1 ? 's' : ''}',
                 icon: Icon(
                   value <= _rating ? Icons.star : Icons.star_border,
                   color: Colors.amber,

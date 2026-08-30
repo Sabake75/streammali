@@ -46,13 +46,14 @@ export function Reviews({ videoId, purchased }: { videoId: number; purchased: bo
 
       {purchased && (
         <form onSubmit={handleSubmit} className="mt-3 flex flex-col gap-2">
-          <div className="flex items-center gap-1">
+          <div role="group" aria-label="Note (1 à 5 étoiles)" className="flex items-center gap-1">
             {[1, 2, 3, 4, 5].map((value) => (
               <button
                 key={value}
                 type="button"
                 onClick={() => setRating(value)}
                 aria-label={`${value} étoile${value > 1 ? "s" : ""}`}
+                aria-pressed={value <= rating}
                 className={`text-2xl leading-none ${
                   value <= rating ? "text-amber-500" : "text-neutral-300 dark:text-neutral-700"
                 }`}
@@ -61,7 +62,11 @@ export function Reviews({ videoId, purchased }: { videoId: number; purchased: bo
               </button>
             ))}
           </div>
+          <label htmlFor="review-comment" className="sr-only">
+            Commentaire
+          </label>
           <textarea
+            id="review-comment"
             value={comment}
             onChange={(event) => setComment(event.target.value)}
             placeholder="Un commentaire (optionnel)"

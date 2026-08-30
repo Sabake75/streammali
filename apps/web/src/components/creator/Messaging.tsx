@@ -66,6 +66,9 @@ export function Messaging() {
       </div>
 
       <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-2">
+        <label htmlFor="message-body" className="sr-only">
+          Message à la modération
+        </label>
         <textarea
           id="message-body"
           required
