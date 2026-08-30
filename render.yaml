@@ -33,7 +33,15 @@ services:
       - key: APP_KEY
         sync: false
       # Unknown until the first deploy assigns a *.onrender.com hostname —
-      # set manually in the dashboard afterwards, then redeploy.
+      # set manually in the dashboard afterwards, then redeploy. MUST
+      # include the https:// scheme (not just the bare hostname) — a
+      # scheme-less/http:// value here made Filament generate its CSS/JS
+      # asset links as http://, which the browser blocks as mixed
+      # content on the https:// page (confirmed in production: page
+      # rendered as unstyled HTML, no console errors visible without
+      # opening devtools). trustProxies(at: '*') in bootstrap/app.php
+      # covers scheme detection elsewhere, but asset()/url() still
+      # follow APP_URL literally when it's set.
       - key: APP_URL
         sync: false
       - key: APP_LOCALE

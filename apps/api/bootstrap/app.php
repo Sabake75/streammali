@@ -22,6 +22,18 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'account.active' => EnsureAccountIsActive::class,
         ]);
+
+        // Render (like Heroku/most PaaS) terminates TLS at its own edge
+        // and forwards plain HTTP to the container — without this,
+        // Laravel has no way to know the original request was HTTPS.
+        // '*' is safe here specifically because the container isn't
+        // directly reachable from the internet, only through Render's
+        // proxy. Symptom without it: asset()/url() (Filament's CSS/JS on
+        // /moderation) generate as http://, which the browser then
+        // blocks as mixed content on the https:// page — confirmed in
+        // production (a correctly-set APP_URL alone wasn't the whole
+        // story; this closes the same gap at the framework level).
+        $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // No-op until SENTRY_LARAVEL_DSN is set (see .env.example) — no
