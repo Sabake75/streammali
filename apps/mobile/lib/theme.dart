@@ -91,7 +91,7 @@ class AppTheme {
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.orange600,
           foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 14),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
           textStyle: const TextStyle(fontWeight: FontWeight.w600),
         ),
@@ -101,7 +101,7 @@ class AppTheme {
           backgroundColor: AppColors.orange600,
           foregroundColor: Colors.white,
           elevation: 0,
-          padding: const EdgeInsets.symmetric(vertical: 14),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
           textStyle: const TextStyle(fontWeight: FontWeight.w600),
         ),
@@ -110,7 +110,7 @@ class AppTheme {
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.orange600,
           side: const BorderSide(color: AppColors.orange600),
-          padding: const EdgeInsets.symmetric(vertical: 14),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
         ),
       ),
@@ -181,7 +181,7 @@ class AppTheme {
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.orange500,
           foregroundColor: Colors.black,
-          padding: const EdgeInsets.symmetric(vertical: 14),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
           textStyle: const TextStyle(fontWeight: FontWeight.w600),
         ),
@@ -191,7 +191,7 @@ class AppTheme {
           backgroundColor: AppColors.orange500,
           foregroundColor: Colors.black,
           elevation: 0,
-          padding: const EdgeInsets.symmetric(vertical: 14),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
           textStyle: const TextStyle(fontWeight: FontWeight.w600),
         ),
@@ -200,7 +200,7 @@ class AppTheme {
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.orange400,
           side: const BorderSide(color: AppColors.orange400),
-          padding: const EdgeInsets.symmetric(vertical: 14),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
         ),
       ),

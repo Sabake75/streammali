@@ -377,8 +377,8 @@ class _NewVideoFormState extends State<_NewVideoForm> {
               ],
               const SizedBox(height: 12),
               FilledButton(
-                onPressed: _submit,
-                child: const Text('Créer et envoyer'),
+                onPressed: _phase == _NewVideoPhase.form ? _submit : null,
+                child: Text(_phase == _NewVideoPhase.form ? 'Créer et envoyer' : 'Envoi…'),
               ),
             ],
           ),
