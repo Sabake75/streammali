@@ -50,7 +50,9 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Mes favoris')),
-      body: FutureBuilder<PaginatedResponse<Video>>(
+      body: SafeArea(
+        top: false,
+        child: FutureBuilder<PaginatedResponse<Video>>(
         future: _future,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -117,6 +119,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             },
           );
         },
+        ),
       ),
     );
   }

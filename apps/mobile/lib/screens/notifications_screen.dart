@@ -53,7 +53,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           TextButton(onPressed: _markAllRead, child: const Text('Tout marquer comme lu')),
         ],
       ),
-      body: FutureBuilder<NotificationListResult>(
+      body: SafeArea(
+        top: false,
+        child: FutureBuilder<NotificationListResult>(
         future: _future,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -109,6 +111,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             },
           );
         },
+        ),
       ),
     );
   }

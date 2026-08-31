@@ -71,7 +71,9 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> with WidgetsBindi
             ? Text(_lastLoadedVideo!.title, overflow: TextOverflow.ellipsis)
             : null,
       ),
-      body: FutureBuilder<Video?>(
+      body: SafeArea(
+        top: false,
+        child: FutureBuilder<Video?>(
         future: _future,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -223,6 +225,7 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> with WidgetsBindi
             ),
           );
         },
+        ),
       ),
     );
   }

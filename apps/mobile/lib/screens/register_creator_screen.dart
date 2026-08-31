@@ -97,7 +97,9 @@ class _UpgradeToCreatorScreenState extends State<_UpgradeToCreatorScreen> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Devenir créateur')),
-      body: SingleChildScrollView(
+      body: SafeArea(
+        top: false,
+        child: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -128,6 +130,7 @@ class _UpgradeToCreatorScreenState extends State<_UpgradeToCreatorScreen> {
               child: Text(_submitting ? 'Passage en créateur…' : 'Devenir créateur'),
             ),
           ],
+        ),
         ),
       ),
     );
@@ -219,7 +222,9 @@ class _FullRegistrationScreenState extends State<_FullRegistrationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Inscription créateur')),
-      body: SingleChildScrollView(
+      body: SafeArea(
+        top: false,
+        child: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Form(
           key: _formKey,
@@ -270,6 +275,7 @@ class _FullRegistrationScreenState extends State<_FullRegistrationScreen> {
               ),
             ],
           ),
+        ),
         ),
       ),
     );

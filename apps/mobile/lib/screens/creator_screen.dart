@@ -54,7 +54,9 @@ class _CreatorScreenState extends State<CreatorScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Espace créateur')),
-      body: ListenableBuilder(
+      body: SafeArea(
+        top: false,
+        child: ListenableBuilder(
         listenable: AuthController.instance,
         builder: (context, _) {
           final user = AuthController.instance.user;
@@ -152,6 +154,7 @@ class _CreatorScreenState extends State<CreatorScreen> {
             ],
           );
         },
+        ),
       ),
     );
   }

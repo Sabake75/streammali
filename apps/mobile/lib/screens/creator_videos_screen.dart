@@ -34,7 +34,9 @@ class _CreatorVideosScreenState extends State<CreatorVideosScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(widget.creatorName)),
-      body: FutureBuilder<PaginatedResponse<Video>>(
+      body: SafeArea(
+        top: false,
+        child: FutureBuilder<PaginatedResponse<Video>>(
         future: _future,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -83,6 +85,7 @@ class _CreatorVideosScreenState extends State<CreatorVideosScreen> {
             },
           );
         },
+        ),
       ),
     );
   }

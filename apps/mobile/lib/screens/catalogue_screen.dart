@@ -196,10 +196,13 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
         ],
       ),
       endDrawer: _buildDrawer(),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
+      body: SafeArea(
+        top: false,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
             const Padding(
               padding: EdgeInsets.fromLTRB(12, 12, 12, 0),
               child: HeroBanner(),
@@ -475,6 +478,7 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
               },
             ),
           ],
+          ),
         ),
       ),
     );

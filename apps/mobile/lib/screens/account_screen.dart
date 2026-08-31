@@ -106,7 +106,9 @@ class _AccountScreenState extends State<AccountScreen> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Mon compte')),
-      body: ListView(
+      body: SafeArea(
+        top: false,
+        child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           if (user != null)
@@ -118,7 +120,7 @@ class _AccountScreenState extends State<AccountScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Télécharger mes données', style: TextStyle(fontWeight: FontWeight.bold)),
+                  const Text('Voir mes données', style: TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 6),
                   const Text(
                     'Affiche tout ce que StreamMali détient sur toi (profil, achats, favoris, avis, '
@@ -127,7 +129,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   const SizedBox(height: 12),
                   FilledButton(
                     onPressed: _exporting ? null : _export,
-                    child: Text(_exporting ? 'Préparation…' : 'Télécharger mes données'),
+                    child: Text(_exporting ? 'Préparation…' : 'Voir mes données'),
                   ),
                 ],
               ),
@@ -161,6 +163,7 @@ class _AccountScreenState extends State<AccountScreen> {
             ),
           ),
         ],
+        ),
       ),
     );
   }

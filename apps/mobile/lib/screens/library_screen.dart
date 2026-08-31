@@ -38,7 +38,9 @@ class _LibraryScreenState extends State<LibraryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Mes achats')),
-      body: FutureBuilder<PaginatedResponse<Video>>(
+      body: SafeArea(
+        top: false,
+        child: FutureBuilder<PaginatedResponse<Video>>(
         future: _future,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -116,6 +118,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
             },
           );
         },
+        ),
       ),
     );
   }
@@ -144,22 +147,36 @@ class _PurchaseReceipt extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
           ),
-          InkWell(
-            onTap: () async {
-              await Clipboard.setData(ClipboardData(text: purchase.orderReference));
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Référence copiée'), duration: Duration(seconds: 1)),
-                );
-              }
-            },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-              child: Text(
-                'Réf.',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontWeight: FontWeight.w600,
+          Tooltip(
+            message: 'Copier la référence',
+            child: InkWell(
+              onTap: () async {
+                await Clipboard.setData(ClipboardData(text: purchase.orderReference));
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Référence copiée'), duration: Duration(seconds: 1)),
+                  );
+                }
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.copy,
+                      size: 14,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Réf.',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
