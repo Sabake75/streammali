@@ -27,6 +27,7 @@ class CatalogueScreen extends StatefulWidget {
 class _CatalogueScreenState extends State<CatalogueScreen> {
   final ApiClient _apiClient = ApiClient();
   final TextEditingController _searchController = TextEditingController();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   String? _category;
   String _search = '';
@@ -77,9 +78,88 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
     }).catchError((_) {});
   }
 
+  Widget _buildDrawer() {
+    return ListenableBuilder(
+      listenable: AuthController.instance,
+      builder: (context, _) {
+        final user = AuthController.instance.user;
+        if (user == null) return const SizedBox.shrink();
+
+        return Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              UserAccountsDrawerHeader(
+                accountName: Text(user.name),
+                accountEmail: Text(user.phone),
+                currentAccountPicture: const CircleAvatar(
+                  child: Icon(Icons.person),
+                ),
+              ),
+              ListTile(
+                leading: const Icon(Icons.person_outline),
+                title: const Text('Mon compte'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => const AccountScreen()),
+                  );
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.favorite_border),
+                title: const Text('Mes favoris'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => const FavoritesScreen()),
+                  );
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.video_library_outlined),
+                title: const Text('Mes achats'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => const LibraryScreen()),
+                  );
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.video_call_outlined),
+                title: const Text('Espace créateur'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => const CreatorScreen()),
+                  );
+                },
+              ),
+              const Divider(),
+              ListTile(
+                leading: const Icon(Icons.logout),
+                title: const Text('Déconnexion'),
+                onTap: () async {
+                  Navigator.of(context).pop();
+                  final token = AuthController.instance.token;
+                  if (token != null) {
+                    await _apiClient.logout(token);
+                  }
+                  await AuthController.instance.clearSession();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: const AppLogo(),
         actions: [
@@ -102,59 +182,11 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
               return Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => const AccountScreen()),
-                      );
-                    },
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 96),
-                      child: Text(
-                        user.name,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                      ),
-                    ),
-                  ),
                   const NotificationBell(),
                   IconButton(
-                    icon: const Icon(Icons.favorite_border),
-                    tooltip: 'Mes favoris',
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => const FavoritesScreen()),
-                      );
-                    },
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.video_library_outlined),
-                    tooltip: 'Mes achats',
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => const LibraryScreen()),
-                      );
-                    },
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.video_call_outlined),
-                    tooltip: 'Espace créateur',
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => const CreatorScreen()),
-                      );
-                    },
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.logout),
-                    tooltip: 'Déconnexion',
-                    onPressed: () async {
-                      final token = AuthController.instance.token;
-                      if (token != null) {
-                        await _apiClient.logout(token);
-                      }
-                      await AuthController.instance.clearSession();
-                    },
+                    icon: const Icon(Icons.menu),
+                    tooltip: 'Menu',
+                    onPressed: () => _scaffoldKey.currentState?.openEndDrawer(),
                   ),
                 ],
               );
@@ -163,6 +195,7 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
           const SizedBox(width: 8),
         ],
       ),
+      endDrawer: _buildDrawer(),
       body: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
