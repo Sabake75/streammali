@@ -5,6 +5,7 @@ namespace App\Domain\Payment\Gateways;
 use App\Domain\Payment\Contracts\PaymentGateway;
 use App\Domain\Payment\Data\PaymentInitiationResult;
 use App\Domain\Payment\Enums\PaymentStatus;
+use App\Domain\Payment\Exceptions\PaymentGatewayException;
 use App\Domain\Payment\Models\Payment;
 use Illuminate\Support\Facades\Http;
 use RuntimeException;
@@ -52,7 +53,7 @@ class PayDunyaGateway implements PaymentGateway
             ->json();
 
         if (($response['response_code'] ?? null) !== '00') {
-            throw new RuntimeException(
+            throw new PaymentGatewayException(
                 'PayDunya invoice creation failed: '.($response['response_text'] ?? 'unknown error')
             );
         }

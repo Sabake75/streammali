@@ -1,5 +1,6 @@
 <?php
 
+use App\Domain\Payment\Exceptions\PaymentGatewayException;
 use App\Http\Middleware\EnsureAccountIsActive;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -49,6 +50,20 @@ return Application::configure(basePath: dirname(__DIR__))
         // for reasons unrelated to the request itself (outage, timeout, bad
         // credentials) — never leak the raw upstream response/stack trace.
         $exceptions->render(function (RequestException|ConnectionException $e, Request $request) {
+            if ($request->is('api/*') || $request->expectsJson()) {
+                return response()->json([
+                    'message' => 'Un service externe est momentanément indisponible. Réessaie dans quelques instants.',
+                ], 502);
+            }
+        });
+
+        // Same family as above, but the gateway call itself succeeded
+        // (HTTP-wise) and refused the request at the business level — e.g.
+        // PayDunya's merchant KYC not yet validated. Confirmed in
+        // production: a viewer purchasing a video got a raw, untranslated
+        // "Server Error" because PayDunyaGateway::initiate() threw a bare
+        // RuntimeException nothing here caught.
+        $exceptions->render(function (PaymentGatewayException $e, Request $request) {
             if ($request->is('api/*') || $request->expectsJson()) {
                 return response()->json([
                     'message' => 'Un service externe est momentanément indisponible. Réessaie dans quelques instants.',

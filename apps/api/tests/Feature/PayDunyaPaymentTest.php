@@ -58,6 +58,30 @@ class PayDunyaPaymentTest extends TestCase
         app(InitiatePayment::class)($buyer, $video, '+223 76 00 00 00');
     }
 
+    public function test_purchasing_a_video_returns_a_friendly_error_when_paydunya_refuses_the_request(): void
+    {
+        // Reproduces the real production incident: PayDunya's merchant
+        // account was blocked pending KYC, so every invoice creation
+        // returned an HTTP 200 with response_code != "00" — a business
+        // refusal, not a transport failure. Without the
+        // PaymentGatewayException -> render() handler in bootstrap/app.php,
+        // this surfaced to the viewer as a raw, untranslated "Server Error".
+        Http::fake([
+            '*/checkout-invoice/create' => Http::response([
+                'response_code' => '01',
+                'response_text' => 'Vous devez valider vos informations de KYC avant d\'avoir accès au service.',
+            ], 200),
+        ]);
+
+        $buyer = User::factory()->create(['role' => UserRole::Viewer]);
+        $video = Video::factory()->approved()->create();
+
+        $this->actingAs($buyer)
+            ->postJson("/api/videos/{$video->id}/purchase", ['payer_msisdn' => '+223 76 00 00 00'])
+            ->assertStatus(502)
+            ->assertJson(['message' => 'Un service externe est momentanément indisponible. Réessaie dans quelques instants.']);
+    }
+
     public function test_confirm_payment_marks_a_verified_payment_as_succeeded(): void
     {
         Http::fake([
