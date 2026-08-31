@@ -8,6 +8,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\Exceptions\PostTooLargeException;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Http\Request;
 use League\Flysystem\UnableToWriteFile;
 use Sentry\Laravel\Integration;
@@ -95,6 +96,21 @@ return Application::configure(basePath: dirname(__DIR__))
                 return response()->json([
                     'message' => 'Le stockage est momentanément indisponible. Réessaie dans quelques instants.',
                 ], 502);
+            }
+        });
+
+        // Message hardcoded in English inside Laravel's own
+        // ThrottleRequests middleware ("Too Many Attempts.") — same class
+        // of gap as PostTooLargeException above. Confirmed in production:
+        // a viewer registering after several throttled attempts saw the
+        // raw English string on /inscription (web) and /inscription
+        // (mobile). Retry-After is preserved so a client that reads it can
+        // still back off correctly.
+        $exceptions->render(function (ThrottleRequestsException $e, Request $request) {
+            if ($request->is('api/*') || $request->expectsJson()) {
+                return response()->json([
+                    'message' => 'Trop de tentatives. Réessaie dans un instant.',
+                ], 429, $e->getHeaders());
             }
         });
     })->create();

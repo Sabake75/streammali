@@ -24,12 +24,17 @@ class RateLimitingTest extends TestCase
             ]);
         }
 
+        // "Too Many Attempts." is hardcoded in English inside Laravel's own
+        // ThrottleRequests middleware — not a lang/ key, confirmed leaking
+        // raw to a real viewer registering on the production web/mobile
+        // apps. bootstrap/app.php maps it to a French message.
         $this->postJson('/api/register', [
             'name' => 'Test',
             'phone' => '+22376999900',
             'password' => '1234',
             'terms_accepted' => true,
-        ])->assertStatus(429);
+        ])->assertStatus(429)
+            ->assertJson(['message' => 'Trop de tentatives. Réessaie dans un instant.']);
     }
 
     public function test_video_purchase_is_rate_limited_per_user(): void
