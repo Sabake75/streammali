@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Domain\Moderation\Enums\AccountStatus;
 use App\Enums\UserRole;
+use App\Filament\Resources\Users\Pages\EditUser;
 use App\Filament\Resources\Users\Pages\ListUsers;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -97,6 +98,42 @@ class ModerationAccountManagementTest extends TestCase
             'phone' => '+223 76 00 00 00',
             'password' => '5678',
         ])->assertOk();
+    }
+
+    public function test_the_account_list_has_no_bulk_delete_action(): void
+    {
+        // A real DELETE on `users` cascades to videos/payments/payouts/
+        // ledger_entries/messages/reviews/favorites/reports — an accidental
+        // multi-select "delete" would destroy real transaction history.
+        // Suspend/block are the intended moderation tools.
+        $moderator = User::factory()->create(['role' => UserRole::Moderator]);
+
+        Livewire::actingAs($moderator)
+            ->test(ListUsers::class)
+            ->assertTableBulkActionDoesNotExist('delete');
+    }
+
+    public function test_the_edit_account_page_has_no_delete_action(): void
+    {
+        $moderator = User::factory()->create(['role' => UserRole::Moderator]);
+        $viewer = User::factory()->create(['role' => UserRole::Viewer]);
+
+        Livewire::actingAs($moderator)
+            ->test(EditUser::class, ['record' => $viewer->getKey()])
+            ->assertActionDoesNotExist('delete');
+    }
+
+    public function test_the_account_list_disables_the_default_click_to_edit_behavior(): void
+    {
+        // Filament opens the edit page by default when a cell has no
+        // ->action()/->url() of its own — a moderator clicking the name,
+        // phone, or "Identité vérifiée" icon landed on the edit form
+        // instead of doing nothing. Same bug/fix already applied to
+        // VideosTable (see Domain\Video\README), never applied here.
+        $table = \App\Filament\Resources\Users\Tables\UsersTable::configure(new \Filament\Tables\Table(new ListUsers));
+        $viewer = User::factory()->create(['role' => UserRole::Viewer]);
+
+        $this->assertNull($table->getRecordUrl($viewer));
     }
 
     public function test_resetting_a_pin_revokes_the_accounts_existing_tokens(): void
