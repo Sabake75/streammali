@@ -108,7 +108,14 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
                         MaterialPageRoute(builder: (context) => const AccountScreen()),
                       );
                     },
-                    child: Text(user.name),
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 96),
+                      child: Text(
+                        user.name,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    ),
                   ),
                   const NotificationBell(),
                   IconButton(
@@ -156,163 +163,167 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
           const SizedBox(width: 8),
         ],
       ),
-      body: Column(
-        children: [
-          const Padding(
-            padding: EdgeInsets.fromLTRB(12, 12, 12, 0),
-            child: HeroBanner(),
-          ),
-          if (_featured != null && _featured!.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(12, 20, 12, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SectionHeading(title: 'En vedette'),
-                  const SizedBox(height: 8),
-                  SizedBox(
-                    height: 275,
-                    child: ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: _featured!.length,
-                      separatorBuilder: (context, index) => const SizedBox(width: 12),
-                      itemBuilder: (context, index) {
-                        final video = _featured![index];
-                        return SizedBox(
-                          width: 160,
-                          child: VideoCard(
-                            video: video,
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => VideoDetailScreen(videoId: video.id),
-                                ),
-                              );
-                            },
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Padding(
+              padding: EdgeInsets.fromLTRB(12, 12, 12, 0),
+              child: HeroBanner(),
             ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(12, 20, 12, 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SectionHeading(title: 'Catalogue'),
-                const SizedBox(height: 12),
-                Card(
-                  margin: EdgeInsets.zero,
-                  child: Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Column(
-                      children: [
-                        TextField(
-                          controller: _searchController,
-                          decoration: const InputDecoration(
-                            labelText: 'Recherche',
-                            hintText: "Titre d'un film, clip, sketch…",
-                            prefixIcon: Icon(Icons.search),
-                          ),
-                          onSubmitted: (value) {
-                            _search = value;
-                            _page = 1;
-                            _reload();
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: DropdownButtonFormField<String?>(
-                                initialValue: _category,
-                                decoration: const InputDecoration(labelText: 'Catégorie'),
-                                items: [
-                                  const DropdownMenuItem(value: null, child: Text('Toutes')),
-                                  ..._categories.map(
-                                    (category) => DropdownMenuItem(
-                                      value: category.value,
-                                      child: Text(category.label),
-                                    ),
+            if (_featured != null && _featured!.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(12, 20, 12, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SectionHeading(title: 'En vedette'),
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      height: 275,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: _featured!.length,
+                        separatorBuilder: (context, index) => const SizedBox(width: 12),
+                        itemBuilder: (context, index) {
+                          final video = _featured![index];
+                          return SizedBox(
+                            width: 160,
+                            child: VideoCard(
+                              video: video,
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => VideoDetailScreen(videoId: video.id),
                                   ),
-                                ],
-                                onChanged: (value) {
-                                  _category = value;
-                                  _page = 1;
-                                  _reload();
-                                },
-                              ),
+                                );
+                              },
                             ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: DropdownButtonFormField<String>(
-                                initialValue: _sort,
-                                decoration: const InputDecoration(labelText: 'Trier par'),
-                                items: const [
-                                  DropdownMenuItem(value: 'recent', child: Text('Plus récent')),
-                                  DropdownMenuItem(value: 'popular', child: Text('Plus populaire')),
-                                ],
-                                onChanged: (value) {
-                                  _sort = value ?? 'recent';
-                                  _page = 1;
-                                  _reload();
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                          );
+                        },
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
-          ),
-          if (_recommended != null && _recommended!.isNotEmpty)
+              ),
             Padding(
               padding: const EdgeInsets.fromLTRB(12, 20, 12, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SectionHeading(title: 'Recommandé pour vous'),
-                  const SizedBox(height: 8),
-                  SizedBox(
-                    height: 275,
-                    child: ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: _recommended!.length,
-                      separatorBuilder: (context, index) => const SizedBox(width: 12),
-                      itemBuilder: (context, index) {
-                        final video = _recommended![index];
-                        return SizedBox(
-                          width: 160,
-                          child: VideoCard(
-                            video: video,
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => VideoDetailScreen(videoId: video.id),
-                                ),
-                              );
+                  const SectionHeading(title: 'Catalogue'),
+                  const SizedBox(height: 12),
+                  Card(
+                    margin: EdgeInsets.zero,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                        children: [
+                          TextField(
+                            controller: _searchController,
+                            decoration: const InputDecoration(
+                              labelText: 'Recherche',
+                              hintText: "Titre d'un film, clip, sketch…",
+                              prefixIcon: Icon(Icons.search),
+                            ),
+                            onSubmitted: (value) {
+                              _search = value;
+                              _page = 1;
+                              _reload();
                             },
                           ),
-                        );
-                      },
+                          const SizedBox(height: 10),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: DropdownButtonFormField<String?>(
+                                  initialValue: _category,
+                                  decoration: const InputDecoration(labelText: 'Catégorie'),
+                                  items: [
+                                    const DropdownMenuItem(value: null, child: Text('Toutes')),
+                                    ..._categories.map(
+                                      (category) => DropdownMenuItem(
+                                        value: category.value,
+                                        child: Text(category.label),
+                                      ),
+                                    ),
+                                  ],
+                                  onChanged: (value) {
+                                    _category = value;
+                                    _page = 1;
+                                    _reload();
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: DropdownButtonFormField<String>(
+                                  initialValue: _sort,
+                                  decoration: const InputDecoration(labelText: 'Trier par'),
+                                  items: const [
+                                    DropdownMenuItem(value: 'recent', child: Text('Plus récent')),
+                                    DropdownMenuItem(value: 'popular', child: Text('Plus populaire')),
+                                  ],
+                                  onChanged: (value) {
+                                    _sort = value ?? 'recent';
+                                    _page = 1;
+                                    _reload();
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 12),
                 ],
               ),
             ),
-          Expanded(
-            child: FutureBuilder<PaginatedResponse<Video>>(
+            if (_recommended != null && _recommended!.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(12, 20, 12, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SectionHeading(title: 'Recommandé pour vous'),
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      height: 275,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: _recommended!.length,
+                        separatorBuilder: (context, index) => const SizedBox(width: 12),
+                        itemBuilder: (context, index) {
+                          final video = _recommended![index];
+                          return SizedBox(
+                            width: 160,
+                            child: VideoCard(
+                              video: video,
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => VideoDetailScreen(videoId: video.id),
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                  ],
+                ),
+              ),
+            FutureBuilder<PaginatedResponse<Video>>(
               future: _future,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const Padding(
+                    padding: EdgeInsets.all(48),
+                    child: Center(child: CircularProgressIndicator()),
+                  );
                 }
 
                 if (snapshot.hasError) {
@@ -369,31 +380,32 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
                 }
 
                 return Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Expanded(
-                      child: GridView.builder(
-                        padding: const EdgeInsets.all(12),
-                        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent: 280,
-                          mainAxisExtent: 260,
-                          crossAxisSpacing: 12,
-                          mainAxisSpacing: 12,
-                        ),
-                        itemCount: catalogue.data.length,
-                        itemBuilder: (context, index) {
-                          final video = catalogue.data[index];
-                          return VideoCard(
-                            video: video,
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => VideoDetailScreen(videoId: video.id),
-                                ),
-                              );
-                            },
-                          );
-                        },
+                    GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: const EdgeInsets.all(12),
+                      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent: 280,
+                        mainAxisExtent: 260,
+                        crossAxisSpacing: 12,
+                        mainAxisSpacing: 12,
                       ),
+                      itemCount: catalogue.data.length,
+                      itemBuilder: (context, index) {
+                        final video = catalogue.data[index];
+                        return VideoCard(
+                          video: video,
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => VideoDetailScreen(videoId: video.id),
+                              ),
+                            );
+                          },
+                        );
+                      },
                     ),
                     if (catalogue.lastPage > 1)
                       Padding(
@@ -429,8 +441,8 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
                 );
               },
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
