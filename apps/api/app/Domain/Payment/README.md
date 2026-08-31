@@ -34,3 +34,5 @@ Testé (mock HTTP, aucun appel réseau réel) dans `tests/Feature/PayDunyaPaymen
 - Pas d'intégration réelle de décaissement Mobile Money — le modérateur traite les demandes manuellement dans le back-office (`/moderation/payouts`), comme pour la modération vidéo.
 
 Testé dans `tests/Feature/PayoutApiTest.php`, vérifié aussi contre PostgreSQL (calcul de commission, réservation du solde).
+
+`PayoutsTable`/`EditPayout` : même correctifs que `UsersTable`/`VideosTable` (`->recordUrl(null)`, pas de `DeleteAction`/`DeleteBulkAction` — voir `Domain\Video\README`), trouvés lors du même audit QA production que le correctif `UsersTable`. Une demande de retrait supprimée par erreur perdrait la trace d'un vrai retrait d'argent réel ; "Rejeter" (déjà présent) est l'outil prévu pour un retrait qu'on refuse. `LedgerEntriesTable` n'a jamais ce problème : lecture seule par construction (`canCreate() => false`, aucune page d'édition enregistrée), les écritures ne sont créées que par `ConfirmPayment`.

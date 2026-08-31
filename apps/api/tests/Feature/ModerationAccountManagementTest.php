@@ -6,7 +6,9 @@ use App\Domain\Moderation\Enums\AccountStatus;
 use App\Enums\UserRole;
 use App\Filament\Resources\Users\Pages\EditUser;
 use App\Filament\Resources\Users\Pages\ListUsers;
+use App\Filament\Resources\Users\Tables\UsersTable;
 use App\Models\User;
+use Filament\Tables\Table;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -130,7 +132,7 @@ class ModerationAccountManagementTest extends TestCase
         // phone, or "Identité vérifiée" icon landed on the edit form
         // instead of doing nothing. Same bug/fix already applied to
         // VideosTable (see Domain\Video\README), never applied here.
-        $table = \App\Filament\Resources\Users\Tables\UsersTable::configure(new \Filament\Tables\Table(new ListUsers));
+        $table = UsersTable::configure(new Table(new ListUsers));
         $viewer = User::factory()->create(['role' => UserRole::Viewer]);
 
         $this->assertNull($table->getRecordUrl($viewer));

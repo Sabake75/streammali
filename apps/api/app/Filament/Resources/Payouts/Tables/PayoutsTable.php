@@ -4,8 +4,6 @@ namespace App\Filament\Resources\Payouts\Tables;
 
 use App\Domain\Payment\Enums\PayoutStatus;
 use Filament\Actions\Action;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
@@ -17,6 +15,10 @@ class PayoutsTable
     public static function configure(Table $table): Table
     {
         return $table
+            // Même bug/correctif que UsersTable/VideosTable : sans ça,
+            // cliquer sur "Numéro Mobile Money" ou une autre cellule ouvre
+            // le formulaire d'édition au lieu de rien faire.
+            ->recordUrl(null)
             ->columns([
                 TextColumn::make('creator.name')
                     ->label('Créateur')
@@ -71,11 +73,9 @@ class PayoutsTable
                         'processed_at' => now(),
                     ])),
                 EditAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
             ]);
+        // Pas de toolbarActions/DeleteBulkAction : un retrait supprimé par
+        // erreur perd la trace d'une vraie demande d'argent réel — "Rejeter"
+        // (déjà ci-dessus) est l'outil prévu pour un retrait qu'on refuse.
     }
 }

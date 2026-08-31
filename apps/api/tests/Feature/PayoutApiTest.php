@@ -8,9 +8,14 @@ use App\Domain\Payment\Enums\PayoutStatus;
 use App\Domain\Payment\Models\Payment;
 use App\Domain\Video\Models\Video;
 use App\Enums\UserRole;
+use App\Filament\Resources\Payouts\Pages\EditPayout;
+use App\Filament\Resources\Payouts\Pages\ListPayouts;
+use App\Filament\Resources\Payouts\Tables\PayoutsTable;
 use App\Models\User;
+use Filament\Tables\Table;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class PayoutApiTest extends TestCase
@@ -166,5 +171,46 @@ class PayoutApiTest extends TestCase
 
         $this->assertSame(PayoutStatus::Paid, $payout->fresh()->status);
         $this->assertNotNull($payout->fresh()->processed_at);
+    }
+
+    public function test_the_payouts_list_has_no_bulk_delete_action(): void
+    {
+        // A deleted payout loses the trace of a real withdrawal request —
+        // "Rejeter" is the intended tool for a payout the moderator refuses.
+        $moderator = User::factory()->create(['role' => UserRole::Moderator]);
+
+        Livewire::actingAs($moderator)
+            ->test(ListPayouts::class)
+            ->assertTableBulkActionDoesNotExist('delete');
+    }
+
+    public function test_the_edit_payout_page_has_no_delete_action(): void
+    {
+        $moderator = User::factory()->create(['role' => UserRole::Moderator]);
+        $creator = User::factory()->create(['role' => UserRole::Creator]);
+        $payout = $creator->payouts()->create([
+            'amount' => 15000,
+            'destination_msisdn' => '+223 76 00 00 00',
+            'status' => PayoutStatus::Pending,
+        ]);
+
+        Livewire::actingAs($moderator)
+            ->test(EditPayout::class, ['record' => $payout->getKey()])
+            ->assertActionDoesNotExist('delete');
+    }
+
+    public function test_the_payouts_list_disables_the_default_click_to_edit_behavior(): void
+    {
+        // Same bug/fix as UsersTable/VideosTable: without ->recordUrl(null),
+        // clicking a cell like "Numéro Mobile Money" opened the edit form.
+        $table = PayoutsTable::configure(new Table(new ListPayouts));
+        $creator = User::factory()->create(['role' => UserRole::Creator]);
+        $payout = $creator->payouts()->create([
+            'amount' => 15000,
+            'destination_msisdn' => '+223 76 00 00 00',
+            'status' => PayoutStatus::Pending,
+        ]);
+
+        $this->assertNull($table->getRecordUrl($payout));
     }
 }
