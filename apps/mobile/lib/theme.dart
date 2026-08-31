@@ -86,6 +86,11 @@ class AppTheme {
         focusedBorder: inputBorder.copyWith(
           borderSide: const BorderSide(color: AppColors.orange500, width: 2),
         ),
+        // Always float the label above the field instead of only once it
+        // has content — otherwise dropdowns/pre-filled fields (label
+        // floated) sit next to empty text fields (label centered inside)
+        // on the same form, which reads as inconsistent.
+        floatingLabelBehavior: FloatingLabelBehavior.always,
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
@@ -176,6 +181,7 @@ class AppTheme {
         focusedBorder: inputBorder.copyWith(
           borderSide: const BorderSide(color: AppColors.orange500, width: 2),
         ),
+        floatingLabelBehavior: FloatingLabelBehavior.always,
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
