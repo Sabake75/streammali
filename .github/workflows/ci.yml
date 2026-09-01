@@ -91,10 +91,29 @@ jobs:
       - name: Run tests
         run: flutter test
 
-      # Manual-testing/distribution artifact only — not a Play Store release
-      # (needs a paid developer account + real signing, out of scope for
-      # now). Falls back to the debug signing config already configured in
-      # android/app/build.gradle.kts, so no keystore secret is needed here.
+      # If the upload-keystore secrets are configured (repo Settings →
+      # Secrets → Actions: ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD,
+      # ANDROID_KEY_ALIAS — see infra/DEPLOY.md), sign with the real release
+      # key. Otherwise android/app/build.gradle.kts falls back to debug
+      # signing on its own, so this step is a no-op and the build below is a
+      # manual-testing artifact only, not upload-ready for the Play Store.
+      - name: Configure release signing
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > android/app/upload-keystore.jks
+            cat > android/key.properties <<EOF
+          storePassword=$KEYSTORE_PASSWORD
+          keyPassword=$KEYSTORE_PASSWORD
+          keyAlias=$KEY_ALIAS
+          storeFile=upload-keystore.jks
+          EOF
+          fi
+
       - name: Build release APK
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         run: flutter build apk --release
@@ -105,4 +124,18 @@ jobs:
         with:
           name: streammali-mobile-apk
           path: apps/mobile/build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 30
+
+      # Play Store submission format. Uses the same signing config as the
+      # APK above (real key if configured, debug fallback otherwise).
+      - name: Build App Bundle
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        run: flutter build appbundle --release
+
+      - name: Upload App Bundle artifact
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        uses: actions/upload-artifact@v4
+        with:
+          name: streammali-mobile-appbundle
+          path: apps/mobile/build/app/outputs/bundle/release/app-release.aab
           retention-days: 30
