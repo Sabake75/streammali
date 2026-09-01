@@ -1,15 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-/// Shows a CGU page from the web app inside the mobile app (rather than
-/// handing off to an external browser) — the text itself still lives only
-/// on the web app, this just renders it in place. Pops `true` if the user
-/// taps "J'accepte les CGU", `false`/`null` otherwise.
+/// Shows a legal page (CGU, privacy policy…) from the web app inside the
+/// mobile app (rather than handing off to an external browser) — the text
+/// itself still lives only on the web app, this just renders it in place.
+/// With [showAcceptButton] (the registration consent flow), pops `true` if
+/// the user taps accept, `false`/`null` otherwise. Without it (e.g. reading
+/// the privacy policy from the account menu), there's just a close button.
 class TermsWebViewScreen extends StatefulWidget {
   final String url;
   final String title;
+  final bool showAcceptButton;
+  final String acceptLabel;
 
-  const TermsWebViewScreen({super.key, required this.url, required this.title});
+  const TermsWebViewScreen({
+    super.key,
+    required this.url,
+    required this.title,
+    this.showAcceptButton = true,
+    this.acceptLabel = "J'accepte les CGU",
+  });
 
   @override
   State<TermsWebViewScreen> createState() => _TermsWebViewScreenState();
@@ -47,23 +57,28 @@ class _TermsWebViewScreenState extends State<TermsWebViewScreen> {
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: () => Navigator.of(context).pop(false),
+          child: widget.showAcceptButton
+              ? Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        child: const Text('Fermer'),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: FilledButton(
+                        onPressed: () => Navigator.of(context).pop(true),
+                        child: Text(widget.acceptLabel),
+                      ),
+                    ),
+                  ],
+                )
+              : OutlinedButton(
+                  onPressed: () => Navigator.of(context).pop(),
                   child: const Text('Fermer'),
                 ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: FilledButton(
-                  onPressed: () => Navigator.of(context).pop(true),
-                  child: const Text("J'accepte les CGU"),
-                ),
-              ),
-            ],
-          ),
         ),
       ),
     );

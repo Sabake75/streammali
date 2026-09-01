@@ -5,6 +5,7 @@ import '../services/auth_controller.dart';
 import '../widgets/app_logo.dart';
 import '../widgets/phone_number_field.dart';
 import '../widgets/pin_code_field.dart';
+import '../widgets/privacy_policy_link.dart';
 import '../widgets/terms_checkbox.dart';
 import 'register_creator_screen.dart';
 import 'video_detail_screen.dart';
@@ -108,6 +109,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 onChanged: (value) => setState(() => _termsAccepted = value),
                 termsUrl: '${ApiClient.webBaseUrl}/cgu-spectateur',
               ),
+              const PrivacyPolicyLink(),
               if (_error != null) ...[
                 const SizedBox(height: 12),
                 Text(_error!, style: const TextStyle(color: Colors.red)),

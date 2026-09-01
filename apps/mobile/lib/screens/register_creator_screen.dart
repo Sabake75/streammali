@@ -7,6 +7,7 @@ import '../services/auth_controller.dart';
 import '../widgets/app_logo.dart';
 import '../widgets/phone_number_field.dart';
 import '../widgets/pin_code_field.dart';
+import '../widgets/privacy_policy_link.dart';
 import '../widgets/terms_checkbox.dart';
 import 'creator_screen.dart';
 
@@ -120,6 +121,7 @@ class _UpgradeToCreatorScreenState extends State<_UpgradeToCreatorScreen> {
               termsUrl: '${ApiClient.webBaseUrl}/cgu-createur',
               linkLabel: 'CGU créateur',
             ),
+            const PrivacyPolicyLink(),
             if (_error != null) ...[
               const SizedBox(height: 12),
               Text(_error!, style: const TextStyle(color: Colors.red)),
@@ -259,6 +261,7 @@ class _FullRegistrationScreenState extends State<_FullRegistrationScreen> {
                 termsUrl: '${ApiClient.webBaseUrl}/cgu-createur',
                 linkLabel: 'CGU créateur',
               ),
+              const PrivacyPolicyLink(),
               if (_error != null) ...[
                 const SizedBox(height: 12),
                 Text(_error!, style: const TextStyle(color: Colors.red)),
