@@ -44,9 +44,9 @@ class _CreatorScreenState extends State<CreatorScreen> {
         _videos = videos;
         _error = null;
       });
-    } catch (err) {
+    } catch (_) {
       if (!mounted) return;
-      setState(() => _error = err.toString());
+      setState(() => _error = 'Impossible de charger tes vidéos. Vérifie ta connexion et réessaie.');
     }
   }
 
@@ -91,7 +91,10 @@ class _CreatorScreenState extends State<CreatorScreen> {
             );
           }
 
-          return ListView(
+          return RefreshIndicator(
+            onRefresh: _reload,
+            child: ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.all(16),
             children: [
               const Stats(),
@@ -152,6 +155,7 @@ class _CreatorScreenState extends State<CreatorScreen> {
                 ),
               ),
             ],
+            ),
           );
         },
         ),

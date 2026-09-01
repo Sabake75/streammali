@@ -5,6 +5,7 @@ import '../services/api_client.dart';
 import '../services/auth_controller.dart';
 import '../theme.dart';
 import '../utils/formatting.dart';
+import '../widgets/error_retry_view.dart';
 import 'creator_screen.dart';
 import 'video_detail_screen.dart';
 
@@ -31,6 +32,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     return _apiClient.fetchNotifications(token);
   }
 
+  Future<void> _reload() async {
+    setState(() => _future = _load());
+    await _future.then((_) {}, onError: (_) {});
+  }
+
   Future<void> _markRead(AppNotification notification) async {
     final token = AuthController.instance.token;
     if (token == null || notification.read) return;
@@ -55,6 +61,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       ),
       body: SafeArea(
         top: false,
+        child: RefreshIndicator(
+        onRefresh: _reload,
         child: FutureBuilder<NotificationListResult>(
         future: _future,
         builder: (context, snapshot) {
@@ -63,12 +71,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           }
 
           if (snapshot.hasError) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Text('Erreur : ${snapshot.error}', textAlign: TextAlign.center),
-              ),
-            );
+            return ErrorRetryView(onRetry: _reload);
           }
 
           final notifications = snapshot.data!.data;
@@ -83,6 +86,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           }
 
           return ListView.separated(
+            physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.all(12),
             itemCount: notifications.length,
             separatorBuilder: (context, index) => const SizedBox(height: 8),
@@ -111,6 +115,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             },
           );
         },
+        ),
         ),
       ),
     );
@@ -154,7 +159,7 @@ class _NotificationTile extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(text, style: Theme.of(context).textTheme.bodyMedium),
+                    Text(text, style: Theme.of(context).textTheme.bodyMedium, maxLines: 3, overflow: TextOverflow.ellipsis),
                     const SizedBox(height: 4),
                     Text(
                       formatDate(notification.createdAt),

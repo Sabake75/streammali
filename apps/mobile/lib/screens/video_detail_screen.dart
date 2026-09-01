@@ -5,6 +5,7 @@ import '../models/video.dart';
 import '../services/api_client.dart';
 import '../theme.dart';
 import '../utils/formatting.dart';
+import '../widgets/error_retry_view.dart';
 import '../widgets/favorite_button.dart';
 import '../widgets/purchase_section.dart';
 import '../widgets/report_section.dart';
@@ -81,7 +82,7 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> with WidgetsBindi
           }
 
           if (snapshot.hasError) {
-            return Center(child: Text('Erreur : ${snapshot.error}'));
+            return ErrorRetryView(onRetry: () => setState(_loadVideo));
           }
 
           final video = snapshot.data;

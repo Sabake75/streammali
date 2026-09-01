@@ -6,6 +6,7 @@ import '../services/api_client.dart';
 import '../services/auth_controller.dart';
 import '../theme.dart';
 import '../widgets/app_logo.dart';
+import '../widgets/error_retry_view.dart';
 import '../widgets/hero_banner.dart';
 import '../widgets/notification_bell.dart';
 import '../widgets/onboarding_dialog.dart';
@@ -15,6 +16,7 @@ import 'creator_screen.dart';
 import 'favorites_screen.dart';
 import 'library_screen.dart';
 import 'login_screen.dart';
+import 'terms_webview_screen.dart';
 import 'video_detail_screen.dart';
 
 class CatalogueScreen extends StatefulWidget {
@@ -138,6 +140,22 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
               ),
               const Divider(),
               ListTile(
+                leading: const Icon(Icons.privacy_tip_outlined),
+                title: const Text('Politique de confidentialité'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => TermsWebViewScreen(
+                        url: '${ApiClient.webBaseUrl}/politique-de-confidentialite',
+                        title: 'Politique de confidentialité',
+                        showAcceptButton: false,
+                      ),
+                    ),
+                  );
+                },
+              ),
+              ListTile(
                 leading: const Icon(Icons.logout),
                 title: const Text('Déconnexion'),
                 onTap: () async {
@@ -198,7 +216,13 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
       endDrawer: _buildDrawer(),
       body: SafeArea(
         top: false,
+        child: RefreshIndicator(
+        onRefresh: () async {
+          _reload();
+          await _future.then((_) {}, onError: (_) {});
+        },
         child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.only(bottom: 12),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -363,15 +387,7 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
                 }
 
                 if (snapshot.hasError) {
-                  return Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: Text(
-                        'Erreur : ${snapshot.error}',
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  );
+                  return ErrorRetryView(onRetry: _reload);
                 }
 
                 final catalogue = snapshot.data!;
@@ -479,6 +495,7 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
             ),
           ],
           ),
+        ),
         ),
       ),
     );

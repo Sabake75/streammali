@@ -6,6 +6,7 @@ import '../models/video.dart';
 import '../services/api_client.dart';
 import '../services/auth_controller.dart';
 import '../utils/formatting.dart';
+import '../widgets/error_retry_view.dart';
 import '../widgets/video_card.dart';
 import 'video_detail_screen.dart';
 
@@ -34,12 +35,19 @@ class _LibraryScreenState extends State<LibraryScreen> {
     return _apiClient.fetchMyPurchases(token);
   }
 
+  Future<void> _reload() async {
+    setState(() => _future = _load());
+    await _future.then((_) {}, onError: (_) {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Mes achats')),
       body: SafeArea(
         top: false,
+        child: RefreshIndicator(
+        onRefresh: _reload,
         child: FutureBuilder<PaginatedResponse<Video>>(
         future: _future,
         builder: (context, snapshot) {
@@ -48,12 +56,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
           }
 
           if (snapshot.hasError) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Text('Erreur : ${snapshot.error}', textAlign: TextAlign.center),
-              ),
-            );
+            return ErrorRetryView(onRetry: _reload);
           }
 
           final videos = snapshot.data!.data;
@@ -88,6 +91,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
           }
 
           return GridView.builder(
+            physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.all(12),
             gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
               maxCrossAxisExtent: 280,
@@ -118,6 +122,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
             },
           );
         },
+        ),
         ),
       ),
     );
