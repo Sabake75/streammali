@@ -15,7 +15,7 @@ Scaffold Flutter initialisé (`flutter create`, package `com.streammali`), `flut
 Catalogue fonctionnel, consomme l'API `apps/api` (`GET /api/videos`, `GET /api/videos/{id}`) :
 - `lib/screens/catalogue_screen.dart` — liste paginée en grille, recherche + filtre catégorie.
 - `lib/screens/video_detail_screen.dart` — fiche vidéo.
-- `lib/services/api_client.dart` — client HTTP (`package:http`), URL de base surchargeable via `--dart-define=API_BASE_URL=...`. Sur l'émulateur Android, `localhost` pointe vers l'émulateur lui-même — utiliser `http://10.0.2.2:8000/api` pour joindre l'API sur la machine hôte.
+- `lib/services/api_client.dart` — client HTTP (`package:http`). `baseUrl`/`webBaseUrl` pointent par défaut vers la production Render (`https://streammali-api.onrender.com/api`, `https://streammali-web.onrender.com`), pour qu'un `flutter build` sans flag produise déjà un binaire fonctionnel. Pour le dev local, surcharger via `--dart-define=API_BASE_URL=...`/`WEB_BASE_URL=...` — `http://127.0.0.1:8000/api` sur appareil physique via `adb reverse tcp:8000 tcp:8000`, ou `http://10.0.2.2:8000/api` sur l'émulateur Android (`localhost` y pointe vers l'émulateur lui-même, pas la machine hôte).
 - `lib/models/`, `lib/widgets/video_card.dart`, `lib/utils/formatting.dart`.
 
 Auth + achat, même flux token Bearer Sanctum que le web (`apps/web/src/lib/{auth-client,api-client}.ts`) :

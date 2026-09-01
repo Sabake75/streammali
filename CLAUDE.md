@@ -79,7 +79,7 @@ Construit et vérifié :
 
 CI GitHub Actions (`.github/workflows/ci.yml`) : PHPUnit, lint+tsc+build web, flutter analyze+test, plus build d'un APK release (artefact CI, pas de publication store) à chaque push sur `master`.
 
-Hébergement/CD choisi et préparé (jamais déployé en conditions réelles — pas de compte Render/Vercel lié) : `apps/api/Dockerfile.prod` (FrankenPHP, build vérifié en local avec une vraie base Postgres) + `render.yaml` (Blueprint API + PostgreSQL managé) + Vercel pour le web ; voir `infra/DEPLOY.md`. Stockage des pièces d'identité créateur basculé sur `FILESYSTEM_DISK` (S3/R2 en prod plutôt que le disque local du conteneur, éphémère).
+**Déployé en production sur Render** (API + web, depuis le 2026-08-30 — voir `infra/DEPLOY.md` pour l'historique des pièges rencontrés au premier déploiement) : `https://streammali-api.onrender.com` et `https://streammali-web.onrender.com`, tous deux vérifiés en ligne (`/up` et `/` répondent 200, `GET /api/categories` renvoie des données réelles). Web finalement déployé sur Render plutôt que Vercel (bloqué sur un 404 persistant en prod, jamais élucidé). Stockage des pièces d'identité créateur basculé sur `FILESYSTEM_DISK` (S3/R2 en prod plutôt que le disque local du conteneur, éphémère).
 
 Webhook Cloudflare Stream (`CloudflareStreamWebhookController`) : ne fait pas confiance au payload entrant, redéclenche juste `RefreshVideoSourceStatus` qui revérifie l'état réel auprès de Cloudflare — même logique que le webhook Orange Money.
 

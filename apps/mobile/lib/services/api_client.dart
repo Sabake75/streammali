@@ -35,19 +35,23 @@ class PurchaseResult {
 }
 
 class ApiClient {
-  /// Override with `flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8000/api`
-  /// on the Android emulator, where `localhost` refers to the emulator itself,
-  /// not the host machine running the Laravel API.
+  /// Defaults to the real production API so a plain `flutter build` (CI's
+  /// release APK/App Bundle included) ships something that actually works.
+  /// For local development against a Laravel dev server, override with
+  /// `flutter run --dart-define=API_BASE_URL=http://127.0.0.1:8000/api`
+  /// (physical device over `adb reverse`) or `http://10.0.2.2:8000/api` on
+  /// the Android emulator, where `localhost` refers to the emulator itself,
+  /// not the host machine.
   static const String baseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://localhost:8000/api',
+    defaultValue: 'https://streammali-api.onrender.com/api',
   );
 
   /// The CGU pages (terms of service) live on the web app, not natively in
-  /// this app — same override caveat as [baseUrl] on the Android emulator.
+  /// this app — same override caveat as [baseUrl] for local development.
   static const String webBaseUrl = String.fromEnvironment(
     'WEB_BASE_URL',
-    defaultValue: 'http://localhost:3000',
+    defaultValue: 'https://streammali-web.onrender.com',
   );
 
   Future<PaginatedResponse<Video>> fetchVideos({
