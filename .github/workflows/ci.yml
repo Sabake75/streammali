@@ -120,7 +120,7 @@ jobs:
 
       - name: Upload APK artifact
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: streammali-mobile-apk
           path: apps/mobile/build/app/outputs/flutter-apk/app-release.apk
@@ -134,7 +134,7 @@ jobs:
 
       - name: Upload App Bundle artifact
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: streammali-mobile-appbundle
           path: apps/mobile/build/app/outputs/bundle/release/app-release.aab
