@@ -42,11 +42,15 @@ StreamMali répond à un vrai besoin : la production locale malienne circule auj
 Divertissement (Entertainment)
 
 ## Coordonnées (obligatoire dans Play Console)
-- Email de contact : à définir
-- Site web : https://streammali-web.onrender.com (à remplacer par le domaine définitif une fois acheté/configuré)
+- Email de contact : sbd.diarra@gmail.com
+- Nom légal / raison sociale (compte développeur Play Console) : SABAKE FOURNITURE
+- Site web : https://streammali-web.onrender.com (choix assumé de garder l'URL onrender.com pour cette publication — pas de domaine dédié acheté à ce stade)
 - Politique de confidentialité (URL obligatoire) : https://streammali-web.onrender.com/politique-de-confidentialite
 
+## Assets graphiques
+- Icône 512×512 : `apps/mobile/web/icons/Icon-512.png` (déjà prête).
+- Feature graphic (bannière 1024×500, obligatoire) : générée, voir `infra/play-store-assets/feature-graphic.png` (source éditable : `infra/play-store-assets/feature-graphic.html`, rendu via Chrome headless).
+
 ## Notes
-- Remplacer l'URL onrender.com partout ci-dessus si un nom de domaine dédié est configuré avant publication.
-- Prévoir 2 à 8 captures d'écran téléphone (Play Console impose un minimum de 2) et une icône 512×512 — les captures peuvent être générées depuis l'app elle-même (catalogue, fiche vidéo, espace créateur) une fois du vrai contenu en production ; l'icône source haute résolution existe déjà : `apps/mobile/web/icons/Icon-512.png`.
-- Feature graphic (bannière 1024×500, obligatoire) : pas encore créée — nécessite un visuel dédié (pas juste l'icône agrandie).
+- Si un nom de domaine dédié est acheté avant la publication, remplacer l'URL onrender.com ci-dessus (site web + politique de confidentialité).
+- Prévoir 2 à 8 captures d'écran téléphone (Play Console impose un minimum de 2) — **volontairement pas encore générées** : elles doivent montrer du vrai contenu (catalogue, fiche vidéo, espace créateur), et la prod n'a pas encore de vidéos publiées. À faire juste avant la soumission, une fois du contenu réel en ligne.
