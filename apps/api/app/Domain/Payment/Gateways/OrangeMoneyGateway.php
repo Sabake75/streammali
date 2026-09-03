@@ -42,7 +42,10 @@ class OrangeMoneyGateway implements PaymentGateway
                 'cancel_url' => $config['cancel_url'],
                 'notif_url' => $config['notif_url'],
                 'lang' => 'fr',
-                'reference' => "StreamMali #{$payment->id}",
+                // Pas de "#" : Orange rejette ce caractère dans `reference`
+                // avec un 400 "Invalid body field ... bad syntax", vérifié
+                // en réel (2026-09-03).
+                'reference' => "StreamMali {$payment->id}",
             ])
             ->throw()
             ->json();
