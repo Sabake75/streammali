@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use App\Domain\Payment\Contracts\PaymentGateway;
-use App\Domain\Payment\Gateways\PayDunyaGateway;
+use App\Domain\Payment\Gateways\OrangeMoneyGateway;
 use App\Domain\Video\Contracts\VideoStorageGateway;
 use App\Domain\Video\Gateways\CloudflareStreamGateway;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -19,7 +19,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(PaymentGateway::class, PayDunyaGateway::class);
+        $this->app->bind(PaymentGateway::class, OrangeMoneyGateway::class);
         $this->app->bind(VideoStorageGateway::class, CloudflareStreamGateway::class);
     }
 
@@ -43,9 +43,9 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perHour(5)->by($request->ip());
         });
 
-        // Every purchase call hits PayDunya's real API to create an invoice
-        // — generous enough for a legitimate binge-buying session, tight
-        // enough to make hammering the payment gateway impractical.
+        // Every purchase call hits Orange Money's real API to create an
+        // invoice — generous enough for a legitimate binge-buying session,
+        // tight enough to make hammering the payment gateway impractical.
         RateLimiter::for('purchase', function (Request $request) {
             return Limit::perMinute(10)->by($request->user()?->id ?: $request->ip());
         });

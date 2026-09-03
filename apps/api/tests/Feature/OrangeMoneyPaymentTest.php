@@ -16,10 +16,9 @@ use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 /**
- * Orange Money is no longer the active PaymentGateway binding (PayDunya is
- * — see AppServiceProvider) but stays in the codebase as an alternate
- * implementation of the same interface, so this test pins the binding
- * itself rather than relying on the app's default.
+ * Orange Money is the active PaymentGateway binding (see AppServiceProvider),
+ * but this test still pins the binding itself rather than relying on the
+ * app's default, so it keeps passing if that default changes again.
  */
 class OrangeMoneyPaymentTest extends TestCase
 {

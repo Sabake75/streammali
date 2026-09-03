@@ -13,12 +13,17 @@ use RuntimeException;
 /**
  * Orange Money Web Payment integration.
  *
- * Implémentation basée sur le contrat documenté publiquement pour l'API
- * "Orange Money Web Payment" (OAuth2 client_credentials, puis un endpoint
- * d'initiation qui renvoie une URL de paiement + un pay_token, et un
- * endpoint de statut interrogé côté serveur). Les chemins exacts sous
- * `base_url` sont à confirmer avec la doc Orange Developer Center Mali une
- * fois les credentials marchand obtenus — voir config/services.php.
+ * OAuth2 client_credentials, puis un endpoint d'initiation qui renvoie une
+ * URL de paiement + un pay_token, et un endpoint de statut interrogé côté
+ * serveur. Vérifié en réel (2026-09-03) avec le compte sandbox "Orange Money
+ * WebPay Dev" — deux pièges rencontrés :
+ * - `merchant_key` ne prend PAS le point final affiché sur le Developer
+ *   Center (`35ec1887`, pas `35ec1887.`) — avec le point, Orange renvoie une
+ *   erreur "Invalid body field ... bad syntax".
+ * - `return_url`/`cancel_url`/`notif_url` doivent être des URLs publiques —
+ *   Orange rejette explicitement localhost/127.0.0.1 ("localhost and
+ *   127.0.0.1 are not allowed"), donc impossible de tester le
+ *   redirect/webhook en boucle complète depuis un frontend en dev local.
  */
 class OrangeMoneyGateway implements PaymentGateway
 {

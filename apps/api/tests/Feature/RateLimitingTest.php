@@ -40,10 +40,10 @@ class RateLimitingTest extends TestCase
     public function test_video_purchase_is_rate_limited_per_user(): void
     {
         Http::fake([
-            '*/checkout-invoice/create' => Http::response([
-                'response_code' => '00',
-                'response_text' => 'Invoice Created',
-                'token' => 'invoice-token-abc123',
+            '*/oauth/v3/token' => Http::response(['access_token' => 'fake-token'], 200),
+            '*/webpayment' => Http::response([
+                'payment_url' => 'https://webpay.orange-money.test/pay/abc123',
+                'pay_token' => 'pay-token-abc123',
             ], 200),
         ]);
 

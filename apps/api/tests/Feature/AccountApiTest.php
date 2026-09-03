@@ -83,7 +83,8 @@ class AccountApiTest extends TestCase
     public function test_a_creator_with_an_available_balance_cannot_delete_their_account_yet(): void
     {
         Http::fake([
-            '*/checkout-invoice/confirm/*' => Http::response(['status' => 'completed'], 200),
+            '*/oauth/v3/token' => Http::response(['access_token' => 'fake-token'], 200),
+            '*/transactionstatus*' => Http::response(['status' => 'SUCCESS'], 200),
         ]);
 
         $creator = User::factory()->create(['role' => UserRole::Creator]);

@@ -35,11 +35,20 @@ return [
         ],
     ],
 
-    // À vérifier contre la doc Orange Developer Center Mali une fois les
-    // credentials marchand obtenus — voir App\Domain\Payment\Gateways\OrangeMoneyGateway.
+    // C'est le gateway actif (voir le binding dans AppServiceProvider) —
+    // voir App\Domain\Payment\Gateways\OrangeMoneyGateway. paydunya ci-dessous
+    // reste dans le repo comme implémentation de rechange derrière la même
+    // interface PaymentGateway, en attente que son KYC marchand soit validé.
+    //
+    // Vérifié en réel (2026-09-03) avec le compte sandbox "Orange Money
+    // WebPay Dev" du Developer Center : tant que seul ce produit (pas le
+    // produit de prod, qui nécessite une validation marchand séparée) est
+    // approuvé, `country` doit valoir littéralement "dev" — pas le code pays
+    // (`ml`) — sous peine de 403 "Access denied" à l'appel de /webpayment.
+    // Repasser à `ml` une fois l'abonnement de production approuvé.
     'orange_money' => [
         'base_url' => env('ORANGE_MONEY_BASE_URL', 'https://api.orange.com'),
-        'country' => env('ORANGE_MONEY_COUNTRY', 'ml'),
+        'country' => env('ORANGE_MONEY_COUNTRY', 'dev'),
         'client_id' => env('ORANGE_MONEY_CLIENT_ID'),
         'client_secret' => env('ORANGE_MONEY_CLIENT_SECRET'),
         'merchant_key' => env('ORANGE_MONEY_MERCHANT_KEY'),
@@ -48,11 +57,9 @@ return [
         'notif_url' => env('ORANGE_MONEY_NOTIF_URL'),
     ],
 
-    // À vérifier contre la doc PayDunya une fois le compte marchand
-    // disponible — voir App\Domain\Payment\Gateways\PayDunyaGateway.
-    // C'est le gateway actif (voir le binding dans AppServiceProvider) ;
-    // orange_money ci-dessus reste dans le repo comme implémentation de
-    // rechange derrière la même interface PaymentGateway.
+    // Gateway de rechange (voir orange_money ci-dessus, actif pour l'instant)
+    // — voir App\Domain\Payment\Gateways\PayDunyaGateway. Compte marchand
+    // sandbox bloqué par PayDunya tant que son KYC n'est pas complété.
     'paydunya' => [
         'base_url' => env('PAYDUNYA_BASE_URL', 'https://app.paydunya.com/api/v1'),
         'master_key' => env('PAYDUNYA_MASTER_KEY'),

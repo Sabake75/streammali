@@ -4,7 +4,9 @@ namespace Tests\Feature;
 
 use App\Domain\Payment\Actions\ConfirmPayment;
 use App\Domain\Payment\Actions\InitiatePayment;
+use App\Domain\Payment\Contracts\PaymentGateway;
 use App\Domain\Payment\Enums\PaymentStatus;
+use App\Domain\Payment\Gateways\PayDunyaGateway;
 use App\Domain\Payment\Models\Payment;
 use App\Domain\Video\Models\Video;
 use App\Enums\UserRole;
@@ -13,9 +15,22 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
+/**
+ * PayDunya is no longer the active PaymentGateway binding (Orange Money is
+ * — see AppServiceProvider) but stays in the codebase as an alternate
+ * implementation of the same interface, so this test pins the binding
+ * itself rather than relying on the app's default.
+ */
 class PayDunyaPaymentTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->app->bind(PaymentGateway::class, PayDunyaGateway::class);
+    }
 
     public function test_initiate_payment_creates_a_pending_payment_and_returns_a_payment_url(): void
     {

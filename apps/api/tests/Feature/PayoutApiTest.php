@@ -25,7 +25,8 @@ class PayoutApiTest extends TestCase
     private function creditCreator(User $creator, int $amount): void
     {
         Http::fake([
-            '*/checkout-invoice/confirm/*' => Http::response(['status' => 'completed'], 200),
+            '*/oauth/v3/token' => Http::response(['access_token' => 'fake-token'], 200),
+            '*/transactionstatus*' => Http::response(['status' => 'SUCCESS'], 200),
         ]);
 
         $video = Video::factory()
