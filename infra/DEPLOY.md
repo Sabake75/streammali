@@ -31,8 +31,8 @@ Ces valeurs vont dans `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_BUCKET`
 3. Une fois les services créés, remplir dans le dashboard Render (Environment) toutes les variables marquées `sync: false` dans `render.yaml`, pour `streammali-api` :
    - `APP_KEY` : lancer `php artisan key:generate --show` **dans le Shell Render de ce service** (pour que la clé ne transite jamais ailleurs) et coller la valeur `base64:...` obtenue — ne pas laisser Render en générer une lui-même (voir piège ci-dessus).
    - `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_BUCKET`, `AWS_ENDPOINT` (étape 1, R2).
-   - `ORANGE_MONEY_CLIENT_ID`, `ORANGE_MONEY_CLIENT_SECRET`, `ORANGE_MONEY_MERCHANT_KEY`, `ORANGE_MONEY_RETURN_URL`, `ORANGE_MONEY_CANCEL_URL`, `ORANGE_MONEY_NOTIF_URL` — vides tant que le compte marchand Orange Developer Center n'existe pas (Phase 7 de la feuille de route).
-   - `PAYDUNYA_MASTER_KEY`, `PAYDUNYA_PRIVATE_KEY`, `PAYDUNYA_PUBLIC_KEY`, `PAYDUNYA_TOKEN` — gateway de paiement actif, voir `AppServiceProvider`.
+   - `ORANGE_MONEY_CLIENT_ID`, `ORANGE_MONEY_CLIENT_SECRET`, `ORANGE_MONEY_MERCHANT_KEY`, `ORANGE_MONEY_RETURN_URL`, `ORANGE_MONEY_CANCEL_URL`, `ORANGE_MONEY_NOTIF_URL` — gateway de paiement actif (voir `AppServiceProvider`), compte sandbox "Orange Money WebPay Dev" du Developer Center, vérifié en réel (voir `CLAUDE.md`). `merchant_key` sans le point final affiché sur le Developer Center. `ORANGE_MONEY_COUNTRY` vaut `dev` (hardcodé dans `render.yaml`, pas `sync: false`) tant que seul ce produit sandbox est approuvé.
+   - `PAYDUNYA_MASTER_KEY`, `PAYDUNYA_PRIVATE_KEY`, `PAYDUNYA_PUBLIC_KEY`, `PAYDUNYA_TOKEN` — gateway de repli, bloqué par son KYC marchand (voir `CLAUDE.md`).
    - `CLOUDFLARE_STREAM_ACCOUNT_ID`, `CLOUDFLARE_STREAM_API_TOKEN`.
 4. Après le premier déploiement de chaque service, Render assigne une URL `*.onrender.com` :
    - Côté `streammali-api` : la reporter dans `APP_URL`, puis redéployer manuellement.

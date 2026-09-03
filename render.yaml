@@ -117,25 +117,32 @@ services:
         value: "0.25"
       - key: PLATFORM_MINIMUM_PAYOUT_AMOUNT
         value: "10000"
+      # Orange Money est le gateway actif (voir AppServiceProvider) — PayDunya
+      # reste configurable ci-dessous comme implémentation de rechange, en
+      # attente que son KYC marchand aboutisse.
       - key: ORANGE_MONEY_BASE_URL
         value: https://api.orange.com
+      # "dev" tant que seul le produit sandbox "Orange Money WebPay Dev" est
+      # approuvé côté Developer Center — repasser à "ml" une fois le produit
+      # de production approuvé (voir CLAUDE.md).
       - key: ORANGE_MONEY_COUNTRY
-        value: ml
+        value: dev
       - key: ORANGE_MONEY_CLIENT_ID
         sync: false
       - key: ORANGE_MONEY_CLIENT_SECRET
         sync: false
+      # Sans le point final affiché sur le Developer Center (35ec1887, pas
+      # 35ec1887.) — voir App\Domain\Payment\Gateways\OrangeMoneyGateway.
       - key: ORANGE_MONEY_MERCHANT_KEY
         sync: false
+      # Renseigner une fois l'URL streammali-web connue (comme CORS_ALLOWED_ORIGINS).
       - key: ORANGE_MONEY_RETURN_URL
         sync: false
       - key: ORANGE_MONEY_CANCEL_URL
         sync: false
+      # Renseigner une fois l'URL Render de ce service connue (comme APP_URL).
       - key: ORANGE_MONEY_NOTIF_URL
         sync: false
-      # PayDunya est le gateway actif (voir AppServiceProvider) — Orange
-      # Money reste configurable ci-dessus comme implémentation de
-      # rechange, mais ces variables sont celles réellement utilisées.
       - key: PAYDUNYA_BASE_URL
         value: https://app.paydunya.com/api/v1
       - key: PAYDUNYA_MASTER_KEY
