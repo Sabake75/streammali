@@ -9,11 +9,11 @@ Oui.
 
 | Donnée | Collectée | Partagée avec un tiers | Pourquoi | Optionnelle |
 |---|---|---|---|---|
-| Numéro de téléphone | Oui | Non (sauf PayDunya, voir note) | Inscription/connexion, identifiant de compte | Non (requis à l'inscription) |
+| Numéro de téléphone | Oui | Non (sauf Orange Money, voir note) | Inscription/connexion, identifiant de compte | Non (requis à l'inscription) |
 | Nom | Oui | Non | Profil, affiché aux autres utilisateurs (créateur) | Non |
 | Pièce d'identité (photo/PDF) | Oui, créateurs uniquement | Non | Vérification d'identité créateur (KYC), consultable par un modérateur uniquement | Non (requis pour devenir créateur) |
 | Historique d'achats | Oui | Non | Fonctionnement du service (bibliothèque, reçus) | N/A (généré par l'usage) |
-| Informations de paiement | Non stockées côté app — la saisie Mobile Money se fait sur la page PayDunya, hors de l'app | Oui, avec PayDunya (agrégateur de paiement) | Traiter le paiement | N/A |
+| Informations de paiement | Non stockées côté app — la saisie Mobile Money se fait sur la page Orange Money, hors de l'app | Oui, avec Orange Money (fournisseur Mobile Money ; PayDunya reste une option de repli, voir CLAUDE.md) | Traiter le paiement | N/A |
 | Avis/notes | Oui | Non (visibles publiquement dans l'app par design) | Fonctionnalité du produit | Oui |
 | Messages (créateur ↔ modération) | Oui | Non | Support | N/A |
 | Identifiants de l'app (token de session) | Oui, stocké localement sur l'appareil (`shared_preferences`) | Non | Rester connecté | N/A |
@@ -25,5 +25,5 @@ Oui.
 - Cible principalement les enfants : **Non**.
 
 ## Notes
-- PayDunya (agrégateur Mobile Money) est un sous-traitant de paiement, pas un partage marketing/publicitaire — répondre "oui, partagé" avec la finalité "traitement des paiements" dans le formulaire, pas "publicité".
+- Orange Money (fournisseur Mobile Money) est un sous-traitant de paiement, pas un partage marketing/publicitaire — répondre "oui, partagé" avec la finalité "traitement des paiements" dans le formulaire, pas "publicité".
 - Aucune donnée n'est vendue ni utilisée à des fins publicitaires — l'app n'intègre aucun SDK publicitaire ni tracker tiers (vérifié : `pubspec.yaml` ne liste que `sentry_flutter` comme dépendance à vocation "analytics/diagnostic", et son DSN est vide par défaut).

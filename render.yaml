@@ -170,6 +170,8 @@ services:
         sync: false
       - key: CLOUDFLARE_STREAM_MAX_DURATION_SECONDS
         value: "7200"
+      - key: CLOUDFLARE_STREAM_PREVIEW_DURATION_SECONDS
+        value: "45"
 
   # Web (Next.js) — sur Render plutôt que Vercel : même compte déjà en
   # place, et `next start` gère nativement le $PORT que Render assigne

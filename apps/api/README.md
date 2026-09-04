@@ -6,7 +6,7 @@ Backend Laravel : API REST pour les 3 profils (Créateur, Viewer, Modérateur) +
 
 - Auth API (Sanctum) et gestion des rôles/permissions.
 - Domaines métier : `Creator`, `Viewer`, `Moderation`, `Payment`, `Video`, `Review`.
-- Intégration paiement Mobile Money via PayDunya (agrégateur) — voir `CLAUDE.md` à la racine du dépôt et `app/Domain/Payment/README.md`.
+- Intégration paiement Mobile Money via Orange Money (Web Payment, gateway actif — voir `CLAUDE.md` à la racine du dépôt et `app/Domain/Payment/README.md` pour l'historique de bascule avec PayDunya, gardé en repli).
 - Jobs asynchrones (queue) : webhooks de paiement, orchestration de transcodage vidéo, notifications.
 
 ## Structure prévue
@@ -29,15 +29,15 @@ api/
 
 ## Statut
 
-Scaffold Laravel initialisé (`composer create-project laravel/laravel`), `.env` configuré pour PostgreSQL (`DB_CONNECTION=pgsql`, base `streammali`).
+API fonctionnellement complète (voir `CLAUDE.md` à la racine pour l'état détaillé et l'historique) — les paragraphes ci-dessous décrivent ce qui est réellement implémenté, pas une intention. PostgreSQL en prod (`DB_CONNECTION=pgsql`), SQLite pour la suite de tests locale.
 
-Les dossiers `Domain/{Creator,Viewer,Moderation,Payment,Video}` sont créés, chacun avec un README décrivant son rôle et sa sous-structure prévue (`Models/`, `Actions/`, `Data/`) — aucune classe métier n'y est encore implémentée.
+Les dossiers `Domain/{Creator,Viewer,Moderation,Payment,Video,Review}` ont chacun un README décrivant leur rôle et leur sous-structure (`Models/`, `Actions/`, `Data/`).
 
 Back-office modérateur : panneau Filament sur `/moderation` (`app/Providers/Filament/ModerationPanelProvider.php`). Accès restreint via `App\Enums\UserRole` (colonne `role` sur `users`) : seuls les comptes `moderator` peuvent se connecter (`User::canAccessPanel`).
 
 Table `videos` + modèle `App\Domain\Video\Models\Video` (catégorie via `App\Domain\Video\Models\Category`, gérée par le modérateur — `app/Filament/Resources/Categories/`, endpoint public `GET /api/categories` — statut de modération `VideoStatus`). Ressource Filament `app/Filament/Resources/Videos/` : file d'attente avec filtres statut/catégorie et actions **Valider** / **Refuser** (motif obligatoire), conformes au cahier des charges §5.3.
 
-Table `payments` + modèle `App\Domain\Payment\Models\Payment`, intégration PayDunya (`App\Domain\Payment\Gateways\PayDunyaGateway`, gateway actif) — voir `app/Domain/Payment/README.md` pour le détail. Config dans `.env`/`config/services.php` (`PAYDUNYA_*`, credentials vides tant qu'il n'y a pas de compte marchand). Webhook : `/api/webhooks/paydunya`.
+Table `payments` + modèle `App\Domain\Payment\Models\Payment`, intégration Orange Money (`App\Domain\Payment\Gateways\OrangeMoneyGateway`, gateway actif) — voir `app/Domain/Payment/README.md` pour le détail (dont les pièges d'intégration trouvés en réel). Config dans `.env`/`config/services.php` (`ORANGE_MONEY_*`). Webhook : `/api/webhooks/orange-money`.
 
 Auth API (Viewer, par téléphone — cahier des charges §5.2, colonne `phone` ajoutée à `users`, `email` devenu optionnel) :
 - `POST /api/register` — `{ name, phone, password }`, crée un compte `role=viewer` (`App\Domain\Viewer\Actions\RegisterViewer`) et renvoie un token Sanctum.
@@ -53,7 +53,7 @@ Inscription Créateur (cahier des charges §5.1, détail dans `app/Domain/Creato
 API catalogue et achat (publiques sauf mention) :
 - `GET /api/videos` — liste paginée des vidéos **validées uniquement**, filtres `category`/`creator_id`/`search`.
 - `GET /api/videos/{id}` — fiche vidéo (404 si pas encore validée).
-- `POST /api/videos/{id}/purchase` — authentifié (`auth:sanctum`), body `{ payer_msisdn }`, démarre un paiement PayDunya et renvoie `payment_url` ; 404 si vidéo non validée, 409 si déjà achetée.
+- `POST /api/videos/{id}/purchase` — authentifié (`auth:sanctum`), body `{ payer_msisdn }`, démarre un paiement Orange Money et renvoie `payment_url` ; 404 si vidéo non validée, 409 si déjà achetée.
 
 Gestion des comptes côté modérateur (cahier des charges §5.3) : ressource Filament `app/Filament/Resources/Users/` sur `/moderation/users` (créateurs/viewers uniquement, les comptes modérateur sont exclus de cette liste). Colonnes `account_status` (`active`/`suspended`/`blocked`) et `identity_verified_at` ajoutées à `users`. Actions : Suspendre/Bloquer (motif obligatoire), Réactiver, Vérifier l'identité. Un compte suspendu/bloqué ne peut plus se connecter (`LoginController`) ni utiliser un token existant (middleware `account.active` sur toutes les routes `auth:sanctum`). Pas de vraie vérification de pièce d'identité (upload de document) — c'est un simple horodatage que le modérateur pose manuellement.
 
@@ -65,7 +65,7 @@ API créateur (authentifié, `role=creator` requis — 403 sinon) :
 - `POST /api/creator/videos/{id}/source` — démarre l'upload du fichier (Cloudflare Stream, flux "direct creator upload"), renvoie `upload_url` ; 409 si déjà en cours/terminé.
 - `GET /api/creator/videos/{id}/source` — rafraîchit/consulte le statut de traitement (`processing`/`ready`/`failed`) et l'URL de lecture une fois prête.
 
-Upload vidéo (détail dans `app/Domain/Video/README.md`) : intégration Cloudflare Stream — le fichier part directement du client vers Cloudflare (jamais proxié par l'API). Le statut peut être interrogé à la demande (`GET /api/creator/videos/{id}/source`) ou poussé par Cloudflare via webhook (`POST /api/webhooks/cloudflare-stream`, `CloudflareStreamWebhookController`) — comme pour PayDunya, le payload entrant n'est pas fait confiance, le webhook ne fait que redéclencher une revérification réelle (`RefreshVideoSourceStatus`) auprès de l'API Cloudflare. Config `CLOUDFLARE_STREAM_*` dans `.env`/`config/services.php`, credentials vides tant qu'il n'y a pas de compte (l'URL du webhook doit être enregistrée côté Cloudflare une fois l'API déployée, voir `infra/DEPLOY.md`). Une vidéo ne peut être validée par un modérateur que si son fichier est `ready`. L'URL de lecture n'est exposée dans `GET /api/videos/{id}` qu'aux acheteurs, une fois le fichier prêt.
+Upload vidéo (détail dans `app/Domain/Video/README.md`) : intégration Cloudflare Stream — le fichier part directement du client vers Cloudflare (jamais proxié par l'API). Le statut peut être interrogé à la demande (`GET /api/creator/videos/{id}/source`) ou poussé par Cloudflare via webhook (`POST /api/webhooks/cloudflare-stream`, `CloudflareStreamWebhookController`) — comme pour le webhook de paiement, le payload entrant n'est pas fait confiance, le webhook ne fait que redéclencher une revérification réelle (`RefreshVideoSourceStatus`) auprès de l'API Cloudflare. Config `CLOUDFLARE_STREAM_*` dans `.env`/`config/services.php` — compte réel connecté et vérifié de bout en bout (voir `CLAUDE.md`), l'URL du webhook devant être enregistrée côté Cloudflare une fois l'API déployée (voir `infra/DEPLOY.md`). Une vidéo ne peut être validée par un modérateur que si son fichier est `ready`. L'URL de lecture n'est exposée dans `GET /api/videos/{id}` qu'aux acheteurs, une fois le fichier prêt.
 
 Pas encore fait : OCR/vérification automatisée de la pièce d'identité (vérification manuelle par le modérateur après consultation du document).
 
@@ -94,7 +94,7 @@ Mise en avant : `videos.featured_at` (nullable), bascule via l'action Filament "
 
 Suivi d'erreurs (`bootstrap/app.php`) : `Integration::handles($exceptions)` (`sentry/sentry-laravel`), DSN vide par défaut (aucun compte Sentry lié au projet pour l'instant) — reste inactif tant que `SENTRY_LARAVEL_DSN` n'est pas défini dans `.env`.
 
-Testé via `tests/Feature/` (`php artisan test`) — 131/131 au dernier passage, vérifié aussi manuellement contre PostgreSQL (inscription créateur avec vrai upload multipart, upload vidéo/lecture, calcul de commission, réservation du solde, échange de messages créateur/modérateur, signalement d'une vidéo, comptage de vues et statistiques, avis/notation, favoris/recommandations, mise en avant). Le comptage de vues a été vérifié à la fois en dev (`next dev`) et en build de production (`next build && next start`) : React Strict Mode double-invoque l'effet côté web en dev (2 requêtes `/view` par visite, artefact connu et documenté de React, sans impact en production où une visite produit bien une seule requête).
+Testé via `tests/Feature/` (`php artisan test`) — 157/157 au dernier passage (2026-09-04), vérifié aussi manuellement contre PostgreSQL (inscription créateur avec vrai upload multipart, upload vidéo/lecture, calcul de commission, réservation du solde, échange de messages créateur/modérateur, signalement d'une vidéo, comptage de vues et statistiques, avis/notation, favoris/recommandations, mise en avant). Le comptage de vues a été vérifié à la fois en dev (`next dev`) et en build de production (`next build && next start`) : React Strict Mode double-invoque l'effet côté web en dev (2 requêtes `/view` par visite, artefact connu et documenté de React, sans impact en production où une visite produit bien une seule requête).
 
 Créer un utilisateur modérateur de test :
 

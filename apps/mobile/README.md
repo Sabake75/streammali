@@ -23,13 +23,13 @@ Auth + achat, même flux token Bearer Sanctum que le web (`apps/web/src/lib/{aut
 - `lib/services/auth_controller.dart` — `ChangeNotifier` singleton, persiste le token/utilisateur avec `shared_preferences` (équivalent du `localStorage` web).
 - `lib/services/api_client.dart` — méthodes `register`/`login`/`logout`/`purchaseVideo` ajoutées, mêmes endpoints que le web.
 - `lib/widgets/purchase_section.dart` (fiche vidéo) — ouvre `payment_url` dans le navigateur externe via `url_launcher` après un achat réussi.
-- L'AppBar du catalogue affiche l'état de connexion (nom + déconnexion, ou lien connexion).
+- Navigation par barre en bas (`lib/screens/root_shell.dart`, façon TikTok — remplace l'ancien tiroir de menu) : Accueil, Favoris, Bibliothèque, Compte. Les 3 derniers affichent un écran "Connecte-toi pour voir ça" si non connecté plutôt que d'être masqués. L'AppBar du catalogue (onglet Accueil) ne garde que le logo, la cloche de notifications et un lien "Connexion" pour un invité.
 
 Important : CORS ne s'applique qu'à Flutter **Web** (Android/iOS/desktop ne sont pas concernés). Pour tester sur Chrome, ajouter l'origine du serveur de dev Flutter (`flutter run -d chrome --web-port=...`) à `CORS_ALLOWED_ORIGINS` côté API.
 
 Inscription créateur (`lib/screens/register_creator_screen.dart`, liée depuis l'inscription standard et depuis l'espace créateur) : formulaire avec sélection de pièce d'identité (`file_picker`, jpg/jpeg/png/pdf) puis upload multipart (`http.MultipartRequest`) vers `POST /api/register/creator`. Si un viewer est déjà connecté, l'écran affiche un formulaire court à la place (pièce d'identité + CGU seulement, `POST /api/creator/upgrade`) qui fait évoluer son compte existant — avant ça, un viewer connecté tombait systématiquement sur l'échec de la contrainte `unique` du téléphone en tentant de recréer un compte avec le même numéro.
 
-Upload vidéo côté créateur (`lib/screens/creator_screen.dart`, accessible via l'icône dans l'AppBar du catalogue) :
+Upload vidéo côté créateur (`lib/screens/creator_screen.dart`, accessible via "Espace créateur" dans l'onglet Compte) :
 - Réservé aux comptes `role=creator` (bouton vers l'inscription créateur sinon).
 - Formulaire de création (métadonnées) + liste "mes vidéos" avec statut de modération et de traitement.
 - `lib/widgets/video_upload_widget.dart` — sélection de fichier (`file_picker`) puis upload via **`tus_client_dart`** contre l'`upload_url` Cloudflare Stream. `TusMemoryStore` pré-rempli avec l'URL fournie par l'API pour que le client cible directement la ressource déjà créée côté Cloudflare (sans re-déclencher une création). Barre de progression, puis sondage périodique du statut jusqu'à `ready`/`failed`.
@@ -60,7 +60,7 @@ Mise en avant (`catalogue_screen.dart`, rangée "En vedette") : `fetchFeaturedVi
 
 Suivi d'erreurs (`lib/main.dart`) : `SentryFlutter.init` enveloppe `runApp`, DSN vide par défaut (aucun compte Sentry lié au projet pour l'instant) — le SDK reste inactif tant qu'on n'active pas via `--dart-define=SENTRY_DSN=...`, même convention que `API_BASE_URL`.
 
-Mon compte (`lib/screens/account_screen.dart`, accessible en tapant son nom dans l'AppBar du catalogue) : export de données (`GET /api/account/export`, affiché dans une boîte de dialogue avec copie presse-papiers plutôt qu'un fichier — évite une dépendance file-system/partage pour un bouton peu utilisé) et suppression de compte (`DELETE /api/account`, confirmation obligatoire).
+Mon compte (`lib/screens/account_screen.dart`, onglet "Compte" de la barre de navigation) : en-tête profil (nom/téléphone), "Espace créateur", "Politique de confidentialité", déconnexion, export de données (`GET /api/account/export`, affiché dans une boîte de dialogue avec copie presse-papiers plutôt qu'un fichier — évite une dépendance file-system/partage pour un bouton peu utilisé) et suppression de compte (`DELETE /api/account`, confirmation obligatoire).
 
 Accessibilité : les étoiles de notation (`review_section.dart`) n'avaient pas de `tooltip` — seul point réellement muet pour TalkBack/VoiceOver trouvé côté mobile, le reste (`IconButton` de l'AppBar, `Tooltip` par barre sur le graphique de revenus) l'avait déjà.
 

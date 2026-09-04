@@ -37,13 +37,15 @@ Ces valeurs vont dans `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_BUCKET`
 4. Après le premier déploiement de chaque service, Render assigne une URL `*.onrender.com` :
    - Côté `streammali-api` : la reporter dans `APP_URL`, puis redéployer manuellement.
    - Côté `streammali-web` : la reporter dans `NEXT_PUBLIC_SITE_URL`, puis redéployer manuellement.
-5. Une fois les deux URLs connues, revenir sur `streammali-api` pour renseigner `CORS_ALLOWED_ORIGINS` (l'URL de `streammali-web`) et `PAYDUNYA_RETURN_URL`/`PAYDUNYA_CANCEL_URL`/`PAYDUNYA_CALLBACK_URL`, puis redéployer.
+5. Une fois les deux URLs connues, revenir sur `streammali-api` pour renseigner `CORS_ALLOWED_ORIGINS` (l'URL de `streammali-web`), `ORANGE_MONEY_RETURN_URL`/`ORANGE_MONEY_CANCEL_URL` (URL de `streammali-web`) et `ORANGE_MONEY_NOTIF_URL` (URL de `streammali-api` + `/api/webhooks/orange-money`) — **c'est le gateway actif, ne pas oublier ces trois-là** — puis, si le KYC PayDunya venait à aboutir, faire de même pour `PAYDUNYA_RETURN_URL`/`PAYDUNYA_CANCEL_URL`/`PAYDUNYA_CALLBACK_URL`. Redéployer après chaque changement.
 
 Les migrations tournent automatiquement via le "Pre-Deploy Command" (`php artisan migrate --force`) sur `streammali-api`, avant que le nouveau conteneur ne prenne le trafic. Déploiement automatique ensuite à chaque push sur `master` pour les deux services, nativement, sans job GitHub Actions dédié.
 
 ## 3. Mobile
 
-La CI (`.github/workflows/ci.yml`) construit un APK release à chaque push sur `master` (signé avec la config de debug — suffisant pour tester, pas pour le Play Store) et le publie comme artefact GitHub Actions téléchargeable, 30 jours de rétention. Publication sur le Play Store hors scope pour l'instant (compte développeur payant, externe).
+La CI (`.github/workflows/ci.yml`) construit un APK release et un App Bundle (`.aab`, format de soumission Play Store) à chaque push sur `master`, publiés comme artefacts GitHub Actions téléchargeables (30 jours de rétention). Signature : avec la vraie clé de release si les secrets `ANDROID_KEYSTORE_BASE64`/`ANDROID_KEYSTORE_PASSWORD`/`ANDROID_KEY_ALIAS` sont configurés (repo Settings → Secrets → Actions), sinon repli automatique sur la signature de debug (suffisant pour tester, pas pour soumettre au Play Store).
+
+Préparation de la publication Play Store déjà avancée (voir `infra/PLAY_STORE_LISTING.md` et `infra/PLAY_STORE_DATA_SAFETY.md`) : fiche store et formulaire sécurité des données rédigés, feature graphic générée. Reste à faire manuellement : compte développeur Play Console (payant, externe), captures d'écran (attendent du vrai contenu en prod), et la soumission elle-même.
 
 ## 4. Recommandé (à faire manuellement)
 

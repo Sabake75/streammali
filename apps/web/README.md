@@ -26,7 +26,7 @@ Auth + achat côté client (Bearer token Sanctum, pas de cookies/CSRF — voir `
 - `src/lib/use-auth.ts` — `useAuthToken`/`useAuthUser` via `useSyncExternalStore` (lit `localStorage` sans décalage d'hydratation SSR, se resynchronise entre onglets et après connexion/déconnexion dans le même onglet).
 - `src/components/AuthStatus.tsx` (header) et `src/components/PurchaseButton.tsx` (fiche vidéo) consomment ces hooks ; `PurchaseButton` appelle `POST /api/videos/{id}/purchase` et redirige vers `payment_url`.
 
-Vérifié en conditions réelles (requêtes cross-origin avec `Origin: http://localhost:3000` contre l'API) : le flux passe l'auth/CORS/validation de bout en bout ; l'échec final vient uniquement de l'absence de vrais credentials Orange Money côté API (déjà documenté), pas d'un problème CORS/Sanctum.
+Vérifié en conditions réelles (requêtes cross-origin avec `Origin: http://localhost:3000` contre l'API) : le flux passe l'auth/CORS/validation de bout en bout. Note historique (vérification initiale, avant l'obtention de vrais credentials Orange Money) : l'échec venait alors uniquement de l'absence de credentials côté API, pas d'un problème CORS/Sanctum — un vrai paiement Orange Money sandbox de bout en bout (redirection + webhook) est depuis confirmé, voir `CLAUDE.md`.
 
 Inscription créateur (`/inscription-createur`, liée depuis `/inscription` et depuis `/creer`) : formulaire avec upload de pièce d'identité (`multipart/form-data`, `POST /api/register/creator`), redirige vers `/creer` après création du compte. Si un viewer est déjà connecté, `RegisterCreatorPageClient.tsx` affiche un formulaire court à la place (pièce d'identité + CGU seulement, `POST /api/creator/upgrade`) qui fait évoluer son compte existant plutôt que d'échouer sur la contrainte `unique` du téléphone en tentant d'en créer un second.
 
@@ -35,7 +35,7 @@ Upload vidéo côté créateur (`/creer`, lien dans le header) :
 - `src/components/creator/NewVideoForm.tsx` — crée la vidéo (métadonnées, `POST /api/creator/videos`).
 - `src/components/creator/VideoUploadWidget.tsx` — upload du fichier via **tus-js-client** contre l'`upload_url` Cloudflare Stream renvoyée par `POST /api/creator/videos/{id}/source` (protocole TUS "direct creator upload" — `uploadUrl` passé à tus-js-client, pas `endpoint`, puisque la ressource d'upload existe déjà côté Cloudflare). Barre de progression, puis sondage (`GET .../source`) toutes les 5s jusqu'à `ready`/`failed`.
 
-Vérifié en conditions réelles contre l'API (inscription créateur avec vrai upload multipart, création vidéo, liste "mes vidéos" — tout confirmé sur PostgreSQL) ; l'appel Cloudflare échoue comme attendu faute de vrai compte (même limitation que côté API).
+Vérifié en conditions réelles contre l'API (inscription créateur avec vrai upload multipart, création vidéo, liste "mes vidéos" — tout confirmé sur PostgreSQL). L'upload Cloudflare Stream lui-même est vérifié avec un vrai compte depuis, voir `CLAUDE.md`.
 
 Champ téléphone (connexion, inscription, achat, retrait créateur) : `src/components/PhoneNumberField.tsx`, indicatif pays + chiffres seuls, longueur plafonnée par pays via `src/lib/phone.ts` (`libphonenumber-js` — tous les pays proposés, pas seulement le Mali, pour les Maliens de la diaspora).
 
