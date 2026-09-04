@@ -28,7 +28,7 @@ class PaymentFactory extends Factory
             'amount' => 100,
             'provider' => 'orange_money',
             'payer_msisdn' => fake()->numerify('+223 7# ## ## ##'),
-            'order_reference' => (string) Str::uuid(),
+            'order_reference' => (string) Str::ulid(),
             'status' => PaymentStatus::Pending,
         ];
     }

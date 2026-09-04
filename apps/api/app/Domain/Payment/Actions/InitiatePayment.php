@@ -23,7 +23,9 @@ class InitiatePayment
             'video_id' => $video->id,
             'amount' => $video->price,
             'payer_msisdn' => $payerMsisdn,
-            'order_reference' => (string) Str::uuid(),
+            // Orange Money caps order_id at 30 chars (see App\Domain\Payment\Gateways\OrangeMoneyGateway) —
+            // a UUID (36 chars) doesn't fit, a ULID (26 chars) does.
+            'order_reference' => (string) Str::ulid(),
             'status' => PaymentStatus::Pending,
         ]);
 
