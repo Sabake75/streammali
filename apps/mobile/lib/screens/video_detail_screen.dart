@@ -13,6 +13,7 @@ import '../widgets/review_section.dart';
 import '../widgets/video_card.dart';
 import '../widgets/video_player_widget.dart';
 import 'creator_videos_screen.dart';
+import 'library_screen.dart';
 
 class VideoDetailScreen extends StatefulWidget {
   final int videoId;
@@ -164,12 +165,24 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> with WidgetsBindi
                   Text(video.description!),
                 ],
                 const SizedBox(height: 20),
-                Text(
-                  formatPrice(video.price),
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 12),
-                PurchaseSection(videoId: video.id),
+                if (video.purchased ?? false) ...[
+                  ActionChip(
+                    avatar: const Icon(Icons.check_circle, color: Colors.green, size: 18),
+                    label: const Text('Déjà achetée'),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => const LibraryScreen()),
+                      );
+                    },
+                  ),
+                ] else ...[
+                  Text(
+                    formatPrice(video.price),
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 12),
+                  PurchaseSection(videoId: video.id),
+                ],
                 const SizedBox(height: 8),
                 FavoriteButton(videoId: video.id, initialFavorited: video.favorited ?? false),
                 const SizedBox(height: 8),

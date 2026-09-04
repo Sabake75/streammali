@@ -125,10 +125,21 @@ export default async function VideoDetailPage(props: PageProps<"/videos/[id]">) 
 
         <div className="mt-4 rounded-xl border border-neutral-200 p-4 shadow-sm dark:border-neutral-800">
           <div className="flex flex-wrap items-center gap-4">
-            <span className="text-2xl font-bold text-orange-700 dark:text-orange-400">
-              {formatPrice(video.price)}
-            </span>
-            <PurchaseButton videoId={video.id} />
+            {video.purchased ? (
+              <Link
+                href="/bibliotheque"
+                className="rounded-full bg-emerald-100 px-3 py-1 text-sm font-semibold text-emerald-700 hover:underline dark:bg-emerald-950 dark:text-emerald-400"
+              >
+                ✓ Déjà achetée
+              </Link>
+            ) : (
+              <>
+                <span className="text-2xl font-bold text-orange-700 dark:text-orange-400">
+                  {formatPrice(video.price)}
+                </span>
+                <PurchaseButton videoId={video.id} />
+              </>
+            )}
             <FavoriteButton videoId={video.id} initialFavorited={Boolean(video.favorited)} />
             <ShareButton title={video.title} />
           </div>
