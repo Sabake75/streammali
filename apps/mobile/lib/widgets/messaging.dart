@@ -55,9 +55,11 @@ class _MessagingState extends State<Messaging> {
 
     try {
       await _apiClient.sendMessage(body: _bodyController.text, token: token);
+      if (!mounted) return;
       _bodyController.clear();
       await _reload();
     } catch (err) {
+      if (!mounted) return;
       setState(() => _error = err.toString());
     } finally {
       if (mounted) setState(() => _submitting = false);

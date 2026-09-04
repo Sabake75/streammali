@@ -74,10 +74,12 @@ class _BalanceAndPayoutsState extends State<BalanceAndPayouts> {
         destinationMsisdn: _destinationController.text,
         token: token,
       );
+      if (!mounted) return;
       _amountController.clear();
       _destinationController.clear();
       await _reload();
     } catch (err) {
+      if (!mounted) return;
       setState(() => _error = err.toString());
     } finally {
       if (mounted) setState(() => _submitting = false);

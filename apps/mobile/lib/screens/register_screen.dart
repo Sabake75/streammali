@@ -62,6 +62,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (!mounted) return;
       _goBack();
     } catch (error) {
+      if (!mounted) return;
       setState(() {
         _error = error.toString();
         _submitting = false;

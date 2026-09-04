@@ -47,6 +47,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     final token = AuthController.instance.token;
     if (token == null) return;
     await _apiClient.markAllNotificationsRead(token).catchError((_) {});
+    if (!mounted) return;
     setState(() => _future = _load());
   }
 

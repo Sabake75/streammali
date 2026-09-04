@@ -2,6 +2,8 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart' as vp;
 
+import 'error_retry_view.dart';
+
 /// [url] is an HLS manifest URL (Cloudflare Stream's `playback.hls`, see
 /// apps/api CloudflareStreamGateway), played natively by ExoPlayer/AVPlayer
 /// under the hood. `autoPlay: false` — Chewie's own play button is the
@@ -17,12 +19,18 @@ class VideoPlayerWidget extends StatefulWidget {
 }
 
 class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
-  late final vp.VideoPlayerController _videoController;
+  late vp.VideoPlayerController _videoController;
   ChewieController? _chewieController;
+  bool _failed = false;
 
   @override
   void initState() {
     super.initState();
+    _initialize();
+  }
+
+  void _initialize() {
+    _failed = false;
     _videoController = vp.VideoPlayerController.networkUrl(Uri.parse(widget.url));
     _videoController.initialize().then((_) {
       if (!mounted) return;
@@ -33,7 +41,17 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
           looping: false,
         );
       });
+    }).catchError((_) {
+      if (!mounted) return;
+      setState(() => _failed = true);
     });
+  }
+
+  void _retry() {
+    _chewieController?.dispose();
+    _videoController.dispose();
+    setState(() => _chewieController = null);
+    _initialize();
   }
 
   @override
@@ -45,6 +63,16 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 
   @override
   Widget build(BuildContext context) {
+    if (_failed) {
+      return AspectRatio(
+        aspectRatio: 16 / 9,
+        child: ColoredBox(
+          color: Colors.black,
+          child: ErrorRetryView(onRetry: _retry),
+        ),
+      );
+    }
+
     final chewieController = _chewieController;
 
     if (chewieController == null) {

@@ -68,7 +68,7 @@ class _VideoUploadWidgetState extends State<VideoUploadWidget> {
 
     final result = await FilePicker.pickFiles(type: FileType.video);
     final path = result?.files.single.path;
-    if (path == null) return;
+    if (path == null || !mounted) return;
 
     setState(() {
       _error = null;
@@ -92,6 +92,7 @@ class _VideoUploadWidgetState extends State<VideoUploadWidget> {
       _startPolling();
       widget.onStatusChange();
     } catch (err) {
+      if (!mounted) return;
       setState(() => _error = err.toString());
     }
   }

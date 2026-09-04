@@ -42,8 +42,10 @@ class _ReportSectionState extends State<ReportSection> {
         reason: _reasonController.text,
         token: token,
       );
+      if (!mounted) return;
       setState(() => _confirmation = message);
     } catch (error) {
+      if (!mounted) return;
       setState(() => _error = error.toString());
     } finally {
       if (mounted) setState(() => _submitting = false);

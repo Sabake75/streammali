@@ -46,7 +46,7 @@ class _UpgradeToCreatorScreenState extends State<_UpgradeToCreatorScreen> {
       allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf'],
     );
     final path = result?.files.single.path;
-    if (path == null) return;
+    if (path == null || !mounted) return;
 
     setState(() {
       _identityDocumentPath = path;
@@ -85,6 +85,7 @@ class _UpgradeToCreatorScreenState extends State<_UpgradeToCreatorScreen> {
         MaterialPageRoute(builder: (context) => const CreatorScreen()),
       );
     } catch (error) {
+      if (!mounted) return;
       setState(() {
         _error = error.toString();
         _submitting = false;
@@ -173,7 +174,7 @@ class _FullRegistrationScreenState extends State<_FullRegistrationScreen> {
       allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf'],
     );
     final path = result?.files.single.path;
-    if (path == null) return;
+    if (path == null || !mounted) return;
 
     setState(() {
       _identityDocumentPath = path;
@@ -213,6 +214,7 @@ class _FullRegistrationScreenState extends State<_FullRegistrationScreen> {
         MaterialPageRoute(builder: (context) => const CreatorScreen()),
       );
     } catch (error) {
+      if (!mounted) return;
       setState(() {
         _error = error.toString();
         _submitting = false;

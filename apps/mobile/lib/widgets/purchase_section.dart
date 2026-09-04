@@ -58,6 +58,7 @@ class _PurchaseSectionState extends State<PurchaseSection> {
         throw ApiException("Impossible d'ouvrir la page de paiement Mobile Money.");
       }
     } catch (error) {
+      if (!mounted) return;
       setState(() => _error = error.toString());
     } finally {
       if (mounted) setState(() => _submitting = false);

@@ -216,7 +216,7 @@ class _NewVideoFormState extends State<_NewVideoForm> {
   Future<void> _pickFile() async {
     final result = await FilePicker.pickFiles(type: FileType.video);
     final path = result?.files.single.path;
-    if (path != null) setState(() => _filePath = path);
+    if (path != null && mounted) setState(() => _filePath = path);
   }
 
   Future<void> _submit() async {
@@ -250,6 +250,7 @@ class _NewVideoFormState extends State<_NewVideoForm> {
 
       final uploadUrl = await _apiClient.createVideoUploadUrl(videoId: video.id, token: token);
 
+      if (!mounted) return;
       setState(() => _phase = _NewVideoPhase.uploading);
 
       await _apiClient.uploadVideoFile(
@@ -265,6 +266,7 @@ class _NewVideoFormState extends State<_NewVideoForm> {
       _startPolling(token);
       widget.onCreated();
     } catch (err) {
+      if (!mounted) return;
       setState(() {
         _error = err.toString();
         _phase = _NewVideoPhase.form;

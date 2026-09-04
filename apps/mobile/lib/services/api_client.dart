@@ -348,8 +348,8 @@ class ApiClient {
         'title': title,
         if (description != null && description.isNotEmpty) 'description': description,
         'category': category,
-        if (price != null) 'price': price,
-        if (durationSeconds != null) 'duration_seconds': durationSeconds,
+        'price': ?price,
+        'duration_seconds': ?durationSeconds,
       }),
     );
 

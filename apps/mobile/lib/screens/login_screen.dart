@@ -50,6 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (!mounted) return;
       _goBack();
     } catch (error) {
+      if (!mounted) return;
       setState(() {
         _error = error.toString();
         _submitting = false;
