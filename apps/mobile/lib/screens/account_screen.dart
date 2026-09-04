@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 
 import '../services/api_client.dart';
 import '../services/auth_controller.dart';
+import 'creator_screen.dart';
+import 'terms_webview_screen.dart';
 
 /// "Mon compte" — mirrors apps/web/src/app/compte/page.tsx: self-service
 /// data export and account deletion.
@@ -111,9 +113,71 @@ class _AccountScreenState extends State<AccountScreen> {
         child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          if (user != null)
-            Text('${user.name} · ${user.phone}', style: Theme.of(context).textTheme.bodyMedium),
-          const SizedBox(height: 24),
+          if (user != null) ...[
+            Row(
+              children: [
+                const CircleAvatar(child: Icon(Icons.person)),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(user.name, style: Theme.of(context).textTheme.titleMedium),
+                      Text(user.phone, style: Theme.of(context).textTheme.bodyMedium),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+          ],
+          Card(
+            margin: EdgeInsets.zero,
+            child: Column(
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.video_call_outlined),
+                  title: const Text('Espace créateur'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => const CreatorScreen()),
+                    );
+                  },
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  leading: const Icon(Icons.privacy_tip_outlined),
+                  title: const Text('Politique de confidentialité'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => TermsWebViewScreen(
+                          url: '${ApiClient.webBaseUrl}/politique-de-confidentialite',
+                          title: 'Politique de confidentialité',
+                          showAcceptButton: false,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  leading: const Icon(Icons.logout),
+                  title: const Text('Déconnexion'),
+                  onTap: () async {
+                    final token = AuthController.instance.token;
+                    if (token != null) {
+                      await _apiClient.logout(token);
+                    }
+                    await AuthController.instance.clearSession();
+                  },
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16),
