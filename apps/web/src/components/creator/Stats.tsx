@@ -1,22 +1,30 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { ErrorRetryView } from "@/components/ErrorRetryView";
 import { fetchCreatorStats } from "@/lib/api-client";
 import { formatPrice } from "@/lib/format";
 import type { CreatorStats } from "@/lib/types";
 
 export function Stats() {
   const [stats, setStats] = useState<CreatorStats | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(false);
 
-  useEffect(() => {
+  const reload = useCallback(() => {
     fetchCreatorStats()
-      .then(setStats)
-      .catch((err) => setError(err instanceof Error ? err.message : "Une erreur est survenue."));
+      .then((result) => {
+        setStats(result);
+        setError(false);
+      })
+      .catch(() => setError(true));
   }, []);
 
+  useEffect(() => {
+    reload();
+  }, [reload]);
+
   if (error) {
-    return <p className="text-sm text-red-600 dark:text-red-400">{error}</p>;
+    return <ErrorRetryView onRetry={reload} />;
   }
 
   if (!stats) {

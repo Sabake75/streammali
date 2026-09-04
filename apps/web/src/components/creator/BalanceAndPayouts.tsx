@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { ErrorRetryView } from "@/components/ErrorRetryView";
 import { PhoneNumberField } from "@/components/PhoneNumberField";
 import { fetchBalance, fetchMyPayouts, requestPayout } from "@/lib/api-client";
 import { formatPrice } from "@/lib/format";
@@ -13,17 +14,27 @@ export function BalanceAndPayouts() {
   const [destination, setDestination] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState(false);
 
   const reload = useCallback(() => {
-    fetchBalance().then(setBalance).catch(() => undefined);
+    fetchBalance()
+      .then((result) => {
+        setBalance(result);
+        setLoadError(false);
+      })
+      .catch(() => setLoadError(true));
     fetchMyPayouts()
       .then((response) => setPayouts(response.data))
-      .catch(() => undefined);
+      .catch(() => setLoadError(true));
   }, []);
 
   useEffect(() => {
     reload();
   }, [reload]);
+
+  if (loadError && balance === null) {
+    return <ErrorRetryView onRetry={reload} />;
+  }
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();

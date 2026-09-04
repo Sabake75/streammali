@@ -7,11 +7,12 @@ import { PhoneNumberField } from "@/components/PhoneNumberField";
 import { PinCodeField } from "@/components/PinCodeField";
 import { loginViewer } from "@/lib/api-client";
 import { setSession } from "@/lib/auth-client";
+import { safeNextPath } from "@/lib/safe-next-path";
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const next = searchParams.get("next") ?? "/";
+  const next = safeNextPath(searchParams.get("next"));
 
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");

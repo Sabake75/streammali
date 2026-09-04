@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
+import { ErrorRetryView } from "@/components/ErrorRetryView";
 import { VideoUploadWidget } from "@/components/creator/VideoUploadWidget";
 import { fetchMyVideos } from "@/lib/api-client";
 import { categoryStyle, formatDuration, formatPrice } from "@/lib/format";
@@ -9,12 +10,15 @@ import type { CreatorVideo } from "@/lib/types";
 
 export function CreatorPageClient() {
   const [videos, setVideos] = useState<CreatorVideo[] | null>(null);
-  const [loadError, setLoadError] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState(false);
 
   const reload = useCallback(() => {
     fetchMyVideos()
-      .then((response) => setVideos(response.data))
-      .catch((err) => setLoadError(err instanceof Error ? err.message : "Une erreur est survenue."));
+      .then((response) => {
+        setVideos(response.data);
+        setLoadError(false);
+      })
+      .catch(() => setLoadError(true));
   }, []);
 
   useEffect(() => {
@@ -51,7 +55,7 @@ export function CreatorPageClient() {
           )}
         </h2>
 
-        {loadError && <p className="mt-4 text-sm text-red-600 dark:text-red-400">{loadError}</p>}
+        {loadError && <ErrorRetryView onRetry={reload} />}
         {videos === null && !loadError && <p className="mt-4 text-neutral-500">Chargement…</p>}
         {videos?.length === 0 && <p className="mt-4 text-neutral-500">Aucune vidéo pour l&apos;instant.</p>}
 

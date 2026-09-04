@@ -9,7 +9,7 @@ const PENDING_VIDEO_KEY = "streammali:pending_purchase_video_id";
 const POLL_INTERVAL_MS = 2500;
 const MAX_POLLS = 12; // ~30s — Mobile Money confirmations are usually near-instant, but PayDunya's webhook can lag.
 
-type Status = "no-pending" | "checking" | "confirmed" | "timeout" | "error";
+type Status = "no-pending" | "checking" | "confirmed" | "timeout";
 
 export function PaymentSuccessPageClient() {
   const [status, setStatus] = useState<Status>("checking");
@@ -39,21 +39,20 @@ export function PaymentSuccessPageClient() {
           return;
         }
       } catch {
-        if (cancelled) return;
-        setStatus("error");
+        // A single flaky request shouldn't give up on the whole poll —
+        // treated the same as "not confirmed yet", retried below like any
+        // other attempt, up to MAX_POLLS.
+      }
+
+      if (cancelled) return;
+
+      if (attempts >= MAX_POLLS) {
+        setStatus("timeout");
         sessionStorage.removeItem(PENDING_VIDEO_KEY);
         return;
       }
 
-      if (attempts >= MAX_POLLS) {
-        if (!cancelled) {
-          setStatus("timeout");
-          sessionStorage.removeItem(PENDING_VIDEO_KEY);
-        }
-        return;
-      }
-
-      if (!cancelled) setTimeout(poll, POLL_INTERVAL_MS);
+      setTimeout(poll, POLL_INTERVAL_MS);
     }
 
     poll();
@@ -104,7 +103,7 @@ export function PaymentSuccessPageClient() {
         </>
       )}
 
-      {(status === "timeout" || status === "error") && (
+      {status === "timeout" && (
         <>
           <h1 className="text-xl font-bold text-neutral-900 dark:text-neutral-50">
             La confirmation prend plus de temps que prévu

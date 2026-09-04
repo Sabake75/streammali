@@ -10,11 +10,12 @@ import { TermsModal } from "@/components/legal/TermsModal";
 import { ViewerTermsContent } from "@/components/legal/ViewerTermsContent";
 import { registerViewer } from "@/lib/api-client";
 import { setSession } from "@/lib/auth-client";
+import { safeNextPath } from "@/lib/safe-next-path";
 
 function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const next = searchParams.get("next") ?? "/";
+  const next = safeNextPath(searchParams.get("next"));
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");

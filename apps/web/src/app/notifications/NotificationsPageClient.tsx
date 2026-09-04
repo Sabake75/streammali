@@ -2,18 +2,22 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
+import { ErrorRetryView } from "@/components/ErrorRetryView";
 import { fetchNotifications, markAllNotificationsRead, markNotificationRead } from "@/lib/api-client";
 import { formatDate } from "@/lib/format";
 import type { AppNotification } from "@/lib/types";
 
 export function NotificationsPageClient() {
   const [notifications, setNotifications] = useState<AppNotification[] | null>(null);
-  const [loadError, setLoadError] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState(false);
 
   const reload = useCallback(() => {
     fetchNotifications()
-      .then((response) => setNotifications(response.data))
-      .catch((err) => setLoadError(err instanceof Error ? err.message : "Une erreur est survenue."));
+      .then((response) => {
+        setNotifications(response.data);
+        setLoadError(false);
+      })
+      .catch(() => setLoadError(true));
   }, []);
 
   useEffect(() => {
@@ -46,7 +50,7 @@ export function NotificationsPageClient() {
         )}
       </div>
 
-      {loadError && <p className="mt-6 text-sm text-red-600 dark:text-red-400">{loadError}</p>}
+      {loadError && <ErrorRetryView onRetry={reload} />}
       {notifications === null && !loadError && <p className="mt-6 text-neutral-500">Chargement…</p>}
 
       {notifications?.length === 0 && (

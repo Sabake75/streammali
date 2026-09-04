@@ -1,4 +1,4 @@
-import { getToken, type StoredUser } from "@/lib/auth-client";
+import { clearSession, getToken, type StoredUser } from "@/lib/auth-client";
 import type {
   CreatorBalance,
   CreatorStats,
@@ -375,6 +375,13 @@ async function postJson<T>(
 }
 
 async function extractErrorMessage(response: Response): Promise<string> {
+  // A 401 means the stored token is no longer valid (expired, revoked, or
+  // the account got suspended/blocked mid-session — see CLAUDE.md, that
+  // takes effect immediately on existing tokens). Without this, the app
+  // stays "logged in" client-side forever, silently failing every
+  // subsequent request with no way out except manually visiting /connexion.
+  if (response.status === 401) clearSession();
+
   try {
     const json = await response.json();
     if (json.errors) {

@@ -2,18 +2,22 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
+import { ErrorRetryView } from "@/components/ErrorRetryView";
 import { VideoCard } from "@/components/VideoCard";
 import { favoriteVideo, fetchMyFavorites } from "@/lib/api-client";
 import type { VideoSummary } from "@/lib/types";
 
 export function FavoritesPageClient() {
   const [videos, setVideos] = useState<VideoSummary[] | null>(null);
-  const [loadError, setLoadError] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState(false);
 
   const reload = useCallback(() => {
     fetchMyFavorites()
-      .then((response) => setVideos(response.data))
-      .catch((err) => setLoadError(err instanceof Error ? err.message : "Une erreur est survenue."));
+      .then((response) => {
+        setVideos(response.data);
+        setLoadError(false);
+      })
+      .catch(() => setLoadError(true));
   }, []);
 
   useEffect(() => {
@@ -37,7 +41,7 @@ export function FavoritesPageClient() {
         Les vidéos que tu as mises de côté pour plus tard.
       </p>
 
-      {loadError && <p className="mt-6 text-sm text-red-600 dark:text-red-400">{loadError}</p>}
+      {loadError && <ErrorRetryView onRetry={reload} />}
       {videos === null && !loadError && <p className="mt-6 text-neutral-500">Chargement…</p>}
 
       {videos?.length === 0 && (

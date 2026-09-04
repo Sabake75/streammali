@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { ErrorRetryView } from "@/components/ErrorRetryView";
 import { fetchMyMessages, sendMessage } from "@/lib/api-client";
 import type { Message } from "@/lib/types";
 
@@ -9,11 +10,15 @@ export function Messaging() {
   const [body, setBody] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState(false);
 
   const reload = useCallback(() => {
     fetchMyMessages()
-      .then((response) => setMessages(response.data))
-      .catch(() => undefined);
+      .then((response) => {
+        setMessages(response.data);
+        setLoadError(false);
+      })
+      .catch(() => setLoadError(true));
   }, []);
 
   useEffect(() => {
@@ -39,7 +44,8 @@ export function Messaging() {
   return (
     <div className="flex h-full flex-col">
       <div className="flex max-h-80 min-h-24 flex-1 flex-col gap-3 overflow-y-auto">
-        {messages === null && <p className="text-neutral-500">Chargement…</p>}
+        {loadError && <ErrorRetryView onRetry={reload} />}
+        {messages === null && !loadError && <p className="text-neutral-500">Chargement…</p>}
         {messages?.length === 0 && (
           <p className="text-sm text-neutral-500 dark:text-neutral-400">
             Aucun message pour l&apos;instant. Pose une question à la modération ci-dessous.

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { ErrorRetryView } from "@/components/ErrorRetryView";
 import { fetchReviews, submitReview } from "@/lib/api-client";
 import type { Review } from "@/lib/types";
 
@@ -10,11 +11,15 @@ export function Reviews({ videoId, purchased }: { videoId: number; purchased: bo
   const [comment, setComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState(false);
 
   const reload = useCallback(() => {
     fetchReviews(videoId)
-      .then((response) => setReviews(response.data))
-      .catch(() => undefined);
+      .then((response) => {
+        setReviews(response.data);
+        setLoadError(false);
+      })
+      .catch(() => setLoadError(true));
   }, [videoId]);
 
   useEffect(() => {
@@ -81,7 +86,8 @@ export function Reviews({ videoId, purchased }: { videoId: number; purchased: bo
       )}
 
       <div className="mt-4 flex flex-col gap-3">
-        {reviews === null && <p className="text-sm text-neutral-500">Chargement…</p>}
+        {loadError && <ErrorRetryView onRetry={reload} />}
+        {reviews === null && !loadError && <p className="text-sm text-neutral-500">Chargement…</p>}
         {reviews?.length === 0 && (
           <p className="text-sm text-neutral-500 dark:text-neutral-400">Aucun avis pour l&apos;instant.</p>
         )}

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
+import { ErrorRetryView } from "@/components/ErrorRetryView";
 import { VideoCard } from "@/components/VideoCard";
 import { fetchMyPurchases } from "@/lib/api-client";
 import { formatDate, formatPrice } from "@/lib/format";
@@ -9,12 +10,15 @@ import type { VideoSummary } from "@/lib/types";
 
 export function LibraryPageClient() {
   const [videos, setVideos] = useState<VideoSummary[] | null>(null);
-  const [loadError, setLoadError] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState(false);
 
   const reload = useCallback(() => {
     fetchMyPurchases()
-      .then((response) => setVideos(response.data))
-      .catch((err) => setLoadError(err instanceof Error ? err.message : "Une erreur est survenue."));
+      .then((response) => {
+        setVideos(response.data);
+        setLoadError(false);
+      })
+      .catch(() => setLoadError(true));
   }, []);
 
   useEffect(() => {
@@ -31,7 +35,7 @@ export function LibraryPageClient() {
         Les vidéos que tu as achetées, accessibles en streaming illimité.
       </p>
 
-      {loadError && <p className="mt-6 text-sm text-red-600 dark:text-red-400">{loadError}</p>}
+      {loadError && <ErrorRetryView onRetry={reload} />}
       {videos === null && !loadError && <p className="mt-6 text-neutral-500">Chargement…</p>}
 
       {videos?.length === 0 && (
