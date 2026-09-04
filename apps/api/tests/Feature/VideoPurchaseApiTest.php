@@ -30,6 +30,7 @@ class VideoPurchaseApiTest extends TestCase
             '*/webpayment' => Http::response([
                 'payment_url' => 'https://webpay.orange-money.test/pay/abc123',
                 'pay_token' => 'pay-token-abc123',
+                'notif_token' => 'notif-token-abc123',
             ], 200),
         ]);
 

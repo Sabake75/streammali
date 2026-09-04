@@ -38,6 +38,7 @@ class OrangeMoneyPaymentTest extends TestCase
             '*/webpayment' => Http::response([
                 'payment_url' => 'https://webpay.orange-money.test/pay/abc123',
                 'pay_token' => 'pay-token-abc123',
+                'notif_token' => 'notif-token-abc123',
             ], 200),
         ]);
 
@@ -49,6 +50,7 @@ class OrangeMoneyPaymentTest extends TestCase
         $this->assertSame('https://webpay.orange-money.test/pay/abc123', $result->paymentUrl);
         $this->assertSame(PaymentStatus::Pending, $result->payment->status);
         $this->assertSame('pay-token-abc123', $result->payment->provider_pay_token);
+        $this->assertSame('notif-token-abc123', $result->payment->provider_notif_token);
         $this->assertSame(25, $result->payment->amount);
 
         Http::assertSent(fn ($request) => str_contains($request->url(), '/webpayment')
@@ -88,11 +90,17 @@ class OrangeMoneyPaymentTest extends TestCase
             '*/transactionstatus*' => Http::response(['status' => 'SUCCESS'], 200),
         ]);
 
-        $payment = Payment::factory()->create(['provider_pay_token' => 'pay-token-abc123']);
+        $payment = Payment::factory()->create([
+            'provider_pay_token' => 'pay-token-abc123',
+            'provider_notif_token' => 'notif-token-abc123',
+        ]);
 
+        // Orange's real notification body only carries {status, notif_token,
+        // txnid} — no order_id (see App\Http\Controllers\Api\OrangeMoneyWebhookController).
         $this->postJson('/api/webhooks/orange-money', [
-            'order_id' => $payment->order_reference,
+            'notif_token' => $payment->provider_notif_token,
             'status' => 'SUCCESS',
+            'txnid' => 'MP150709.1341.A00073',
         ])->assertOk();
 
         $this->assertSame(PaymentStatus::Succeeded, $payment->fresh()->status);

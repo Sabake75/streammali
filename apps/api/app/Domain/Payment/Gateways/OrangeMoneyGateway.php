@@ -53,6 +53,7 @@ class OrangeMoneyGateway implements PaymentGateway
         return new PaymentInitiationResult(
             paymentUrl: $response['payment_url'],
             payToken: $response['pay_token'],
+            notifToken: $response['notif_token'],
         );
     }
 

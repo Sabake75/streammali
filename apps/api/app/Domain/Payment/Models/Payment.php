@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'payer_msisdn',
     'order_reference',
     'provider_pay_token',
+    'provider_notif_token',
     'provider_transaction_id',
     'status',
     'raw_webhook_payload',

@@ -12,7 +12,12 @@ class OrangeMoneyWebhookController extends Controller
 {
     public function __invoke(Request $request, ConfirmPayment $confirmPayment): JsonResponse
     {
-        $payment = Payment::where('order_reference', $request->input('order_id'))->firstOrFail();
+        // Orange's notification body only carries {status, notif_token, txnid}
+        // — no order_id — per their "Guide d'utilisation API webpayment".
+        // notif_token is also how we check the notification is genuine: it's
+        // the one we generated and stored ourselves at initiation, never
+        // guessable from the outside (unlike order_reference).
+        $payment = Payment::where('provider_notif_token', $request->input('notif_token'))->firstOrFail();
 
         $payment->update(['raw_webhook_payload' => $request->all()]);
 

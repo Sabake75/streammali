@@ -31,7 +31,10 @@ class InitiatePayment
 
         $result = $this->gateway->initiate($payment);
 
-        $payment->update(['provider_pay_token' => $result->payToken]);
+        $payment->update([
+            'provider_pay_token' => $result->payToken,
+            'provider_notif_token' => $result->notifToken,
+        ]);
 
         return new InitiatedPayment($payment, $result->paymentUrl);
     }
