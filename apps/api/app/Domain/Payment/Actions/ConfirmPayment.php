@@ -6,10 +6,15 @@ use App\Domain\Payment\Contracts\PaymentGateway;
 use App\Domain\Payment\Enums\PaymentStatus;
 use App\Domain\Payment\Models\LedgerEntry;
 use App\Domain\Payment\Models\Payment;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Idempotent: safe to call multiple times for the same payment (Orange may
- * ping notif_url more than once, and network retries happen).
+ * ping notif_url more than once, and network retries happen). The gateway
+ * call itself isn't inside the lock/transaction below (no reason to hold a
+ * row lock across a slow HTTP round-trip) — only the "is this still
+ * pending, and if not, credit the ledger" part needs to be atomic, since
+ * that's the part with a side effect that isn't safe to repeat.
  */
 class ConfirmPayment
 {
@@ -29,16 +34,32 @@ class ConfirmPayment
             return $payment;
         }
 
-        $payment->update([
-            'status' => $status,
-            'confirmed_at' => now(),
-        ]);
+        return DB::transaction(function () use ($payment, $status) {
+            // Re-fetch under a row lock: two concurrent calls for the same
+            // payment (webhook fired twice, or racing the success-page poll)
+            // both reach this point believing the payment is still Pending —
+            // without the lock+recheck, both would pass and both would
+            // create a LedgerEntry, double-crediting the creator for one
+            // sale. lockForUpdate() makes the second transaction wait for
+            // the first to commit, then its own re-check below sees the
+            // already-Succeeded status and turns into a no-op.
+            $locked = Payment::whereKey($payment->id)->lockForUpdate()->firstOrFail();
 
-        if ($status === PaymentStatus::Succeeded) {
-            $this->recordLedgerEntry($payment);
-        }
+            if ($locked->status !== PaymentStatus::Pending) {
+                return $locked;
+            }
 
-        return $payment->fresh();
+            $locked->update([
+                'status' => $status,
+                'confirmed_at' => now(),
+            ]);
+
+            if ($status === PaymentStatus::Succeeded) {
+                $this->recordLedgerEntry($locked);
+            }
+
+            return $locked->fresh();
+        });
     }
 
     private function recordLedgerEntry(Payment $payment): void

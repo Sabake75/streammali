@@ -6,6 +6,7 @@ use App\Domain\Payment\Enums\PayoutStatus;
 use App\Domain\Payment\Exceptions\PayoutException;
 use App\Domain\Payment\Models\Payout;
 use App\Models\User;
+use Illuminate\Support\Facades\Cache;
 
 class RequestPayout
 {
@@ -21,17 +22,29 @@ class RequestPayout
             throw new PayoutException("Le montant minimum de retrait est de {$minimum} FCFA.");
         }
 
-        $available = ($this->getCreatorBalance)($creator);
+        // Without this lock, two concurrent requests (double-tap, or a
+        // scripted retry) can both read the same available balance before
+        // either Payout row exists, both pass the check, and together
+        // reserve more than the creator actually has — GetCreatorBalance
+        // only subtracts *existing* pending/paid payouts, so it can't catch
+        // a request that hasn't been persisted yet. Serializing per-creator
+        // closes that window; Cache::lock works the same way across every
+        // cache driver this app runs on (array in tests, database/redis in
+        // prod), unlike a DB-level row lock which has nothing to lock here
+        // (the balance is an aggregate, not a single row).
+        return Cache::lock("payout-request:{$creator->id}", 10)->block(5, function () use ($creator, $amount, $destinationMsisdn) {
+            $available = ($this->getCreatorBalance)($creator);
 
-        if ($amount > $available) {
-            throw new PayoutException("Solde disponible insuffisant ({$available} FCFA).");
-        }
+            if ($amount > $available) {
+                throw new PayoutException("Solde disponible insuffisant ({$available} FCFA).");
+            }
 
-        return Payout::create([
-            'creator_id' => $creator->id,
-            'amount' => $amount,
-            'destination_msisdn' => $destinationMsisdn,
-            'status' => PayoutStatus::Pending,
-        ]);
+            return Payout::create([
+                'creator_id' => $creator->id,
+                'amount' => $amount,
+                'destination_msisdn' => $destinationMsisdn,
+                'status' => PayoutStatus::Pending,
+            ]);
+        });
     }
 }

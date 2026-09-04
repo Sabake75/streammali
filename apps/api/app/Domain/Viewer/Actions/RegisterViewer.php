@@ -9,14 +9,19 @@ class RegisterViewer
 {
     public function __invoke(string $name, string $phone, string $password): User
     {
-        return User::create([
+        $user = User::create([
             'name' => $name,
             'phone' => $phone,
             'password' => $password,
-            'role' => UserRole::Viewer,
             // Only reached once the controller's `accepted` validation rule
             // has passed, so acceptance is implicit at this point.
             'terms_accepted_at' => now(),
         ]);
+
+        // 'role' is deliberately not mass-assignable (see User model) —
+        // forceFill is the trusted, server-only path to set it.
+        $user->forceFill(['role' => UserRole::Viewer])->save();
+
+        return $user;
     }
 }

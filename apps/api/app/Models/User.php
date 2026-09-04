@@ -20,7 +20,14 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-#[Fillable(['name', 'email', 'phone', 'password', 'role', 'account_status', 'account_status_reason', 'identity_verified_at', 'identity_document_path', 'terms_accepted_at'])]
+// 'role' is deliberately NOT fillable: every legitimate place that sets it
+// (RegisterViewer/RegisterCreator) uses a hardcoded UserRole:: enum value in
+// the create() array (never client input), and UpgradeToCreator uses
+// forceFill() (bypasses this guard entirely) — so it doesn't need to be
+// mass-assignable, and leaving it out closes off a privilege-escalation
+// path if a future update() call ever passed through insufficiently
+// filtered request data.
+#[Fillable(['name', 'email', 'phone', 'password', 'account_status', 'account_status_reason', 'identity_verified_at', 'identity_document_path', 'terms_accepted_at'])]
 #[Hidden(['password', 'remember_token', 'identity_document_path'])]
 class User extends Authenticatable implements FilamentUser
 {

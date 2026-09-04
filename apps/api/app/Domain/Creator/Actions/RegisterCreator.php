@@ -18,15 +18,22 @@ class RegisterCreator
         // routes/web.php.
         $path = $identityDocument->store('identity-documents', config('filesystems.default'));
 
-        return User::create([
+        $user = User::create([
             'name' => $name,
             'phone' => $phone,
             'password' => $password,
-            'role' => UserRole::Creator,
             'identity_document_path' => $path,
             // Only reached once the controller's `accepted` validation rule
             // has passed, so acceptance is implicit at this point.
             'terms_accepted_at' => now(),
         ]);
+
+        // 'role' is deliberately not mass-assignable (see User model) —
+        // forceFill is the trusted, server-only path to set it. Without
+        // this, the row would keep the users table's DB-level default
+        // ('viewer'), not Creator.
+        $user->forceFill(['role' => UserRole::Creator])->save();
+
+        return $user;
     }
 }

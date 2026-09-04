@@ -7,10 +7,12 @@ use App\Domain\Payment\Actions\InitiatePayment;
 use App\Domain\Payment\Contracts\PaymentGateway;
 use App\Domain\Payment\Enums\PaymentStatus;
 use App\Domain\Payment\Gateways\OrangeMoneyGateway;
+use App\Domain\Payment\Models\LedgerEntry;
 use App\Domain\Payment\Models\Payment;
 use App\Domain\Video\Models\Video;
 use App\Enums\UserRole;
 use App\Models\User;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
@@ -81,6 +83,60 @@ class OrangeMoneyPaymentTest extends TestCase
         app(ConfirmPayment::class)($payment);
 
         Http::assertNothingSent();
+    }
+
+    /**
+     * Orange's own docs and this project's history (see notif_token fix)
+     * both confirm the notif_url can be pinged more than once for the same
+     * transaction. Regression test for the ledger side of ConfirmPayment's
+     * idempotency — the status update alone being idempotent was never the
+     * risky part, a second LedgerEntry silently double-crediting the
+     * creator was (see ConfirmPayment/the ledger_entries unique index).
+     */
+    public function test_confirming_an_already_succeeded_payment_again_does_not_double_credit_the_ledger(): void
+    {
+        Http::fake([
+            '*/oauth/v3/token' => Http::response(['access_token' => 'fake-token'], 200),
+            '*/transactionstatus*' => Http::response(['status' => 'SUCCESS'], 200),
+        ]);
+
+        $video = Video::factory()->approved()->create(['price' => 1000]);
+        $payment = Payment::factory()->create([
+            'video_id' => $video->id,
+            'amount' => 1000,
+            'provider_pay_token' => 'pay-token-abc123',
+        ]);
+
+        app(ConfirmPayment::class)($payment);
+        app(ConfirmPayment::class)($payment->fresh());
+
+        $this->assertSame(1, LedgerEntry::where('payment_id', $payment->id)->count());
+    }
+
+    /** Defense-in-depth: the unique index itself, independent of the app-level guard above. */
+    public function test_ledger_entries_payment_id_is_unique_at_the_database_level(): void
+    {
+        $payment = Payment::factory()->succeeded()->create();
+
+        LedgerEntry::create([
+            'creator_id' => $payment->video->creator_id,
+            'payment_id' => $payment->id,
+            'type' => 'sale',
+            'gross_amount' => 100,
+            'commission_amount' => 25,
+            'net_amount' => 75,
+        ]);
+
+        $this->expectException(QueryException::class);
+
+        LedgerEntry::create([
+            'creator_id' => $payment->video->creator_id,
+            'payment_id' => $payment->id,
+            'type' => 'sale',
+            'gross_amount' => 100,
+            'commission_amount' => 25,
+            'net_amount' => 75,
+        ]);
     }
 
     public function test_orange_money_webhook_confirms_a_payment(): void

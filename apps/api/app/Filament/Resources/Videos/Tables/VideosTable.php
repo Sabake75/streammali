@@ -35,6 +35,13 @@ class VideosTable
             // The explicit "Modifier" action in the "..." menu still
             // opens it for anyone who actually wants to edit.
             ->recordUrl(null)
+            // Without this, both the "Signalements" column and its action's
+            // visibility check ran a fresh reports() query per visible row
+            // — a real N+1 on a table that can list every video in
+            // moderation.
+            ->modifyQueryUsing(fn ($query) => $query->withCount([
+                'reports as pending_reports_count' => fn ($query) => $query->where('status', ReportStatus::Pending),
+            ]))
             ->columns([
                 TextColumn::make('title')
                     ->label('Titre')
@@ -98,11 +105,7 @@ class VideosTable
                     ->label('Signalements')
                     ->badge()
                     ->color('danger')
-                    ->getStateUsing(function ($record) {
-                        $count = static::pendingReportsCount($record);
-
-                        return $count > 0 ? $count : null;
-                    }),
+                    ->formatStateUsing(fn (?int $state) => $state > 0 ? $state : null),
             ])
             ->defaultSort('created_at', 'asc')
             ->filters([
@@ -184,7 +187,7 @@ class VideosTable
                         ->label('Signalements')
                         ->icon('heroicon-o-flag')
                         ->color('danger')
-                        ->visible(fn ($record) => static::pendingReportsCount($record) > 0)
+                        ->visible(fn ($record) => $record->pending_reports_count > 0)
                         ->schema(fn ($record) => [
                             TextEntry::make('reports_list')
                                 ->hiddenLabel()
@@ -213,11 +216,6 @@ class VideosTable
     private static function playerEmbedUrl(Video $video): string
     {
         return preg_replace('#/manifest/video\.m3u8$#', '/iframe', (string) $video->playback_url);
-    }
-
-    private static function pendingReportsCount(Video $video): int
-    {
-        return $video->reports()->where('status', ReportStatus::Pending)->count();
     }
 
     private static function formatReports(Video $video): string
