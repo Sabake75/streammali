@@ -63,9 +63,12 @@ class OrangeMoneyGateway implements PaymentGateway
             throw new RuntimeException("Payment #{$payment->id} has no provider_pay_token to verify against.");
         }
 
+        // POST, not GET: confirmed against Orange's "Guide d'utilisation API
+        // webpayment" (JSON body, 201 response) and in production — a GET
+        // got a real 405 "Method not allowed" from Orange's API gateway.
         $response = Http::withToken($this->getAccessToken())
             ->baseUrl($this->apiBaseUrl())
-            ->get('/transactionstatus', [
+            ->post('/transactionstatus', [
                 'order_id' => $payment->order_reference,
                 'amount' => $payment->amount,
                 'pay_token' => $payment->provider_pay_token,
