@@ -94,16 +94,22 @@ class _BalanceAndPayoutsState extends State<BalanceAndPayouts> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Solde et retraits', style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 8),
-            if (_balance != null)
+            if (_balance != null) ...[
               Text(
-                '${formatPrice(_balance!.availableBalance)} disponible (retrait min. ${formatPrice(_balance!.minimumPayoutAmount)})',
-                style: Theme.of(context).textTheme.bodyMedium,
-              )
-            else
+                formatPrice(_balance!.availableBalance),
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.w800,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                'disponible (retrait min. ${formatPrice(_balance!.minimumPayoutAmount)})',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
+              ),
+            ] else
               const Text('Chargement…'),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
             TextField(
               controller: _amountController,
               decoration: const InputDecoration(labelText: 'Montant (FCFA)'),
@@ -121,16 +127,36 @@ class _BalanceAndPayoutsState extends State<BalanceAndPayouts> {
               Text(_error!, style: const TextStyle(color: Colors.red)),
             ],
             if (_payouts != null && _payouts!.isNotEmpty) ...[
-              const SizedBox(height: 12),
-              Text('Historique', style: Theme.of(context).textTheme.titleSmall),
+              const SizedBox(height: 16),
+              Text('Historique des demandes', style: Theme.of(context).textTheme.bodySmall),
+              const SizedBox(height: 8),
               ..._payouts!.map(
-                (payout) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Row(
+                (payout) => Container(
+                  margin: const EdgeInsets.only(bottom: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Theme.of(context).dividerColor),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(child: Text(formatPrice(payout.amount))),
-                      Expanded(child: Text(payout.destinationMsisdn)),
-                      Text(payout.statusLabel, style: const TextStyle(fontWeight: FontWeight.bold)),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(formatPrice(payout.amount), style: const TextStyle(fontWeight: FontWeight.w600)),
+                          Text(payout.statusLabel, style: const TextStyle(fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                      const SizedBox(height: 2),
+                      Text(payout.destinationMsisdn, style: Theme.of(context).textTheme.bodySmall),
+                      if (payout.statusValue == 'rejected' && payout.rejectionReason != null) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          'Motif du refus : ${payout.rejectionReason}',
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                      ],
                     ],
                   ),
                 ),

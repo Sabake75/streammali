@@ -45,8 +45,6 @@ class _StatsState extends State<Stats> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Statistiques', style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 12),
             if (_error != null) Text(_error!, style: const TextStyle(color: Colors.red)),
             if (_error == null && _stats == null) const Center(child: CircularProgressIndicator()),
             if (_stats != null) ..._buildContent(context, _stats!),
@@ -83,7 +81,7 @@ class _StatsState extends State<Stats> {
             ),
           ),
         )
-      else
+      else ...[
         SizedBox(
           height: 80,
           child: Row(
@@ -107,25 +105,81 @@ class _StatsState extends State<Stats> {
                 .toList(),
           ),
         ),
+        // Bare bars with no reference point are unreadable — at minimum,
+        // anchor the two ends of the 14-day window (mirrors the web
+        // version, apps/web/src/components/creator/Stats.tsx).
+        if (stats.timeseries.isNotEmpty) ...[
+          const SizedBox(height: 4),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(_shortDate(stats.timeseries.first.date), style: Theme.of(context).textTheme.bodySmall),
+              Text(_shortDate(stats.timeseries.last.date), style: Theme.of(context).textTheme.bodySmall),
+            ],
+          ),
+        ],
+      ],
       if (stats.videos.isNotEmpty) ...[
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
         Text('Par vidéo', style: Theme.of(context).textTheme.bodySmall),
-        const SizedBox(height: 4),
-        ...stats.videos.map(
-          (video) => Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4),
-            child: Row(
+        const SizedBox(height: 8),
+        Table(
+          columnWidths: const {0: FlexColumnWidth(2.2)},
+          children: [
+            TableRow(
+              decoration: BoxDecoration(
+                border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
+              ),
               children: [
-                Expanded(flex: 3, child: Text(video.title, overflow: TextOverflow.ellipsis)),
-                Expanded(child: Text('${video.viewsCount} vues')),
-                Expanded(child: Text('${video.purchasesCount} achats')),
-                Expanded(child: Text(formatPrice(video.revenue))),
+                _tableHeaderCell(context, 'Titre'),
+                _tableHeaderCell(context, 'Vues'),
+                _tableHeaderCell(context, 'Achats'),
+                _tableHeaderCell(context, 'Revenus'),
               ],
             ),
-          ),
+            for (final video in stats.videos)
+              TableRow(
+                decoration: BoxDecoration(
+                  border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
+                ),
+                children: [
+                  _tableCell(context, video.title, ellipsis: true),
+                  _tableCell(context, '${video.viewsCount}'),
+                  _tableCell(context, '${video.purchasesCount}'),
+                  _tableCell(context, formatPrice(video.revenue)),
+                ],
+              ),
+          ],
         ),
       ],
     ];
+  }
+
+  String _shortDate(String isoDate) {
+    final parts = isoDate.split('-');
+    if (parts.length != 3) return isoDate;
+    return '${parts[2]}/${parts[1]}';
+  }
+
+  Widget _tableHeaderCell(BuildContext context, String label) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Text(
+        label,
+        style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w700),
+      ),
+    );
+  }
+
+  Widget _tableCell(BuildContext context, String value, {bool ellipsis = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Text(
+        value,
+        maxLines: 1,
+        overflow: ellipsis ? TextOverflow.ellipsis : TextOverflow.visible,
+      ),
+    );
   }
 }
 
