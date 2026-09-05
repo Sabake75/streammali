@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
-import 'screens/root_shell.dart';
+import 'screens/catalogue_screen.dart';
 import 'services/auth_controller.dart';
 import 'theme.dart';
 
@@ -34,7 +34,7 @@ class StreamMaliApp extends StatelessWidget {
       title: 'StreamMali',
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
-      home: const RootShell(),
+      home: const CatalogueScreen(),
     );
   }
 }
