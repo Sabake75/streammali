@@ -29,9 +29,16 @@ class ModerationPanelProvider extends PanelProvider
             ->id('moderation')
             ->path('moderation')
             ->login()
+            ->brandLogo(asset('images/logo-light.svg'))
+            ->darkModeBrandLogo(asset('images/logo-dark.svg'))
+            ->brandLogoHeight('2rem')
             ->colors([
                 'primary' => Color::Amber,
             ])
+            // Nécessaire pour que la notification "export terminé"
+            // (déclenchée par ExportAction sur Transactions/Comptes)
+            // apparaisse dans la cloche du panel.
+            ->databaseNotifications()
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
