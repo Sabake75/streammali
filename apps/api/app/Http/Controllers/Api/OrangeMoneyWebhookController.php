@@ -19,7 +19,14 @@ class OrangeMoneyWebhookController extends Controller
         // guessable from the outside (unlike order_reference).
         $payment = Payment::where('provider_notif_token', $request->input('notif_token'))->firstOrFail();
 
-        $payment->update(['raw_webhook_payload' => $request->all()]);
+        // txnid is Orange's own transaction identifier (shown in their
+        // dashboard/support channels) — distinct from provider_pay_token
+        // (only used internally to call their API) and worth surfacing to
+        // moderators for reconciliation.
+        $payment->update([
+            'raw_webhook_payload' => $request->all(),
+            'provider_transaction_id' => $request->input('txnid'),
+        ]);
 
         // The notif ping itself isn't trusted — ConfirmPayment re-verifies
         // the status directly with Orange before changing anything.

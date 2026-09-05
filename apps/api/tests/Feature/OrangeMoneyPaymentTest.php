@@ -160,5 +160,6 @@ class OrangeMoneyPaymentTest extends TestCase
         ])->assertOk();
 
         $this->assertSame(PaymentStatus::Succeeded, $payment->fresh()->status);
+        $this->assertSame('MP150709.1341.A00073', $payment->fresh()->provider_transaction_id);
     }
 }

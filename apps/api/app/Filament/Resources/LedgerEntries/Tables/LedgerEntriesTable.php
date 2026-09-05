@@ -36,17 +36,16 @@ class LedgerEntriesTable
                     ->badge()
                     ->color(fn (?PaymentStatus $state) => $state?->color())
                     ->formatStateUsing(fn (?PaymentStatus $state) => $state?->label() ?? '—'),
-                // The invoice token PayDunya assigns at checkout-invoice/create
-                // stays the transaction's identifier for its whole lifecycle in
-                // their API — there's no separate "transaction id" distinct
-                // from it in the responses seen so far (compte sandbox bloqué
-                // par le KYC, jamais vu une confirmation réelle — à revérifier
-                // le jour où un vrai paiement aboutit).
-                TextColumn::make('payment.provider_pay_token')
-                    ->label('Référence PayDunya')
+                // txnid tel que fourni par Orange Money dans son webhook de
+                // confirmation (voir OrangeMoneyWebhookController) — distinct
+                // du pay_token, qui ne sert qu'en interne à appeler leur API.
+                // Vide pour un paiement PayDunya (jamais renseigné côté
+                // PayDunyaWebhookController, forme de son IPN non vérifiée).
+                TextColumn::make('payment.provider_transaction_id')
+                    ->label('ID transaction')
                     ->placeholder('—')
                     ->copyable()
-                    ->copyMessage('Référence copiée')
+                    ->copyMessage('ID copié')
                     ->fontFamily('mono'),
                 TextColumn::make('created_at')
                     ->label('Date et heure')
