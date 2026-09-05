@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\LedgerEntries\Tables;
 
 use App\Domain\Payment\Enums\PaymentStatus;
+use App\Filament\Exports\LedgerEntryExporter;
+use Filament\Actions\ExportAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -12,6 +14,11 @@ class LedgerEntriesTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->headerActions([
+                ExportAction::make()
+                    ->label('Exporter en Excel')
+                    ->exporter(LedgerEntryExporter::class),
+            ])
             ->columns([
                 TextColumn::make('id')
                     ->label('ID')

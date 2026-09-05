@@ -6,10 +6,12 @@ use App\Domain\Moderation\Actions\SendMessage;
 use App\Domain\Moderation\Enums\AccountStatus;
 use App\Domain\Moderation\Models\Message;
 use App\Enums\UserRole;
+use App\Filament\Exports\UserExporter;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\EditAction;
+use Filament\Actions\ExportAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
@@ -31,6 +33,11 @@ class UsersTable
             // au lieu de rien faire. Même bug, même correctif que
             // VideosTable (voir Domain\Video\README) — jamais appliqué ici.
             ->recordUrl(null)
+            ->headerActions([
+                ExportAction::make()
+                    ->label('Exporter en Excel')
+                    ->exporter(UserExporter::class),
+            ])
             ->columns([
                 TextColumn::make('name')
                     ->label('Nom')
