@@ -44,13 +44,12 @@ Divertissement (Entertainment)
 ## Coordonnées (obligatoire dans Play Console)
 - Email de contact : sbd.diarra@gmail.com
 - Nom légal / raison sociale (compte développeur Play Console) : SABAKE FOURNITURE
-- Site web : https://streammali-web.onrender.com (choix assumé de garder l'URL onrender.com pour cette publication — pas de domaine dédié acheté à ce stade)
-- Politique de confidentialité (URL obligatoire) : https://streammali-web.onrender.com/politique-de-confidentialite
+- Site web : https://streammali.ml (domaine dédié actif depuis le 2026-09-06, remplace l'ancienne URL onrender.com)
+- Politique de confidentialité (URL obligatoire) : https://streammali.ml/politique-de-confidentialite
 
 ## Assets graphiques
 - Icône 512×512 : `apps/mobile/web/icons/Icon-512.png` (déjà prête).
 - Feature graphic (bannière 1024×500, obligatoire) : générée, voir `infra/play-store-assets/feature-graphic.png` (source éditable : `infra/play-store-assets/feature-graphic.html`, rendu via Chrome headless).
 
 ## Notes
-- Si un nom de domaine dédié est acheté avant la publication, remplacer l'URL onrender.com ci-dessus (site web + politique de confidentialité).
 - Prévoir 2 à 8 captures d'écran téléphone (Play Console impose un minimum de 2) — **volontairement pas encore générées** : elles doivent montrer du vrai contenu (catalogue, fiche vidéo, espace créateur), et la prod n'a pas encore de vidéos publiées. À faire juste avant la soumission, une fois du contenu réel en ligne.

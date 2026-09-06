@@ -187,7 +187,7 @@ services:
       - key: NODE_VERSION
         value: "22"
       - key: NEXT_PUBLIC_API_URL
-        value: https://streammali-api.onrender.com/api
+        value: https://api.streammali.ml/api
       # Unknown until the first deploy assigns a *.onrender.com hostname —
       # set manually in the dashboard afterwards, then redeploy (same as
       # APP_URL for the API service above).

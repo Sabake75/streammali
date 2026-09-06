@@ -41,6 +41,12 @@ Ces valeurs vont dans `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_BUCKET`
 
 Les migrations tournent automatiquement via le "Pre-Deploy Command" (`php artisan migrate --force`) sur `streammali-api`, avant que le nouveau conteneur ne prenne le trafic. Déploiement automatique ensuite à chaque push sur `master` pour les deux services, nativement, sans job GitHub Actions dédié.
 
+**Domaine dédié `streammali.ml`** (actif depuis le 2026-09-06, remplace les URLs `*.onrender.com` ci-dessus — DNS validé en A record, certificats émis pour `streammali.ml`, `www.streammali.ml` et `api.streammali.ml`) : une fois le domaine ajouté et vérifié côté Render (Settings → Custom Domain, sur chacun des deux services), mettre à jour dans le dashboard Render :
+- `streammali-api` : `APP_URL=https://api.streammali.ml`, `CORS_ALLOWED_ORIGINS=https://streammali.ml,https://www.streammali.ml`, `ORANGE_MONEY_RETURN_URL=https://streammali.ml/paiement/succes`, `ORANGE_MONEY_CANCEL_URL=https://streammali.ml/paiement/annule`, `ORANGE_MONEY_NOTIF_URL=https://api.streammali.ml/api/webhooks/orange-money` (chemins réels de l'app, pas `/payment/...` — voir `apps/web/src/app/paiement/{succes,annule}` et `routes/api.php`).
+- `streammali-web` : `NEXT_PUBLIC_SITE_URL=https://streammali.ml`.
+- Redéployer les deux services après ces changements. `NEXT_PUBLIC_API_URL` (côté web) est déjà mis à jour dans `render.yaml` (`https://api.streammali.ml/api`), pas besoin de le toucher manuellement.
+- Ces URLs Orange Money doivent être publiques (Orange rejette localhost) et déjà servies en HTTPS avant d'être renseignées côté Developer Center Orange Money — le domaine étant maintenant vérifié, c'est bon.
+
 ## 3. Mobile
 
 La CI (`.github/workflows/ci.yml`) construit un APK release et un App Bundle (`.aab`, format de soumission Play Store) à chaque push sur `master`, publiés comme artefacts GitHub Actions téléchargeables (30 jours de rétention). Signature : avec la vraie clé de release si les secrets `ANDROID_KEYSTORE_BASE64`/`ANDROID_KEYSTORE_PASSWORD`/`ANDROID_KEY_ALIAS` sont configurés (repo Settings → Secrets → Actions), sinon repli automatique sur la signature de debug (suffisant pour tester, pas pour soumettre au Play Store).

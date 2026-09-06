@@ -44,14 +44,14 @@ class ApiClient {
   /// not the host machine.
   static const String baseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'https://streammali-api.onrender.com/api',
+    defaultValue: 'https://api.streammali.ml/api',
   );
 
   /// The CGU pages (terms of service) live on the web app, not natively in
   /// this app — same override caveat as [baseUrl] for local development.
   static const String webBaseUrl = String.fromEnvironment(
     'WEB_BASE_URL',
-    defaultValue: 'https://streammali-web.onrender.com',
+    defaultValue: 'https://streammali.ml',
   );
 
   Future<PaginatedResponse<Video>> fetchVideos({
