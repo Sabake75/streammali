@@ -40,11 +40,15 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
   List<Video>? _recommended;
   bool _recommendedRequested = false;
   List<Video>? _featured;
+  List<Video>? _catalogueForHero;
 
   @override
   void initState() {
     super.initState();
     _future = _apiClient.fetchVideos();
+    _future.then((response) {
+      if (mounted) setState(() => _catalogueForHero = response.data);
+    }).catchError((_) {});
     _apiClient.fetchCategories().then((categories) {
       if (mounted) setState(() => _categories = categories);
     }).catchError((_) {});
@@ -69,6 +73,12 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
     setState(() {
       _future = _apiClient.fetchVideos(category: _category, search: _search, page: _page, sort: _sort);
     });
+  }
+
+  List<String> _heroPosters() {
+    final source = (_featured != null && _featured!.isNotEmpty) ? _featured! : (_catalogueForHero ?? const []);
+
+    return source.map((video) => video.posterPath).whereType<String>().toList();
   }
 
   void _maybeLoadRecommended() {
@@ -227,9 +237,9 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-            const Padding(
-              padding: EdgeInsets.fromLTRB(12, 12, 12, 0),
-              child: HeroBanner(),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+              child: HeroBanner(posterUrls: _heroPosters()),
             ),
             if (_featured != null && _featured!.isNotEmpty)
               Padding(

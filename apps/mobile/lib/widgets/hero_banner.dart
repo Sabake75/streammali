@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 import '../theme.dart';
@@ -6,47 +8,89 @@ import '../theme.dart';
 /// copy and gradient — apps/web/src/app/page.tsx) so the two apps open on
 /// the same pitch instead of the Flutter default of a bare title bar.
 class HeroBanner extends StatelessWidget {
-  const HeroBanner({super.key});
+  /// Poster URLs to show, heavily blurred, behind the text — same idea as
+  /// the web hero. Deliberately blurred rather than sharp: a flat color
+  /// block reads as "fintech app" (this palette was borrowed from
+  /// PayDunya, see theme.dart), but showing real posters *in focus* also
+  /// exposed the current placeholder catalogue's not-presentable test
+  /// footage. Blur keeps the "real videos behind this" warmth without the
+  /// content being legible — fixes itself once real posters are in place.
+  final List<String> posterUrls;
+
+  const HeroBanner({super.key, this.posterUrls = const []});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [AppColors.orange700, AppColors.orange600, AppColors.orange500],
-        ),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: Stack(
         children: [
-          const Text(
-            'Le cinéma malien, à portée de Mobile Money.',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 22,
-              fontWeight: FontWeight.w800,
-              height: 1.2,
+          Positioned.fill(
+            child: posterUrls.isEmpty
+                ? const DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [AppColors.orange700, AppColors.orange600, AppColors.orange500],
+                      ),
+                    ),
+                  )
+                : ImageFiltered(
+                    imageFilter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+                    child: Transform.scale(
+                      // Oversized so the heavy blur's edges land outside the
+                      // clip rect instead of showing a lighter halo at the
+                      // banner's border.
+                      scale: 1.2,
+                      child: Row(
+                        children: List.generate(6, (index) {
+                          final url = posterUrls[index % posterUrls.length];
+                          return Expanded(child: Image.network(url, fit: BoxFit.cover, height: double.infinity));
+                        }),
+                      ),
+                    ),
+                  ),
+          ),
+          Positioned.fill(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: AppColors.orange700.withValues(alpha: posterUrls.isEmpty ? 0 : 0.72),
+              ),
             ),
           ),
-          const SizedBox(height: 8),
-          Text(
-            'Films, clips et sketchs de créateurs maliens, 100 FCFA la vidéo. '
-            'Paiement Mobile Money, accès immédiat.',
-            style: TextStyle(color: Colors.white.withValues(alpha: 0.92), fontSize: 16, height: 1.4),
-          ),
-          const SizedBox(height: 14),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: const [
-              _HeroPill(icon: Icons.account_balance_wallet_outlined, label: '100 FCFA la vidéo'),
-              _HeroPill(icon: Icons.smartphone, label: 'Mobile Money'),
-              _HeroPill(icon: Icons.movie_creation_outlined, label: 'Créateurs maliens'),
-            ],
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Le cinéma malien, à portée de Mobile Money.',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w800,
+                    height: 1.2,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Films, clips et sketchs de créateurs maliens, 100 FCFA la vidéo. '
+                  'Paiement Mobile Money, accès immédiat.',
+                  style: TextStyle(color: Colors.white.withValues(alpha: 0.92), fontSize: 16, height: 1.4),
+                ),
+                const SizedBox(height: 14),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: const [
+                    _HeroPill(icon: Icons.account_balance_wallet_outlined, label: '100 FCFA la vidéo'),
+                    _HeroPill(icon: Icons.smartphone, label: 'Mobile Money'),
+                    _HeroPill(icon: Icons.movie_creation_outlined, label: 'Créateurs maliens'),
+                  ],
+                ),
+              ],
+            ),
           ),
         ],
       ),
