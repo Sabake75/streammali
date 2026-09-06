@@ -11,15 +11,20 @@ use App\Notifications\VideoStatusChanged;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\View;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Carbon;
 
 class VideosTable
 {
@@ -119,12 +124,64 @@ class VideosTable
                 SelectFilter::make('category')
                     ->label('Catégorie')
                     ->relationship('category', 'label'),
+                SelectFilter::make('source_status')
+                    ->label('Fichier vidéo')
+                    ->options(collect(VideoSourceStatus::cases())->mapWithKeys(fn ($case) => [$case->value => $case->label()])),
                 TernaryFilter::make('reported')
                     ->label('Signalée')
                     ->queries(
                         true: fn ($query) => $query->whereHas('reports', fn ($q) => $q->where('status', ReportStatus::Pending)),
                         false: fn ($query) => $query->whereDoesntHave('reports', fn ($q) => $q->where('status', ReportStatus::Pending)),
                     ),
+                TernaryFilter::make('featured_at')
+                    ->label('En vedette')
+                    ->trueLabel('En vedette')
+                    ->falseLabel('Pas en vedette')
+                    ->nullable(),
+                Filter::make('price')
+                    ->label('Prix')
+                    ->schema([
+                        TextInput::make('min')->label('Min (FCFA)')->numeric(),
+                        TextInput::make('max')->label('Max (FCFA)')->numeric(),
+                    ])
+                    ->query(fn (Builder $query, array $data) => $query
+                        ->when($data['min'] ?? null, fn ($query, $value) => $query->where('price', '>=', $value))
+                        ->when($data['max'] ?? null, fn ($query, $value) => $query->where('price', '<=', $value)))
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+
+                        if ($data['min'] ?? null) {
+                            $indicators[] = 'Prix ≥ '.$data['min'].' FCFA';
+                        }
+
+                        if ($data['max'] ?? null) {
+                            $indicators[] = 'Prix ≤ '.$data['max'].' FCFA';
+                        }
+
+                        return $indicators;
+                    }),
+                Filter::make('created_at')
+                    ->label('Soumis le')
+                    ->schema([
+                        DatePicker::make('from')->label('Du'),
+                        DatePicker::make('until')->label('Au'),
+                    ])
+                    ->query(fn (Builder $query, array $data) => $query
+                        ->when($data['from'] ?? null, fn ($query, $value) => $query->whereDate('created_at', '>=', $value))
+                        ->when($data['until'] ?? null, fn ($query, $value) => $query->whereDate('created_at', '<=', $value)))
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+
+                        if ($data['from'] ?? null) {
+                            $indicators[] = 'Soumis depuis le '.Carbon::parse($data['from'])->format('d/m/Y');
+                        }
+
+                        if ($data['until'] ?? null) {
+                            $indicators[] = 'Soumis jusqu\'au '.Carbon::parse($data['until'])->format('d/m/Y');
+                        }
+
+                        return $indicators;
+                    }),
             ])
             ->recordActions([
                 // Hors du menu "Actions" (plutôt qu'à l'intérieur avec le
