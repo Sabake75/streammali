@@ -15,7 +15,12 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('type');
             $table->morphs('notifiable');
-            $table->text('data');
+            // json, not text: Filament's DatabaseNotifications Livewire
+            // component queries ->where('data->format', 'filament'), which
+            // Laravel compiles to Postgres's `data->>'format'` operator —
+            // undefined on a text column. SQLite's dynamic typing hides this,
+            // which is why it only surfaced against the real Postgres prod DB.
+            $table->json('data');
             $table->timestamp('read_at')->nullable();
             $table->timestamps();
         });
