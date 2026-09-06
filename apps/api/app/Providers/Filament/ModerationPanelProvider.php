@@ -29,8 +29,16 @@ class ModerationPanelProvider extends PanelProvider
             ->id('moderation')
             ->path('moderation')
             ->login()
-            ->brandLogo(asset('images/logo-light.svg'))
-            ->darkModeBrandLogo(asset('images/logo-dark.svg'))
+            // Not asset(): that resolves the scheme from the current
+            // request, but this value is fixed once when the panel is
+            // registered — earlier in the boot cycle than trustProxies
+            // detects HTTPS from Render's proxy. It came out http://,
+            // which the browser blocks as mixed content on the https://
+            // page (silently — no error without opening devtools, just a
+            // missing logo). config('app.url') is a static, already-correct
+            // scheme, independent of request timing.
+            ->brandLogo(rtrim(config('app.url'), '/').'/images/logo-light.svg')
+            ->darkModeBrandLogo(rtrim(config('app.url'), '/').'/images/logo-dark.svg')
             ->brandLogoHeight('2rem')
             ->colors([
                 'primary' => Color::Amber,
