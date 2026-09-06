@@ -29,8 +29,8 @@ export function PrivacyPolicyContent() {
         </p>
         <p>
           <strong>Paiement :</strong> lors d&apos;un achat ou d&apos;une demande de retrait, ton
-          numéro Mobile Money est transmis à PayDunya (notre prestataire de paiement) pour traiter
-          la transaction. StreamMali ne stocke aucune information bancaire ou Mobile Money
+          numéro Mobile Money est transmis à Orange Money (notre prestataire de paiement) pour
+          traiter la transaction. StreamMali ne stocke aucune information bancaire ou Mobile Money
           au-delà de ce numéro.
         </p>
         <p>
@@ -54,7 +54,7 @@ export function PrivacyPolicyContent() {
         </p>
         <ul className="list-disc pl-5">
           <li>
-            <strong>PayDunya</strong> — traitement des paiements et retraits Mobile Money.
+            <strong>Orange Money</strong> — traitement des paiements et retraits Mobile Money.
           </li>
           <li>
             <strong>Cloudflare Stream</strong> — hébergement et diffusion des vidéos.

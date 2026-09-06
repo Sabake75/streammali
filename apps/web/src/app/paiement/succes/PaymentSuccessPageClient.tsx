@@ -7,7 +7,7 @@ import type { VideoSummary } from "@/lib/types";
 
 const PENDING_VIDEO_KEY = "streammali:pending_purchase_video_id";
 const POLL_INTERVAL_MS = 2500;
-const MAX_POLLS = 12; // ~30s — Mobile Money confirmations are usually near-instant, but PayDunya's webhook can lag.
+const MAX_POLLS = 12; // ~30s — Mobile Money confirmations are usually near-instant, but Orange Money's webhook can lag.
 
 type Status = "no-pending" | "checking" | "confirmed" | "timeout";
 
