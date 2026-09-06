@@ -53,10 +53,12 @@ class VideosTable
                     ->sortable(),
                 TextColumn::make('category.label')
                     ->label('Catégorie')
-                    ->badge(),
+                    ->badge()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('price')
                     ->label('Prix')
-                    ->suffix(' FCFA'),
+                    ->suffix(' FCFA')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('status')
                     ->label('Statut')
                     ->badge()
@@ -85,6 +87,7 @@ class VideosTable
                     ->trueColor('warning')
                     ->falseColor('gray')
                     ->getStateUsing(fn ($record) => $record->featured_at !== null)
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->action(function ($record) {
                         if ($record->status !== VideoStatus::Approved) {
                             Notification::make()
@@ -100,7 +103,8 @@ class VideosTable
                 TextColumn::make('created_at')
                     ->label('Soumis le')
                     ->dateTime('d/m/Y H:i')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('pending_reports_count')
                     ->label('Signalements')
                     ->badge()
