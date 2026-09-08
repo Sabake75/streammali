@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
 
@@ -32,6 +33,13 @@ class PurchaseResult {
   final String paymentUrl;
 
   const PurchaseResult({required this.paymentUrl});
+}
+
+class VideoDownloadResult {
+  final bool ready;
+  final String? url;
+
+  const VideoDownloadResult({required this.ready, this.url});
 }
 
 class ApiClient {
@@ -189,6 +197,58 @@ class ApiClient {
 
     final json = jsonDecode(response.body) as Map<String, dynamic>;
     return PurchaseResult(paymentUrl: json['payment_url'] as String);
+  }
+
+  /// Triggers/polls Cloudflare Stream's MP4 download generation for a
+  /// purchased video (see App\Http\Controllers\Api\VideoDownloadController)
+  /// — `ready: false` is a normal "still preparing" result, not an error.
+  Future<VideoDownloadResult> requestVideoDownload({
+    required int videoId,
+    required String token,
+  }) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/videos/$videoId/download'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+
+    if (response.statusCode != 200) {
+      throw ApiException(_extractErrorMessage(response));
+    }
+
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    return VideoDownloadResult(ready: json['status'] == 'ready', url: json['url'] as String?);
+  }
+
+  /// Streams straight to disk (not buffered in memory) — full videos can be
+  /// several hundred MB, same reasoning as [uploadVideoFile] on the way in.
+  Future<void> downloadFile({
+    required String url,
+    required String savePath,
+    required void Function(double percent) onProgress,
+  }) async {
+    final client = http.Client();
+    try {
+      final response = await client.send(http.Request('GET', Uri.parse(url)));
+
+      if (response.statusCode != 200) {
+        throw ApiException('Échec du téléchargement (${response.statusCode}).');
+      }
+
+      final total = response.contentLength ?? 0;
+      var received = 0;
+      final sink = File(savePath).openWrite();
+      try {
+        await for (final chunk in response.stream) {
+          received += chunk.length;
+          sink.add(chunk);
+          if (total > 0) onProgress(received / total * 100);
+        }
+      } finally {
+        await sink.close();
+      }
+    } finally {
+      client.close();
+    }
   }
 
   Future<String> reportVideo({

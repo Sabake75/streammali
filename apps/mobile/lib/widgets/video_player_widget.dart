@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart' as vp;
@@ -9,10 +11,14 @@ import 'error_retry_view.dart';
 /// under the hood. `autoPlay: false` — Chewie's own play button is the
 /// tap-to-play affordance (keeps data usage opt-in, see cahier des charges'
 /// "faible consommation de données" constraint).
+///
+/// [localFilePath], when set (see DownloadManager), plays the downloaded
+/// MP4 straight from disk instead — no network at all, [url] is ignored.
 class VideoPlayerWidget extends StatefulWidget {
   final String url;
+  final String? localFilePath;
 
-  const VideoPlayerWidget({super.key, required this.url});
+  const VideoPlayerWidget({super.key, required this.url, this.localFilePath});
 
   @override
   State<VideoPlayerWidget> createState() => _VideoPlayerWidgetState();
@@ -31,7 +37,10 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 
   void _initialize() {
     _failed = false;
-    _videoController = vp.VideoPlayerController.networkUrl(Uri.parse(widget.url));
+    final localPath = widget.localFilePath;
+    _videoController = localPath != null
+        ? vp.VideoPlayerController.file(File(localPath))
+        : vp.VideoPlayerController.networkUrl(Uri.parse(widget.url));
     _videoController.initialize().then((_) {
       if (!mounted) return;
       setState(() {

@@ -3,6 +3,7 @@
 namespace App\Domain\Video\Gateways;
 
 use App\Domain\Video\Contracts\VideoStorageGateway;
+use App\Domain\Video\Data\VideoDownloadState;
 use App\Domain\Video\Data\VideoPreviewState;
 use App\Domain\Video\Data\VideoSourceState;
 use App\Domain\Video\Data\VideoUploadInitiation;
@@ -102,6 +103,31 @@ class CloudflareStreamGateway implements VideoStorageGateway
         return new VideoPreviewState(
             providerVideoId: $result['uid'],
             playbackUrl: $result['playback']['hls'] ?? null,
+        );
+    }
+
+    /**
+     * "Enable MP4 downloads" — POST kicks off generation if it hasn't run
+     * yet, and is safe to call repeatedly (Cloudflare just reports current
+     * progress on later calls instead of restarting it). Never gated behind
+     * a first-call/subsequent-call distinction on our side for that reason.
+     */
+    public function getDownloadState(Video $video): VideoDownloadState
+    {
+        $config = config('services.cloudflare_stream');
+
+        $response = Http::withToken($config['api_token'])
+            ->baseUrl($this->apiBaseUrl())
+            ->post("/stream/{$video->provider_video_id}/downloads")
+            ->throw()
+            ->json();
+
+        $default = $response['result']['default'] ?? null;
+        $ready = ($default['status'] ?? null) === 'ready';
+
+        return new VideoDownloadState(
+            ready: $ready,
+            url: $ready ? $default['url'] : null,
         );
     }
 

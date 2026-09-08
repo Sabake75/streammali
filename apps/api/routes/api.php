@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\OrangeMoneyWebhookController;
 use App\Http\Controllers\Api\PayDunyaWebhookController;
 use App\Http\Controllers\Api\VideoCatalogController;
+use App\Http\Controllers\Api\VideoDownloadController;
 use App\Http\Controllers\Api\VideoFavoriteController;
 use App\Http\Controllers\Api\VideoPurchaseController;
 use App\Http\Controllers\Api\VideoRecommendationController;
@@ -66,6 +67,9 @@ Route::middleware(['auth:sanctum', 'account.active'])->group(function () {
     Route::post('/videos/{video}/purchase', [VideoPurchaseController::class, 'store'])
         ->middleware('throttle:purchase')
         ->name('videos.purchase');
+    Route::post('/videos/{video}/download', [VideoDownloadController::class, 'store'])
+        ->middleware('throttle:purchase')
+        ->name('videos.download');
     Route::post('/videos/{video}/report', [VideoReportController::class, 'store'])
         ->middleware('throttle:write-action')
         ->name('videos.report');

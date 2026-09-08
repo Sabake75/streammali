@@ -5,6 +5,8 @@ import '../models/video.dart';
 import '../services/api_client.dart';
 import '../theme.dart';
 import '../utils/formatting.dart';
+import '../services/download_manager.dart';
+import '../widgets/download_button.dart';
 import '../widgets/error_retry_view.dart';
 import '../widgets/favorite_button.dart';
 import '../widgets/purchase_section.dart';
@@ -102,7 +104,13 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> with WidgetsBindi
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: canWatchFull
-                      ? VideoPlayerWidget(url: video.playbackUrl!)
+                      ? FutureBuilder<String?>(
+                          future: DownloadManager.instance.localPathFor(video.id),
+                          builder: (context, localPathSnapshot) => VideoPlayerWidget(
+                            url: video.playbackUrl!,
+                            localFilePath: localPathSnapshot.data,
+                          ),
+                        )
                       : canWatchPreview
                       ? VideoPlayerWidget(url: video.previewPlaybackUrl!)
                       : AspectRatio(
@@ -175,6 +183,8 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> with WidgetsBindi
                       );
                     },
                   ),
+                  const SizedBox(height: 8),
+                  DownloadButton(videoId: video.id),
                 ] else ...[
                   Text(
                     formatPrice(video.price),
