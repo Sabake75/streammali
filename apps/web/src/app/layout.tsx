@@ -57,7 +57,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </header>
         {children}
         <footer className="mt-16 border-t border-neutral-200 bg-neutral-50/70 dark:border-neutral-800 dark:bg-neutral-950/40">
-          <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-8">
+          <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:grid-cols-2 sm:px-6 lg:grid-cols-5 lg:px-8">
             <div className="col-span-2 flex flex-col gap-3 lg:col-span-2">
               <Link href="/" className="flex w-fit items-center gap-2 text-lg font-bold tracking-tight">
                 <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-orange-500 to-accent-600 text-base text-white">
@@ -88,6 +88,22 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               <Link href="/creer" className="w-fit text-neutral-500 hover:text-orange-600 dark:text-neutral-400 dark:hover:text-orange-400">
                 Espace créateur
               </Link>
+            </div>
+
+            <div className="flex flex-col gap-2 text-sm">
+              <h3 className="font-semibold text-neutral-900 dark:text-neutral-50">Contact</h3>
+              <a
+                href="mailto:contact@streammali.ml"
+                className="w-fit text-neutral-500 hover:text-orange-600 dark:text-neutral-400 dark:hover:text-orange-400"
+              >
+                contact@streammali.ml
+              </a>
+              <a
+                href="tel:+22378981188"
+                className="w-fit text-neutral-500 hover:text-orange-600 dark:text-neutral-400 dark:hover:text-orange-400"
+              >
+                +223 78 98 11 88
+              </a>
             </div>
 
             <div className="flex flex-col gap-2 text-sm">

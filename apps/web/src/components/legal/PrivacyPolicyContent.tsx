@@ -91,8 +91,8 @@ export function PrivacyPolicyContent() {
         <p>
           Tu peux demander à consulter, corriger, ou supprimer tes données personnelles à tout
           moment en contactant{" "}
-          <a href="mailto:support@streammali.com" className="text-orange-600 hover:underline dark:text-orange-400">
-            support@streammali.com
+          <a href="mailto:contact@streammali.ml" className="text-orange-600 hover:underline dark:text-orange-400">
+            contact@streammali.ml
           </a>
           .
         </p>
@@ -109,8 +109,8 @@ export function PrivacyPolicyContent() {
       <TermsSection title="Contact">
         <p>
           Une question sur tes données ?{" "}
-          <a href="mailto:support@streammali.com" className="text-orange-600 hover:underline dark:text-orange-400">
-            support@streammali.com
+          <a href="mailto:contact@streammali.ml" className="text-orange-600 hover:underline dark:text-orange-400">
+            contact@streammali.ml
           </a>
         </p>
       </TermsSection>

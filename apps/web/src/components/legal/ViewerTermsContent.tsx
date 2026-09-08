@@ -100,8 +100,8 @@ export function ViewerTermsContent() {
       <TermsSection title="Droit applicable et contact">
         <p>
           Ces CGU sont soumises au droit malien. Pour toute question, écris-nous à{" "}
-          <a href="mailto:support@streammali.com" className="text-orange-600 hover:underline dark:text-orange-400">
-            support@streammali.com
+          <a href="mailto:contact@streammali.ml" className="text-orange-600 hover:underline dark:text-orange-400">
+            contact@streammali.ml
           </a>
           .
         </p>

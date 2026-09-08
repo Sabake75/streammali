@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../services/api_client.dart';
 import '../services/auth_controller.dart';
@@ -114,6 +115,40 @@ class _AccountScreenState extends State<AccountScreen> {
           if (user != null)
             Text('${user.name} · ${user.phone}', style: Theme.of(context).textTheme.bodyMedium),
           const SizedBox(height: 24),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Une question, un problème ?', style: TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 12),
+                  InkWell(
+                    onTap: () => launchUrl(Uri.parse('mailto:contact@streammali.ml')),
+                    child: Row(
+                      children: [
+                        Icon(Icons.email_outlined, size: 18, color: Theme.of(context).colorScheme.primary),
+                        const SizedBox(width: 8),
+                        const Text('contact@streammali.ml'),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  InkWell(
+                    onTap: () => launchUrl(Uri.parse('tel:+22378981188')),
+                    child: Row(
+                      children: [
+                        Icon(Icons.phone_outlined, size: 18, color: Theme.of(context).colorScheme.primary),
+                        const SizedBox(width: 8),
+                        const Text('+223 78 98 11 88'),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16),
