@@ -39,7 +39,7 @@ dependencies:
   flutter_secure_storage: ^10.3.1
   url_launcher: ^6.3.2
   file_picker: ^11.0.3
-  phone_numbers_parser: ^9.0.25
+  phone_numbers_parser: ^9.0.26
   country_code_picker: ^3.4.1
   video_player: ^2.10.0
   chewie: ^1.11.2
