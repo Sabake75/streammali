@@ -75,10 +75,10 @@ Ledger commission/créateur et demandes de retrait (cahier des charges §6, dét
 - `POST /api/creator/payouts` — `{ amount, destination_msisdn }`, rejette sous 10 000 FCFA ou au-dessus du solde disponible.
 - Back-office modérateur `/moderation/payouts` (Marquer payé / Rejeter) et `/moderation/ledger-entries` (lecture seule, historique des ventes/commissions par créateur).
 
-Messagerie créateur ↔ modération (cahier des charges §5.1, détail dans `app/Domain/Moderation/README.md`) : fil unique par créateur, pas de sujets séparés.
-- `GET /api/creator/messages` — l'historique complet du créateur connecté (ses messages + les réponses de n'importe quel modérateur), chronologique.
-- `POST /api/creator/messages` — `{ body }`, envoie un message.
-- Côté modérateur : action Filament "Messagerie" sur `/moderation/users` (ligne du créateur), affiche le fil et permet de répondre — pas de ressource/page dédiée, cohérent avec le style des autres actions de cette table (Suspendre/Bloquer...).
+Messagerie créateur/viewer ↔ modération — canal de support unique (détail dans `app/Domain/Moderation/README.md`) : fil unique par utilisateur (tout rôle sauf modérateur), pas de sujets séparés. Créateur uniquement à l'origine (cahier des charges §5.1) ; ouvert aux viewers en 2026-09-08 (feuille de route produit, item P2 "canal support viewer").
+- `GET /api/messages` — l'historique complet de l'utilisateur connecté (ses messages + les réponses de n'importe quel modérateur), chronologique.
+- `POST /api/messages` — `{ body }`, envoie un message.
+- Côté modérateur : action Filament "Messagerie" sur `/moderation/users` (ligne de l'utilisateur, visible pour tout rôle sauf modérateur), affiche le fil et permet de répondre — pas de ressource/page dédiée, cohérent avec le style des autres actions de cette table (Suspendre/Bloquer...).
 
 Signalement de vidéo (cahier des charges §5.2/§5.3, détail dans `app/Domain/Moderation/README.md`) : `POST /api/videos/{video}/report` — `{ reason }`, n'importe quel utilisateur connecté. Ne dépublie rien automatiquement : le back-office affiche un badge "Signalements" sur `/moderation/videos` et une action listant les motifs, la dépublication elle-même réutilise l'action "Refuser" déjà existante.
 

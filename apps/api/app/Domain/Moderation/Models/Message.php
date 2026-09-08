@@ -7,21 +7,22 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['creator_id', 'sender_id', 'body'])]
+#[Fillable(['user_id', 'sender_id', 'body'])]
 class Message extends Model
 {
     /**
-     * The creator this conversation with the moderation team belongs to —
-     * the same on both a creator's own message and a moderator's reply.
+     * Whose conversation with the moderation team this is (a creator or a
+     * viewer — see App\Domain\Moderation\Actions\SendMessage) — the same on
+     * both that user's own message and a moderator's reply.
      */
-    public function creator(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'creator_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     /**
-     * Who actually wrote this message — the creator themselves, or whichever
-     * moderator replied.
+     * Who actually wrote this message — the thread owner themselves, or
+     * whichever moderator replied.
      */
     public function sender(): BelongsTo
     {

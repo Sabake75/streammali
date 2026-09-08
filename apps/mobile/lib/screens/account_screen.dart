@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../services/api_client.dart';
 import '../services/auth_controller.dart';
+import 'messaging_screen.dart';
 
 /// "Mon compte" — mirrors apps/web/src/app/compte/page.tsx: self-service
 /// data export and account deletion.
@@ -144,6 +145,14 @@ class _AccountScreenState extends State<AccountScreen> {
                       ],
                     ),
                   ),
+                  const SizedBox(height: 12),
+                  OutlinedButton.icon(
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => const MessagingScreen()),
+                    ),
+                    icon: const Icon(Icons.chat_bubble_outline, size: 18),
+                    label: const Text('Contacter le support'),
+                  ),
                 ],
               ),
             ),
@@ -159,7 +168,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   const SizedBox(height: 6),
                   const Text(
                     'Affiche tout ce que StreamMali détient sur toi (profil, achats, favoris, avis, '
-                    'et pour un créateur : vidéos, revenus, retraits, messages).',
+                    'messages avec la modération, et pour un créateur : vidéos, revenus, retraits).',
                   ),
                   const SizedBox(height: 12),
                   FilledButton(

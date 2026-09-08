@@ -274,7 +274,7 @@ export async function fetchCreatorStats(): Promise<CreatorStats> {
 }
 
 export async function fetchMyMessages(): Promise<{ data: Message[] }> {
-  return getJson("/creator/messages");
+  return getJson("/messages");
 }
 
 export async function fetchNotifications(): Promise<NotificationListResponse> {
@@ -290,7 +290,7 @@ export async function markAllNotificationsRead(): Promise<{ message: string }> {
 }
 
 export async function sendMessage(body: string): Promise<Message> {
-  return postJson("/creator/messages", { body }, { authenticated: true });
+  return postJson("/messages", { body }, { authenticated: true });
 }
 
 /**

@@ -7,12 +7,12 @@ use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Auth\RegisterCreatorController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CloudflareStreamWebhookController;
-use App\Http\Controllers\Api\Creator\MessageController;
 use App\Http\Controllers\Api\Creator\PayoutController;
 use App\Http\Controllers\Api\Creator\StatsController;
 use App\Http\Controllers\Api\Creator\UpgradeController;
 use App\Http\Controllers\Api\Creator\VideoController as CreatorVideoController;
 use App\Http\Controllers\Api\Creator\VideoSourceController;
+use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\OrangeMoneyWebhookController;
 use App\Http\Controllers\Api\PayDunyaWebhookController;
@@ -89,6 +89,13 @@ Route::middleware(['auth:sanctum', 'account.active'])->group(function () {
     Route::post('/notifications/{notification}/read', [NotificationController::class, 'markRead'])
         ->name('notifications.read');
 
+    // Shared support channel with the moderation team — viewers and
+    // creators alike, not creator-specific (see App\Http\Controllers\Api\MessageController).
+    Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
+    Route::post('/messages', [MessageController::class, 'store'])
+        ->middleware('throttle:write-action')
+        ->name('messages.store');
+
     Route::prefix('creator')->name('creator.')->group(function () {
         Route::post('/upgrade', [UpgradeController::class, 'store'])
             ->middleware('throttle:write-action')
@@ -104,11 +111,6 @@ Route::middleware(['auth:sanctum', 'account.active'])->group(function () {
         Route::post('/payouts', [PayoutController::class, 'store'])
             ->middleware('throttle:write-action')
             ->name('payouts.store');
-
-        Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
-        Route::post('/messages', [MessageController::class, 'store'])
-            ->middleware('throttle:write-action')
-            ->name('messages.store');
 
         Route::get('/stats', [StatsController::class, 'index'])->name('stats');
     });

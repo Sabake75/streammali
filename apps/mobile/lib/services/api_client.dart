@@ -584,7 +584,7 @@ class ApiClient {
 
   Future<List<Message>> fetchMyMessages(String token) async {
     final response = await http.get(
-      Uri.parse('$baseUrl/creator/messages'),
+      Uri.parse('$baseUrl/messages'),
       headers: {'Authorization': 'Bearer $token'},
     );
 
@@ -600,7 +600,7 @@ class ApiClient {
 
   Future<Message> sendMessage({required String body, required String token}) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/creator/messages'),
+      Uri.parse('$baseUrl/messages'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',

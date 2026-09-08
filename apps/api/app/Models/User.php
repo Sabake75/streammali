@@ -88,11 +88,13 @@ class User extends Authenticatable implements FilamentUser
     }
 
     /**
-     * This creator's conversation with the moderation team — not messages
-     * they merely sent, since a moderator's replies also belong to it.
+     * This user's conversation with the moderation team (viewer or
+     * creator — see App\Domain\Moderation\Actions\SendMessage) — not
+     * messages they merely sent, since a moderator's replies also belong
+     * to it.
      */
     public function messages(): HasMany
     {
-        return $this->hasMany(Message::class, 'creator_id');
+        return $this->hasMany(Message::class, 'user_id');
     }
 }

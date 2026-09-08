@@ -54,6 +54,16 @@ class ExportAccountData
                     'comment' => $review->comment,
                     'created_at' => $review->created_at,
                 ]),
+            // The support/moderation thread — a viewer or a creator can
+            // both have one, unlike the creator-only sections below.
+            'messages' => Message::where('user_id', $user->id)
+                ->with('sender:id,name')
+                ->get()
+                ->map(fn (Message $message) => [
+                    'sender' => $message->sender?->name,
+                    'body' => $message->body,
+                    'created_at' => $message->created_at,
+                ]),
         ];
 
         // Creator-only sections — nothing to export here for a viewer.
@@ -82,15 +92,6 @@ class ExportAccountData
                     'amount' => $payout->amount,
                     'status' => $payout->status->value,
                     'created_at' => $payout->created_at,
-                ]);
-
-            $data['messages'] = Message::where('creator_id', $user->id)
-                ->with('sender:id,name')
-                ->get()
-                ->map(fn (Message $message) => [
-                    'sender' => $message->sender?->name,
-                    'body' => $message->body,
-                    'created_at' => $message->created_at,
                 ]);
         }
 

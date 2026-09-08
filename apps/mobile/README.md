@@ -40,7 +40,7 @@ Champ téléphone (connexion, inscription, achat, retrait créateur) : `lib/widg
 
 Mot de passe (connexion, inscription, inscription créateur) : `lib/widgets/pin_code_field.dart`, code à 4 chiffres uniquement (masqué, clavier numérique, plafonné à 4) — voir `apps/api/README.md` pour la justification et le throttling côté serveur.
 
-Messagerie créateur ↔ modération (espace créateur) : `lib/widgets/messaging.dart`, style bulles de chat, `GET`/`POST /api/creator/messages` via `lib/models/message.dart`.
+Messagerie créateur/viewer ↔ modération — canal de support partagé : `lib/widgets/messaging.dart`, style bulles de chat, `GET`/`POST /api/messages` via `lib/models/message.dart`. Accessible via `lib/screens/messaging_screen.dart`, depuis l'espace créateur et depuis "Mon compte" (viewer).
 
 Signalement de vidéo (fiche vidéo) : `lib/widgets/report_section.dart`, même pattern que `purchase_section.dart` (lien repliable → formulaire de motif), `POST /api/videos/{id}/report`.
 

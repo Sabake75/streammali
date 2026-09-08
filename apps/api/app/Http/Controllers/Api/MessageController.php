@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Creator;
+namespace App\Http\Controllers\Api;
 
 use App\Domain\Moderation\Actions\SendMessage;
 use App\Enums\UserRole;
@@ -8,11 +8,16 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
+/**
+ * One message thread per non-moderator user with the moderation team —
+ * shared by creators (originally the only ones with a support channel)
+ * and viewers alike, not two separate systems.
+ */
 class MessageController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $this->authorizeCreator($request);
+        $this->authorizeNonModerator($request);
 
         $messages = $request->user()->messages()->with('sender:id,name,role')->oldest()->get();
 
@@ -32,7 +37,7 @@ class MessageController extends Controller
 
     public function store(Request $request, SendMessage $sendMessage): JsonResponse
     {
-        $this->authorizeCreator($request);
+        $this->authorizeNonModerator($request);
 
         $validated = $request->validate([
             'body' => ['required', 'string', 'max:2000'],
@@ -52,12 +57,12 @@ class MessageController extends Controller
         ], 201);
     }
 
-    private function authorizeCreator(Request $request): void
+    private function authorizeNonModerator(Request $request): void
     {
-        abort_unless(
-            $request->user()->role === UserRole::Creator,
+        abort_if(
+            $request->user()->role === UserRole::Moderator,
             403,
-            'Seuls les créateurs peuvent utiliser la messagerie avec la modération.',
+            'La messagerie avec la modération est réservée aux créateurs et spectateurs.',
         );
     }
 }

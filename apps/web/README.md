@@ -41,7 +41,7 @@ Champ téléphone (connexion, inscription, achat, retrait créateur) : `src/comp
 
 Mot de passe (connexion, inscription, inscription créateur) : `src/components/PinCodeField.tsx`, code à 4 chiffres uniquement (masqué, `inputMode="numeric"`, plafonné à 4), au lieu d'un mot de passe classique — voir `apps/api/README.md` pour la justification et le throttling côté serveur.
 
-Messagerie créateur ↔ modération (`/creer`) : `src/components/creator/Messaging.tsx`, style bulles de chat (message du créateur aligné à droite, réponses de la modération à gauche), `GET`/`POST /api/creator/messages`.
+Messagerie créateur/viewer ↔ modération — canal de support partagé : `src/components/Messaging.tsx`, style bulles de chat (message de l'utilisateur aligné à droite, réponses de la modération à gauche), `GET`/`POST /api/messages`. Utilisé côté créateur (`/creer/messagerie`) et côté viewer (`/support`, lien depuis le footer et `/compte`).
 
 Signalement de vidéo (fiche vidéo) : `src/components/ReportButton.tsx`, lien discret sous le bouton d'achat, formulaire de motif repliable, `POST /api/videos/{id}/report`.
 

@@ -104,6 +104,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               >
                 +223 78 98 11 88
               </a>
+              <Link href="/support" className="w-fit text-neutral-500 hover:text-orange-600 dark:text-neutral-400 dark:hover:text-orange-400">
+                Nous écrire
+              </Link>
             </div>
 
             <div className="flex flex-col gap-2 text-sm">

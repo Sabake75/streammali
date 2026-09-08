@@ -7,7 +7,7 @@ import '../utils/formatting.dart';
 import '../widgets/video_upload_widget.dart';
 import '../theme.dart';
 import 'creator_balance_screen.dart';
-import 'creator_messaging_screen.dart';
+import 'messaging_screen.dart';
 import 'creator_new_video_screen.dart';
 import 'creator_stats_screen.dart';
 import 'register_creator_screen.dart';
@@ -120,7 +120,7 @@ class _CreatorScreenState extends State<CreatorScreen> {
                     icon: Icons.chat_bubble_outline,
                     label: 'Messagerie',
                     onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const CreatorMessagingScreen()),
+                      MaterialPageRoute(builder: (context) => const MessagingScreen()),
                     ),
                   ),
                   _ActionTile(

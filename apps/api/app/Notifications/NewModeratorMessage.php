@@ -8,9 +8,9 @@ use Illuminate\Support\Str;
 
 /**
  * "La modération t'a répondu" — fired from SendMessage::__invoke, the one
- * choke point both the creator's own outgoing messages and a moderator's
- * reply already flow through (see that class for the sender/creator
- * comparison that decides whether this fires).
+ * choke point both a user's own outgoing messages (viewer or creator) and
+ * a moderator's reply already flow through (see that class for the
+ * sender/thread-owner comparison that decides whether this fires).
  */
 class NewModeratorMessage extends Notification
 {

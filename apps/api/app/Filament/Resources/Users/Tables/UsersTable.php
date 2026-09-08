@@ -137,7 +137,7 @@ class UsersTable
                         ->label('Messagerie')
                         ->icon('heroicon-o-chat-bubble-left-right')
                         ->color('gray')
-                        ->visible(fn ($record) => $record->role === UserRole::Creator)
+                        ->visible(fn ($record) => $record->role !== UserRole::Moderator)
                         ->schema(fn ($record) => [
                             TextEntry::make('thread')
                                 ->hiddenLabel()
@@ -189,9 +189,9 @@ class UsersTable
         // d'un coup.
     }
 
-    private static function formatThread(User $creator): string
+    private static function formatThread(User $user): string
     {
-        $messages = $creator->messages()->with('sender')->oldest()->get();
+        $messages = $user->messages()->with('sender')->oldest()->get();
 
         if ($messages->isEmpty()) {
             return '<em>Aucun message pour l\'instant.</em>';

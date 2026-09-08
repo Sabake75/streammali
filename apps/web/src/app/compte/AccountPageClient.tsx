@@ -65,10 +65,24 @@ export function AccountPageClient() {
       </p>
 
       <section className="mt-8 rounded-xl border border-neutral-200 p-5 dark:border-neutral-800">
+        <h2 className="font-semibold text-neutral-900 dark:text-neutral-50">Une question, un problème ?</h2>
+        <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+          Contacte la modération directement depuis l&apos;app — paiement, vidéo, compte, tout sujet.
+        </p>
+        <Link
+          href="/support"
+          className="mt-3 inline-block rounded-full bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-800 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-neutral-200"
+        >
+          Contacter le support
+        </Link>
+      </section>
+
+      <section className="mt-6 rounded-xl border border-neutral-200 p-5 dark:border-neutral-800">
         <h2 className="font-semibold text-neutral-900 dark:text-neutral-50">Télécharger mes données</h2>
         <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-          Reçois un fichier JSON avec toutes les données que StreamMali détient sur toi (profil, achats, favoris, avis
-          {user.role === "creator" && ", vidéos, revenus, retraits, messages"}).
+          Reçois un fichier JSON avec toutes les données que StreamMali détient sur toi (profil, achats, favoris, avis,
+          messages avec la modération
+          {user.role === "creator" && ", vidéos, revenus, retraits"}).
         </p>
         {exportError && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{exportError}</p>}
         <button
