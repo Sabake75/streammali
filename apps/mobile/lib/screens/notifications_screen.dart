@@ -146,9 +146,15 @@ class _NotificationTile extends StatelessWidget {
       text = 'Nouveau message de la modération : « ${data['excerpt']} »';
     }
 
+    // AppColors.orange50 is a light-theme-only near-white — used as-is
+    // regardless of brightness, it made unread cards render pale text on a
+    // pale background in dark mode (unreadable). orange700 is dark theme's
+    // equivalent subtle-highlight tone (already used for its chip background).
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Card(
       margin: EdgeInsets.zero,
-      color: notification.read ? null : AppColors.orange50,
+      color: notification.read ? null : (isDark ? AppColors.orange700 : AppColors.orange50),
       child: InkWell(
         onTap: onTap,
         child: Padding(
