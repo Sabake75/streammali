@@ -91,6 +91,14 @@ class AppTheme {
         // floated) sit next to empty text fields (label centered inside)
         // on the same form, which reads as inconsistent.
         floatingLabelBehavior: FloatingLabelBehavior.always,
+        // Material 3's default content padding (no isDense) made every
+        // field in the app noticeably tall — reported directly ("champs
+        // de saisie trop grands"). isDense shrinks the built-in vertical
+        // padding; the explicit contentPadding keeps enough breathing room
+        // for the always-floated label above without reverting to the
+        // full default height.
+        isDense: true,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
@@ -182,6 +190,8 @@ class AppTheme {
           borderSide: const BorderSide(color: AppColors.orange500, width: 2),
         ),
         floatingLabelBehavior: FloatingLabelBehavior.always,
+        isDense: true,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(

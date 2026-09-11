@@ -95,6 +95,17 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
               child: DropdownButton<IsoCode>(
                 value: _country,
                 isExpanded: true,
+                // Two separate things were making this taller than the
+                // text field next to it: the closed-menu itemHeight
+                // defaults to kMinInteractiveDimension (48) regardless of
+                // the InputDecorationTheme's isDense — itemHeight: null
+                // lets it size to content instead. But DropdownButton also
+                // has its own, unrelated isDense flag (default false) that
+                // directly halves the button's own height — without it,
+                // the surrounding InputDecorationTheme.isDense (theme.dart)
+                // has no effect on this widget at all.
+                itemHeight: null,
+                isDense: true,
                 onChanged: _onCountryChanged,
                 items: [
                   for (final country in countries)
