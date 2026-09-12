@@ -36,12 +36,7 @@ export default async function CataloguePage(props: PageProps<"/">) {
       <OnboardingModal />
       <section className="relative overflow-hidden rounded-2xl text-white shadow-lg">
         {heroPosters.length > 0 ? (
-          // Fortement flouté à dessein : donne une ambiance "vraies
-          // vidéos derrière" sans rendre le contenu de chaque jaquette
-          // lisible en détail (utile tant que le catalogue ne contient que
-          // des vidéos de test pas présentables — s'atténue de lui-même
-          // une fois de vraies jaquettes en place, sans rien à retoucher).
-          <div aria-hidden className="absolute -inset-8 grid grid-cols-6 blur-2xl">
+          <div aria-hidden className="absolute inset-0 grid grid-cols-6">
             {Array.from({ length: 6 }).map((_, index) => (
               <div key={index} className="relative h-full">
                 <Image

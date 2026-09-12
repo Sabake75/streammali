@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
 import '../theme.dart';
@@ -8,13 +6,9 @@ import '../theme.dart';
 /// copy and gradient — apps/web/src/app/page.tsx) so the two apps open on
 /// the same pitch instead of the Flutter default of a bare title bar.
 class HeroBanner extends StatelessWidget {
-  /// Poster URLs to show, heavily blurred, behind the text — same idea as
-  /// the web hero. Deliberately blurred rather than sharp: a flat color
-  /// block reads as "fintech app" (this palette was borrowed from
-  /// PayDunya, see theme.dart), but showing real posters *in focus* also
-  /// exposed the current placeholder catalogue's not-presentable test
-  /// footage. Blur keeps the "real videos behind this" warmth without the
-  /// content being legible — fixes itself once real posters are in place.
+  /// Poster URLs to show behind the text — same idea as the web hero. Real
+  /// posters read as "cinema"; a flat color block (this palette was
+  /// borrowed from PayDunya, see theme.dart) reads as "fintech app".
   final List<String> posterUrls;
 
   const HeroBanner({super.key, this.posterUrls = const []});
@@ -36,20 +30,11 @@ class HeroBanner extends StatelessWidget {
                       ),
                     ),
                   )
-                : ImageFiltered(
-                    imageFilter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
-                    child: Transform.scale(
-                      // Oversized so the heavy blur's edges land outside the
-                      // clip rect instead of showing a lighter halo at the
-                      // banner's border.
-                      scale: 1.2,
-                      child: Row(
-                        children: List.generate(6, (index) {
-                          final url = posterUrls[index % posterUrls.length];
-                          return Expanded(child: Image.network(url, fit: BoxFit.cover, height: double.infinity));
-                        }),
-                      ),
-                    ),
+                : Row(
+                    children: List.generate(6, (index) {
+                      final url = posterUrls[index % posterUrls.length];
+                      return Expanded(child: Image.network(url, fit: BoxFit.cover, height: double.infinity));
+                    }),
                   ),
           ),
           Positioned.fill(

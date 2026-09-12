@@ -66,7 +66,7 @@ class CreateMissingPreviewClipsCommandTest extends TestCase
         $this->artisan('videos:create-missing-previews')->assertSuccessful();
 
         $this->assertSame(
-            'https://customer-xyz.cloudflarestream.com/cf-uid-abc123/thumbnails/thumbnail.jpg',
+            'https://customer-xyz.cloudflarestream.com/cf-uid-abc123/thumbnails/thumbnail.jpg?time=1s',
             $video->fresh()->poster_path,
         );
     }
@@ -103,7 +103,7 @@ class CreateMissingPreviewClipsCommandTest extends TestCase
         $fresh = $video->fresh();
         $this->assertSame('cf-uid-preview-abc123', $fresh->preview_provider_video_id);
         $this->assertSame(
-            'https://customer-xyz.cloudflarestream.com/cf-uid-abc123/thumbnails/thumbnail.jpg',
+            'https://customer-xyz.cloudflarestream.com/cf-uid-abc123/thumbnails/thumbnail.jpg?time=1s',
             $fresh->poster_path,
         );
     }

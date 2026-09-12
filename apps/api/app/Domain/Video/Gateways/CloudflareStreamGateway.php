@@ -69,10 +69,15 @@ class CloudflareStreamGateway implements VideoStorageGateway
             },
             playbackUrl: $result['playback']['hls'] ?? null,
             durationSeconds: is_numeric($duration) && $duration > 0 ? (int) round($duration) : null,
-            // Cloudflare auto-generates this for every video (a frame
-            // grabbed from partway through, no separate upload needed) —
-            // same response as the rest of this method, no extra call.
-            posterUrl: $result['thumbnail'] ?? null,
+            // Cloudflare auto-generates this for every video (no separate
+            // upload needed, same response as the rest of this method) but
+            // its default frame is grabbed at t=0 — a black/blank frame for
+            // any video with a fade-in intro (confirmed on several real
+            // catalogue videos: identical 1651-byte black JPEG). `time=1s`
+            // asks for a frame a second in instead, still safe for the
+            // shortest videos on the platform (duration is always several
+            // seconds at minimum).
+            posterUrl: isset($result['thumbnail']) ? $result['thumbnail'].'?time=1s' : null,
         );
     }
 
