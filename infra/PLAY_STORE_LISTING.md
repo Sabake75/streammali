@@ -51,5 +51,7 @@ Divertissement (Entertainment)
 - Icône 512×512 : `apps/mobile/web/icons/Icon-512.png` (déjà prête).
 - Feature graphic (bannière 1024×500, obligatoire) : générée, voir `infra/play-store-assets/feature-graphic.png` (source éditable : `infra/play-store-assets/feature-graphic.html`, rendu via Chrome headless).
 
+- Captures d'écran téléphone (2 à 8, minimum imposé par Play Console) : 4 générées le 2026-09-12 sur téléphone physique (Galaxy A17, 1080×2340, 9:16), voir `infra/play-store-assets/screenshots/` — accueil (hero + en vedette), catalogue, fiche vidéo (aperçu en lecture), page créateur. Prises sur les 8 vidéos de test actuellement en prod (contenu NASA/espace de démonstration, pas encore de vrai contenu malien) ; à refaire une fois que de vrais créateurs auront publié, pour montrer le catalogue final.
+
 ## Notes
-- Prévoir 2 à 8 captures d'écran téléphone (Play Console impose un minimum de 2) — **volontairement pas encore générées** : elles doivent montrer du vrai contenu (catalogue, fiche vidéo, espace créateur), et la prod n'a pas encore de vidéos publiées. À faire juste avant la soumission, une fois du contenu réel en ligne.
+- En générant les captures, un vrai bug a été trouvé et corrigé : `CloudflareStreamGateway` prenait la vignette par défaut de Cloudflare Stream (image à t=0), qui tombe sur un cadre noir pour toute vidéo avec un fade-in — la moitié du catalogue de test en était affectée. Corrigé pour demander `?time=1s` explicitement (voir commit "Corrige les jaquettes de vignette noires..."), plus un correctif manuel des 4 vidéos déjà en base (une avait un carton d'intro plus long, `time=20s`).
