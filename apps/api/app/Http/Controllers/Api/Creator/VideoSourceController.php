@@ -23,7 +23,11 @@ class VideoSourceController extends Controller
             'Un envoi est déjà en cours ou terminé pour cette vidéo.',
         );
 
-        $initiation = $createVideoUpload($video);
+        $validated = $request->validate([
+            'file_size' => ['required', 'integer', 'min:1'],
+        ]);
+
+        $initiation = $createVideoUpload($video, $validated['file_size']);
 
         return response()->json([
             'upload_url' => $initiation->uploadUrl,

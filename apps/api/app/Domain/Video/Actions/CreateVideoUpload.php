@@ -13,9 +13,9 @@ class CreateVideoUpload
     {
     }
 
-    public function __invoke(Video $video): VideoUploadInitiation
+    public function __invoke(Video $video, int $fileSizeBytes): VideoUploadInitiation
     {
-        $initiation = $this->gateway->createUpload($video);
+        $initiation = $this->gateway->createUpload($video, $fileSizeBytes);
 
         $video->update([
             'provider_video_id' => $initiation->providerVideoId,

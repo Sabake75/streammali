@@ -80,7 +80,7 @@ export function NewVideoForm({ onCreated = () => {} }: { onCreated?: () => void 
       });
       videoIdRef.current = video.id;
 
-      const { upload_url } = await createVideoUploadUrl(video.id);
+      const { upload_url } = await createVideoUploadUrl(video.id, file.size);
 
       setPhase("uploading");
       await uploadVideoFile(upload_url, file, setProgress);

@@ -24,22 +24,33 @@ use Illuminate\Support\Facades\Http;
  */
 class CloudflareStreamGateway implements VideoStorageGateway
 {
-    public function createUpload(Video $video): VideoUploadInitiation
+    /**
+     * The `direct_upload` JSON endpoint used before only accepts a single
+     * "Basic" POST of the whole file, capped by Cloudflare at 200MB — too
+     * small for most films. TUS (resumable, chunked) has no such cap and,
+     * contrary to what an earlier version of this method assumed, doesn't
+     * need our secret API token on every chunk: only this creation call
+     * does, and it returns a one-time URL (the `Location` header) that
+     * already carries its own authorization for the client's chunk PATCH
+     * requests — same "never exposed to the browser" guarantee as before.
+     */
+    public function createUpload(Video $video, int $fileSizeBytes): VideoUploadInitiation
     {
         $config = config('services.cloudflare_stream');
 
         $response = Http::withToken($config['api_token'])
             ->baseUrl($this->apiBaseUrl())
-            ->post('/stream/direct_upload', [
-                'maxDurationSeconds' => $config['max_duration_seconds'],
-                'requireSignedURLs' => false,
+            ->withHeaders([
+                'Tus-Resumable' => '1.0.0',
+                'Upload-Length' => (string) $fileSizeBytes,
+                'Upload-Metadata' => 'maxDurationSeconds '.base64_encode((string) $config['max_duration_seconds']),
             ])
-            ->throw()
-            ->json();
+            ->post('/stream?direct_user=true')
+            ->throw();
 
         return new VideoUploadInitiation(
-            uploadUrl: $response['result']['uploadURL'],
-            providerVideoId: $response['result']['uid'],
+            uploadUrl: $response->header('Location'),
+            providerVideoId: $response->header('stream-media-id'),
         );
     }
 

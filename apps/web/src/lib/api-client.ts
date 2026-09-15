@@ -173,31 +173,60 @@ export async function createVideo(input: {
   return data;
 }
 
-export async function createVideoUploadUrl(videoId: number): Promise<{ upload_url: string }> {
-  return postJson(`/creator/videos/${videoId}/source`, {}, { authenticated: true });
+export async function createVideoUploadUrl(videoId: number, fileSize: number): Promise<{ upload_url: string }> {
+  return postJson(`/creator/videos/${videoId}/source`, { file_size: fileSize }, { authenticated: true });
 }
 
 const UPLOAD_RETRY_DELAYS_MS = [0, 1000, 3000, 5000];
+const TUS_RESUMABLE_VERSION = "1.0.0";
+// Cloudflare's recommended TUS chunk size — also a valid one (a multiple of
+// 256 KiB, required for every chunk but the file's last).
+const TUS_CHUNK_SIZE = 50 * 1024 * 1024;
 
 /**
- * Cloudflare's direct_upload URL only accepts a single plain
- * `multipart/form-data` POST ("Basic" upload) — TUS resumable uploads
- * require the account's secret API token on every request, which can never
- * be exposed to the browser, so this can't be resumed mid-transfer. Retries
- * the whole file on failure instead, since 3G/4G connections drop mid-upload
- * often enough that a single attempt isn't reliable.
+ * Cloudflare Stream's one-time upload URL speaks the TUS resumable-upload
+ * protocol: the file goes up in chunks via PATCH, each carrying the byte
+ * offset it starts at — no 200MB cap like the old single-POST "Basic"
+ * upload, and no need for the account's secret API token (only creating the
+ * URL server-side needs that, see CloudflareStreamGateway). On a failed
+ * chunk, a HEAD request recovers the offset the server actually persisted
+ * before retrying, rather than assuming nothing landed — 3G/4G connections
+ * drop mid-request often enough that "the response never arrived" and "the
+ * server never got the bytes" aren't the same thing.
  */
 export async function uploadVideoFile(
   uploadUrl: string,
   file: File,
   onProgress: (percent: number) => void,
 ): Promise<void> {
+  let offset = 0;
+  onProgress(0);
+  while (offset < file.size) {
+    offset = await uploadTusChunkWithRetry(uploadUrl, file, offset, onProgress);
+  }
+  onProgress(100);
+}
+
+async function uploadTusChunkWithRetry(
+  uploadUrl: string,
+  file: File,
+  offset: number,
+  onProgress: (percent: number) => void,
+): Promise<number> {
+  let currentOffset = offset;
   let lastError: unknown;
   for (const delay of UPLOAD_RETRY_DELAYS_MS) {
-    if (delay > 0) await new Promise((resolve) => setTimeout(resolve, delay));
+    if (delay > 0) {
+      await new Promise((resolve) => setTimeout(resolve, delay));
+      try {
+        currentOffset = await fetchTusOffset(uploadUrl);
+      } catch (err) {
+        lastError = err;
+        continue;
+      }
+    }
     try {
-      await uploadVideoFileOnce(uploadUrl, file, onProgress);
-      return;
+      return await patchTusChunk(uploadUrl, file, currentOffset, onProgress);
     } catch (err) {
       lastError = err;
     }
@@ -205,21 +234,41 @@ export async function uploadVideoFile(
   throw lastError instanceof Error ? lastError : new Error("Échec de l'envoi du fichier vidéo.");
 }
 
-function uploadVideoFileOnce(uploadUrl: string, file: File, onProgress: (percent: number) => void): Promise<void> {
+async function fetchTusOffset(uploadUrl: string): Promise<number> {
+  const response = await fetch(uploadUrl, { method: "HEAD", headers: { "Tus-Resumable": TUS_RESUMABLE_VERSION } });
+  const offset = Number(response.headers.get("Upload-Offset"));
+  if (!response.ok || !Number.isFinite(offset)) {
+    throw new Error(`Échec de l'envoi du fichier vidéo (${response.status}).`);
+  }
+  return offset;
+}
+
+function patchTusChunk(
+  uploadUrl: string,
+  file: File,
+  offset: number,
+  onProgress: (percent: number) => void,
+): Promise<number> {
   return new Promise((resolve, reject) => {
+    const chunk = file.slice(offset, Math.min(offset + TUS_CHUNK_SIZE, file.size));
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", uploadUrl);
+    xhr.open("PATCH", uploadUrl);
+    xhr.setRequestHeader("Tus-Resumable", TUS_RESUMABLE_VERSION);
+    xhr.setRequestHeader("Upload-Offset", String(offset));
+    xhr.setRequestHeader("Content-Type", "application/offset+octet-stream");
     xhr.upload.onprogress = (event) => {
-      if (event.lengthComputable) onProgress(Math.round((event.loaded / event.total) * 100));
+      if (event.lengthComputable) onProgress(Math.round(((offset + event.loaded) / file.size) * 100));
     };
     xhr.onload = () => {
-      if (xhr.status >= 200 && xhr.status < 300) resolve();
-      else reject(new Error(`Échec de l'envoi du fichier vidéo (${xhr.status}).`));
+      if (xhr.status >= 200 && xhr.status < 300) {
+        const newOffset = Number(xhr.getResponseHeader("Upload-Offset"));
+        resolve(Number.isFinite(newOffset) ? newOffset : offset + chunk.size);
+      } else {
+        reject(new Error(`Échec de l'envoi du fichier vidéo (${xhr.status}).`));
+      }
     };
     xhr.onerror = () => reject(new Error("Échec de l'envoi du fichier vidéo (réseau)."));
-    const formData = new FormData();
-    formData.set("file", file);
-    xhr.send(formData);
+    xhr.send(chunk);
   });
 }
 

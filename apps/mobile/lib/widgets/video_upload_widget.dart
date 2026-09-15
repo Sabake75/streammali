@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -76,7 +77,12 @@ class _VideoUploadWidgetState extends State<VideoUploadWidget> {
     });
 
     try {
-      final uploadUrl = await _apiClient.createVideoUploadUrl(videoId: widget.videoId, token: token);
+      final fileSize = await File(path).length();
+      final uploadUrl = await _apiClient.createVideoUploadUrl(
+        videoId: widget.videoId,
+        token: token,
+        fileSize: fileSize,
+      );
 
       await _apiClient.uploadVideoFile(
         uploadUrl: uploadUrl,

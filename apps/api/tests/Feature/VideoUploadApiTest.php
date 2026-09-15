@@ -17,23 +17,20 @@ class VideoUploadApiTest extends TestCase
     public function test_owner_can_request_an_upload_url_for_their_video(): void
     {
         Http::fake([
-            '*/stream/direct_upload' => Http::response([
-                'success' => true,
-                'result' => [
-                    'uploadURL' => 'https://upload.videodelivery.net/abc123',
-                    'uid' => 'cf-uid-abc123',
-                ],
-            ], 200),
+            '*/stream?direct_user=true' => Http::response('', 201, [
+                'Location' => 'https://upload.videodelivery.net/tus/abc123',
+                'stream-media-id' => 'cf-uid-abc123',
+            ]),
         ]);
 
         $creator = User::factory()->create(['role' => UserRole::Creator]);
         $video = Video::factory()->for($creator, 'creator')->create();
 
         $response = $this->actingAs($creator, 'sanctum')
-            ->postJson("/api/creator/videos/{$video->id}/source")
+            ->postJson("/api/creator/videos/{$video->id}/source", ['file_size' => 350_000_000])
             ->assertCreated();
 
-        $response->assertJsonPath('upload_url', 'https://upload.videodelivery.net/abc123');
+        $response->assertJsonPath('upload_url', 'https://upload.videodelivery.net/tus/abc123');
         $response->assertJsonPath('source_status', 'processing');
 
         $this->assertDatabaseHas('videos', [
@@ -41,6 +38,18 @@ class VideoUploadApiTest extends TestCase
             'provider_video_id' => 'cf-uid-abc123',
             'source_status' => 'processing',
         ]);
+
+        Http::assertSent(fn ($request) => $request->hasHeader('Upload-Length', '350000000'));
+    }
+
+    public function test_requesting_an_upload_url_requires_the_file_size(): void
+    {
+        $creator = User::factory()->create(['role' => UserRole::Creator]);
+        $video = Video::factory()->for($creator, 'creator')->create();
+
+        $this->actingAs($creator, 'sanctum')
+            ->postJson("/api/creator/videos/{$video->id}/source")
+            ->assertInvalid(['file_size']);
     }
 
     public function test_cannot_request_an_upload_url_for_someone_elses_video(): void
@@ -50,7 +59,7 @@ class VideoUploadApiTest extends TestCase
         $video = Video::factory()->for($otherCreator, 'creator')->create();
 
         $this->actingAs($creator, 'sanctum')
-            ->postJson("/api/creator/videos/{$video->id}/source")
+            ->postJson("/api/creator/videos/{$video->id}/source", ['file_size' => 1000])
             ->assertForbidden();
     }
 
@@ -60,7 +69,7 @@ class VideoUploadApiTest extends TestCase
         $video = Video::factory()->for($creator, 'creator')->create(['source_status' => VideoSourceStatus::Processing]);
 
         $this->actingAs($creator, 'sanctum')
-            ->postJson("/api/creator/videos/{$video->id}/source")
+            ->postJson("/api/creator/videos/{$video->id}/source", ['file_size' => 1000])
             ->assertStatus(409);
     }
 

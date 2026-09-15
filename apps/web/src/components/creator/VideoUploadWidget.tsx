@@ -45,7 +45,7 @@ export function VideoUploadWidget({
     setProgress(0);
 
     try {
-      const { upload_url } = await createVideoUploadUrl(videoId);
+      const { upload_url } = await createVideoUploadUrl(videoId, file.size);
       await uploadVideoFile(upload_url, file, setProgress);
       setStatus("processing");
       onStatusChange();

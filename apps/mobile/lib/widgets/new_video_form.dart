@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -91,7 +92,12 @@ class _NewVideoFormState extends State<NewVideoForm> {
       );
       _videoId = video.id;
 
-      final uploadUrl = await _apiClient.createVideoUploadUrl(videoId: video.id, token: token);
+      final fileSize = await File(_filePath!).length();
+      final uploadUrl = await _apiClient.createVideoUploadUrl(
+        videoId: video.id,
+        token: token,
+        fileSize: fileSize,
+      );
 
       if (!mounted) return;
       setState(() => _phase = _NewVideoPhase.uploading);

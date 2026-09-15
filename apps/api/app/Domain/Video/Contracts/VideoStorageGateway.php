@@ -11,11 +11,12 @@ use App\Domain\Video\Models\Video;
 interface VideoStorageGateway
 {
     /**
-     * Ask the provider for a one-time direct-upload URL. The video bytes
-     * are sent straight from the creator's client to the provider — our
-     * backend never proxies the file itself.
+     * Ask the provider for a one-time resumable (TUS) upload URL sized for
+     * $fileSizeBytes. The video bytes are sent straight from the creator's
+     * client to the provider in chunks — our backend never proxies the file
+     * itself, and never sees its bytes.
      */
-    public function createUpload(Video $video): VideoUploadInitiation;
+    public function createUpload(Video $video, int $fileSizeBytes): VideoUploadInitiation;
 
     /**
      * Ask the provider for the current transcoding/playback state.
