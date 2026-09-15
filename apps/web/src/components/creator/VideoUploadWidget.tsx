@@ -70,7 +70,7 @@ export function VideoUploadWidget({
     <div className="flex flex-col gap-1">
       <label className="text-sm">
         <span className="mb-1 block text-neutral-600 dark:text-neutral-400">
-          {status === "failed" ? "Échec précédent — réessayer :" : "Fichier vidéo"}
+          {status === "failed" ? "Échec précédent, réessayer :" : "Fichier vidéo"}
         </span>
         <input
           type="file"

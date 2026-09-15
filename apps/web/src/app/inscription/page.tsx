@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { RegisterPageClient } from "./RegisterPageClient";
 
 export const metadata: Metadata = {
-  title: "Inscription — StreamMali",
+  title: "Inscription - StreamMali",
 };
 
 export default function RegisterPage() {

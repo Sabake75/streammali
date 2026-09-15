@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Messaging } from "@/components/Messaging";
 
 export const metadata: Metadata = {
-  title: "Messagerie — StreamMali",
+  title: "Messagerie - StreamMali",
 };
 
 export default function MessagingPage() {

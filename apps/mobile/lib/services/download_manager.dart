@@ -82,7 +82,7 @@ class DownloadManager {
     }
 
     if (url == null) {
-      throw ApiException('Le fichier n\'est pas encore prêt — réessaie dans un instant.');
+      throw ApiException('Le fichier n\'est pas encore prêt, réessaie dans un instant.');
     }
 
     final dir = await getApplicationSupportDirectory();

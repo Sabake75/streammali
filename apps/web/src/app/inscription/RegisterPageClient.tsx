@@ -93,7 +93,7 @@ function RegisterForm() {
 
       <TermsModal
         open={termsModalOpen}
-        title="Conditions générales d'utilisation — Spectateur"
+        title="Conditions générales d'utilisation : Spectateur"
         onClose={() => setTermsModalOpen(false)}
         onAccept={() => {
           setTermsAccepted(true);

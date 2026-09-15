@@ -3,7 +3,7 @@ import Link from "next/link";
 import { NewVideoForm } from "@/components/creator/NewVideoForm";
 
 export const metadata: Metadata = {
-  title: "Nouvelle vidéo — StreamMali",
+  title: "Nouvelle vidéo - StreamMali",
 };
 
 export default function NewVideoPage() {

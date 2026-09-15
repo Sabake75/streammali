@@ -13,7 +13,7 @@ const STEPS = [
   {
     icon: <PriceIcon />,
     title: "Un prix, pas d'abonnement",
-    text: "Tu payes une fois par vidéo, au prix affiché sur sa fiche — aucun engagement mensuel.",
+    text: "Tu payes une fois par vidéo, au prix affiché sur sa fiche, sans engagement mensuel.",
   },
   {
     icon: <PhoneIcon />,

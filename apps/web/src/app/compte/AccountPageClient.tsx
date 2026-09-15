@@ -67,7 +67,7 @@ export function AccountPageClient() {
       <section className="mt-8 rounded-xl border border-neutral-200 p-5 dark:border-neutral-800">
         <h2 className="font-semibold text-neutral-900 dark:text-neutral-50">Une question, un problème ?</h2>
         <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-          Contacte la modération directement depuis l&apos;app — paiement, vidéo, compte, tout sujet.
+          Contacte la modération directement depuis l&apos;app : paiement, vidéo, compte, tout sujet.
         </p>
         <Link
           href="/support"
@@ -100,7 +100,7 @@ export function AccountPageClient() {
         <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
           Ton profil, ton numéro et ta pièce d&apos;identité sont supprimés définitivement et tu es déconnecté(e)
           partout. Action irréversible.
-          {user.role === "creator" && " Retire d'abord ton solde disponible si tu en as un — sinon la suppression est refusée."}
+          {user.role === "creator" && " Retire d'abord ton solde disponible si tu en as un, sinon la suppression est refusée."}
         </p>
         {deleteError && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{deleteError}</p>}
 

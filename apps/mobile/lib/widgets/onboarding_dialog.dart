@@ -51,7 +51,7 @@ class _OnboardingDialog extends StatelessWidget {
             const _Step(
               icon: Icons.sell_outlined,
               title: 'Un prix, pas d\'abonnement',
-              text: 'Tu payes une fois par vidéo, au prix affiché sur sa fiche — aucun engagement mensuel.',
+              text: 'Tu payes une fois par vidéo, au prix affiché sur sa fiche, sans engagement mensuel.',
             ),
             const SizedBox(height: 12),
             const _Step(

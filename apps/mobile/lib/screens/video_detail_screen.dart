@@ -131,7 +131,7 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> with WidgetsBindi
                 if (canWatchPreview) ...[
                   const SizedBox(height: 4),
                   Text(
-                    'Aperçu — achète la vidéo pour la voir en entier.',
+                    'Aperçu : achète la vidéo pour la voir en entier.',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
                   ),
                 ],

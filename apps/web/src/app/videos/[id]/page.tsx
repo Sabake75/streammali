@@ -23,7 +23,7 @@ export async function generateMetadata(props: PageProps<"/videos/[id]">): Promis
     video.description ?? `${video.category.label} de ${video.creator.name}, ${formatPrice(video.price)} sur StreamMali.`;
 
   return {
-    title: `${video.title} — StreamMali`,
+    title: `${video.title} - StreamMali`,
     description,
     openGraph: {
       title: video.title,
@@ -92,7 +92,7 @@ export default async function VideoDetailPage(props: PageProps<"/videos/[id]">) 
       </div>
       {canWatchPreview && (
         <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
-          Aperçu — achète la vidéo pour la voir en entier.
+          Aperçu : achète la vidéo pour la voir en entier.
         </p>
       )}
 

@@ -68,7 +68,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                 </span>
               </Link>
               <p className="max-w-xs text-sm text-neutral-500 dark:text-neutral-400">
-                Le cinéma malien à portée de Mobile Money — films, clips et web-séries de créateurs maliens.
+                Le cinéma malien à portée de Mobile Money : films, clips et web-séries de créateurs maliens.
               </p>
               <div className="mt-1 flex flex-wrap gap-2 text-xs font-medium text-neutral-600 dark:text-neutral-400">
                 <span className="flex items-center gap-1.5 rounded-full border border-neutral-200 px-2.5 py-1 dark:border-neutral-800">

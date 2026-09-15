@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { ViewerTermsContent } from "@/components/legal/ViewerTermsContent";
 
 export const metadata: Metadata = {
-  title: "CGU spectateur — StreamMali",
+  title: "CGU spectateur - StreamMali",
   description: "Conditions générales d'utilisation de StreamMali pour les spectateurs.",
 };
 
@@ -19,7 +19,7 @@ export default function TermsViewerPage() {
 
       <h1 className="mt-4 flex items-center gap-2 text-3xl font-bold text-neutral-900 dark:text-neutral-50">
         <span className="h-7 w-2 rounded-full bg-orange-600" />
-        Conditions générales d&apos;utilisation — Spectateur
+        Conditions générales d&apos;utilisation : Spectateur
       </h1>
 
       <div className="mt-8">

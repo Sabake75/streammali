@@ -64,7 +64,7 @@ export function CreatorTermsContent() {
       <TermsSection title="Répartition des revenus">
         <p>C&apos;est la règle la plus importante à retenir :</p>
         <p className="font-semibold text-neutral-900 dark:text-neutral-50">
-          Sur chaque vente, StreamMali garde 25 % et tu reçois 75 % — quel que soit le prix que tu
+          Sur chaque vente, StreamMali garde 25 % et tu reçois 75 %, quel que soit le prix que tu
           as fixé pour la vidéo.
         </p>
         <p>Exemple concret avec le prix par défaut de 100 FCFA :</p>
@@ -100,7 +100,7 @@ export function CreatorTermsContent() {
           <li>les demandes sont traitées <strong>chaque semaine</strong>,</li>
           <li>
             les frais prélevés par les opérateurs Mobile Money sont{" "}
-            <strong>pris en charge par StreamMali</strong> — tu ne payes aucun frais caché.
+            <strong>pris en charge par StreamMali</strong>, tu ne payes aucun frais caché.
           </li>
         </ul>
       </TermsSection>

@@ -110,7 +110,7 @@ export function PaymentSuccessPageClient() {
           </h1>
           <p className="mt-2 text-neutral-500 dark:text-neutral-400">
             Le paiement Mobile Money peut prendre quelques minutes à être validé. Reviens vérifier dans
-            « Mes achats » dans un instant — pas besoin de payer une seconde fois.
+            « Mes achats » dans un instant, pas besoin de payer une seconde fois.
           </p>
           <Link href="/bibliotheque" className="btn-primary mt-6">
             Vérifier mes achats

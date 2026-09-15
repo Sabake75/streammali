@@ -111,7 +111,7 @@ function UpgradeForm({ user }: { user: StoredUser }) {
 
         <TermsModal
           open={termsModalOpen}
-          title="Conditions générales d'utilisation — Créateur"
+          title="Conditions générales d'utilisation : Créateur"
           onClose={() => setTermsModalOpen(false)}
           onAccept={() => {
             setTermsAccepted(true);
@@ -227,7 +227,7 @@ function FullRegistrationForm() {
 
         <TermsModal
           open={termsModalOpen}
-          title="Conditions générales d'utilisation — Créateur"
+          title="Conditions générales d'utilisation : Créateur"
           onClose={() => setTermsModalOpen(false)}
           onAccept={() => {
             setTermsAccepted(true);

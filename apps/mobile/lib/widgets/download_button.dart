@@ -103,7 +103,7 @@ class _DownloadButtonState extends State<DownloadButton> {
       return TextButton.icon(
         onPressed: _delete,
         icon: const Icon(Icons.download_done, size: 18),
-        label: const Text('Téléchargée — supprimer'),
+        label: const Text('Téléchargée, supprimer'),
       );
     }
 

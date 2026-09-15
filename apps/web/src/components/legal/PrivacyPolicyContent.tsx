@@ -25,7 +25,7 @@ export function PrivacyPolicyContent() {
         <p>
           <strong>Créateurs uniquement :</strong> une pièce d&apos;identité, pour vérifier que tu es
           bien le propriétaire des contenus que tu publies. Elle n&apos;est jamais visible
-          publiquement — seule la modération y a accès.
+          publiquement : seule la modération y a accès.
         </p>
         <p>
           <strong>Paiement :</strong> lors d&apos;un achat ou d&apos;une demande de retrait, ton
@@ -34,8 +34,8 @@ export function PrivacyPolicyContent() {
           au-delà de ce numéro.
         </p>
         <p>
-          <strong>Usage :</strong> les vidéos vues, achetées, mises en favori, et les avis laissés
-          — pour faire fonctionner ton compte (bibliothèque, recommandations, historique).
+          <strong>Usage :</strong> les vidéos vues, achetées, mises en favori, et les avis laissés,
+          pour faire fonctionner ton compte (bibliothèque, recommandations, historique).
         </p>
       </TermsSection>
 
@@ -54,10 +54,10 @@ export function PrivacyPolicyContent() {
         </p>
         <ul className="list-disc pl-5">
           <li>
-            <strong>Orange Money</strong> — traitement des paiements et retraits Mobile Money.
+            <strong>Orange Money</strong> : traitement des paiements et retraits Mobile Money.
           </li>
           <li>
-            <strong>Cloudflare Stream</strong> — hébergement et diffusion des vidéos.
+            <strong>Cloudflare Stream</strong> : hébergement et diffusion des vidéos.
           </li>
         </ul>
       </TermsSection>
@@ -83,7 +83,7 @@ export function PrivacyPolicyContent() {
         <p>
           StreamMali n&apos;utilise pas de cookies publicitaires ni de traceurs tiers. Le site
           garde localement, sur ton appareil, ton jeton de connexion et le fait que tu aies déjà vu
-          le message de bienvenue — rien de plus, rien qui te suive d&apos;un site à l&apos;autre.
+          le message de bienvenue, rien de plus, rien qui te suive d&apos;un site à l&apos;autre.
         </p>
       </TermsSection>
 

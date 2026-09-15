@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { PrivacyPolicyContent } from "@/components/legal/PrivacyPolicyContent";
 
 export const metadata: Metadata = {
-  title: "Politique de confidentialité — StreamMali",
+  title: "Politique de confidentialité - StreamMali",
   description: "Quelles données StreamMali collecte, pourquoi, et comment les consulter ou les supprimer.",
 };
 

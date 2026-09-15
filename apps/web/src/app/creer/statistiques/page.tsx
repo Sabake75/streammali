@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Stats } from "@/components/creator/Stats";
 
 export const metadata: Metadata = {
-  title: "Statistiques — StreamMali",
+  title: "Statistiques - StreamMali",
 };
 
 export default function StatisticsPage() {

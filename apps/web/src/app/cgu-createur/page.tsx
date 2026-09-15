@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { CreatorTermsContent } from "@/components/legal/CreatorTermsContent";
 
 export const metadata: Metadata = {
-  title: "CGU créateur — StreamMali",
+  title: "CGU créateur - StreamMali",
   description: "Conditions générales d'utilisation de StreamMali pour les créateurs, dont la répartition des revenus.",
 };
 
@@ -19,7 +19,7 @@ export default function TermsCreatorPage() {
 
       <h1 className="mt-4 flex items-center gap-2 text-3xl font-bold text-neutral-900 dark:text-neutral-50">
         <span className="h-7 w-2 rounded-full bg-orange-600" />
-        Conditions générales d&apos;utilisation — Créateur
+        Conditions générales d&apos;utilisation : Créateur
       </h1>
 
       <div className="mt-8">
