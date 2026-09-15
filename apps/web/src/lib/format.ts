@@ -18,6 +18,26 @@ export function formatDate(isoDate: string): string {
 }
 
 /**
+ * Shared badge coloring for the small set of status values shown across the
+ * creator area (payment status: pending/succeeded/failed; payout status:
+ * pending/paid/rejected) — "pending" means the same thing in both, the rest
+ * don't overlap, so one map covers both without a naming collision.
+ */
+const STATUS_BADGE_TONE: Record<string, string> = {
+  succeeded: "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300",
+  paid: "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300",
+  pending: "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300",
+  failed: "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300",
+  rejected: "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300",
+};
+
+export function statusBadgeClass(value: string): string {
+  return (
+    STATUS_BADGE_TONE[value] ?? "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300"
+  );
+}
+
+/**
  * Categories are moderator-managed (dynamic, not a fixed enum — see
  * apps/api/app/Domain/Video/README.md), so colors can't be hardcoded per
  * known value. Hashing the category's own value into a fixed palette keeps

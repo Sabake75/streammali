@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { ErrorRetryView } from "@/components/ErrorRetryView";
 import { fetchMyTransactions } from "@/lib/api-client";
-import { formatPrice } from "@/lib/format";
+import { formatDate, formatPrice, statusBadgeClass } from "@/lib/format";
 import type { Transaction } from "@/lib/types";
 
 /**
@@ -48,17 +48,26 @@ export function TransactionHistory() {
         transactions.map((transaction) => (
           <div
             key={transaction.id}
-            className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-neutral-200 px-3 py-2 text-sm dark:border-neutral-800"
+            className="flex items-start justify-between gap-3 rounded-lg border border-neutral-200 px-4 py-3 text-sm dark:border-neutral-800"
           >
-            <span className="font-medium">{transaction.video_title ?? "Vidéo supprimée"}</span>
-            <span className="text-neutral-500 dark:text-neutral-400">
-              {new Date(transaction.created_at).toLocaleDateString("fr-FR")}
-            </span>
-            <span>{formatPrice(transaction.gross_amount)} brut</span>
-            <span className="font-medium text-accent-700 dark:text-accent-400">
-              {formatPrice(transaction.net_amount)} net
-            </span>
-            {transaction.status && <span>{transaction.status.label}</span>}
+            <div className="min-w-0">
+              <p className="truncate font-medium text-neutral-900 dark:text-neutral-50">
+                {transaction.video_title ?? "Vidéo supprimée"}
+              </p>
+              <p className="mt-0.5 text-xs text-neutral-500 dark:text-neutral-400">
+                {formatDate(transaction.created_at)} · {formatPrice(transaction.gross_amount)} brut
+              </p>
+            </div>
+            <div className="flex shrink-0 flex-col items-end gap-1.5">
+              <span className="font-semibold text-accent-700 dark:text-accent-400">
+                {formatPrice(transaction.net_amount)}
+              </span>
+              {transaction.status && (
+                <span className={`w-fit rounded-full px-2.5 py-0.5 text-xs font-semibold ${statusBadgeClass(transaction.status.value)}`}>
+                  {transaction.status.label}
+                </span>
+              )}
+            </div>
           </div>
         ))
       )}

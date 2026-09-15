@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { ErrorRetryView } from "@/components/ErrorRetryView";
 import { PhoneNumberField } from "@/components/PhoneNumberField";
 import { fetchBalance, fetchMyPayouts, requestPayout } from "@/lib/api-client";
-import { formatPrice } from "@/lib/format";
+import { formatDate, formatPrice, statusBadgeClass } from "@/lib/format";
 import type { CreatorBalance, Payout } from "@/lib/types";
 
 export function BalanceAndPayouts() {
@@ -105,13 +105,21 @@ export function BalanceAndPayouts() {
           {payouts.map((payout) => (
             <div
               key={payout.id}
-              className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-neutral-200 px-3 py-2 text-sm dark:border-neutral-800"
+              className="rounded-lg border border-neutral-200 px-4 py-3 text-sm dark:border-neutral-800"
             >
-              <span>{formatPrice(payout.amount)}</span>
-              <span>{payout.destination_msisdn}</span>
-              <span className="font-medium">{payout.status.label}</span>
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="font-medium text-neutral-900 dark:text-neutral-50">{formatPrice(payout.amount)}</p>
+                  <p className="mt-0.5 text-xs text-neutral-500 dark:text-neutral-400">
+                    {payout.destination_msisdn} · {formatDate(payout.created_at)}
+                  </p>
+                </div>
+                <span className={`w-fit shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold ${statusBadgeClass(payout.status.value)}`}>
+                  {payout.status.label}
+                </span>
+              </div>
               {payout.status.value === "rejected" && payout.rejection_reason && (
-                <span className="w-full text-red-600 dark:text-red-400">{payout.rejection_reason}</span>
+                <p className="mt-2 text-xs text-red-600 dark:text-red-400">{payout.rejection_reason}</p>
               )}
             </div>
           ))}
