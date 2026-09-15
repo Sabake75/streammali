@@ -4,8 +4,10 @@ namespace App\Filament\Widgets;
 
 use App\Domain\Moderation\Enums\VideoStatus;
 use App\Domain\Payment\Enums\PaymentStatus;
+use App\Domain\Payment\Enums\PayoutStatus;
 use App\Domain\Payment\Models\LedgerEntry;
 use App\Domain\Payment\Models\Payment;
+use App\Domain\Payment\Models\Payout;
 use App\Domain\Video\Models\Video;
 use App\Enums\UserRole;
 use App\Models\User;
@@ -26,7 +28,18 @@ class OverviewStats extends StatsOverviewWidget
         $commission = LedgerEntry::sum('commission_amount');
         $pendingVideos = Video::where('status', VideoStatus::Pending)->count();
 
+        // Argent réellement encaissé (ventes) moins l'argent déjà reversé aux
+        // créateurs (retraits payés) — le solde courant du compte Mobile
+        // Money de la plateforme, distinct de "Commission plateforme"
+        // ci-dessous qui ne fait qu'augmenter (part définitivement acquise à
+        // StreamMali) alors que ce solde inclut aussi les soldes créateurs
+        // pas encore retirés.
+        $payoutsPaid = Payout::where('status', PayoutStatus::Paid)->sum('amount');
+        $mainAccountBalance = $revenue - $payoutsPaid;
+
         return [
+            Stat::make('Solde du compte principal', number_format($mainAccountBalance, 0, ',', ' ').' FCFA')
+                ->description('Encaissé moins déjà reversé aux créateurs'),
             Stat::make('Créateurs', User::where('role', UserRole::Creator)->count()),
             Stat::make('Viewers', User::where('role', UserRole::Viewer)->count()),
             Stat::make('Vidéos en attente', $pendingVideos)

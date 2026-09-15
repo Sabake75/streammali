@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CloudflareStreamWebhookController;
 use App\Http\Controllers\Api\Creator\PayoutController;
 use App\Http\Controllers\Api\Creator\StatsController;
+use App\Http\Controllers\Api\Creator\TransactionController;
 use App\Http\Controllers\Api\Creator\UpgradeController;
 use App\Http\Controllers\Api\Creator\VideoController as CreatorVideoController;
 use App\Http\Controllers\Api\Creator\VideoSourceController;
@@ -113,5 +114,6 @@ Route::middleware(['auth:sanctum', 'account.active'])->group(function () {
             ->name('payouts.store');
 
         Route::get('/stats', [StatsController::class, 'index'])->name('stats');
+        Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
     });
 });

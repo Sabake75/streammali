@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Users\Tables;
 use App\Domain\Moderation\Actions\SendMessage;
 use App\Domain\Moderation\Enums\AccountStatus;
 use App\Domain\Moderation\Models\Message;
+use App\Domain\Payment\Actions\GetCreatorBalance;
 use App\Enums\UserRole;
 use App\Filament\Exports\UserExporter;
 use App\Models\User;
@@ -63,6 +64,13 @@ class UsersTable
                     ->label('Identité vérifiée')
                     ->boolean()
                     ->getStateUsing(fn ($record) => $record->identity_verified_at !== null),
+                TextColumn::make('balance')
+                    ->label('Solde')
+                    // Créateurs seulement — un viewer/modérateur n'a pas de
+                    // solde à retirer, cellule vide plutôt qu'un 0 trompeur.
+                    ->getStateUsing(fn ($record) => $record->role === UserRole::Creator
+                        ? number_format(app(GetCreatorBalance::class)($record), 0, ',', ' ').' FCFA'
+                        : null),
                 TextColumn::make('created_at')
                     ->label('Inscrit le')
                     ->dateTime('d/m/Y H:i')

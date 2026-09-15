@@ -88,6 +88,24 @@ export type PayoutListResponse = {
   last_page: number;
 };
 
+export type Transaction = {
+  id: number;
+  video_title: string | null;
+  gross_amount: number;
+  commission_amount: number;
+  net_amount: number;
+  status: { value: string; label: string } | null;
+  created_at: string;
+};
+
+// Same raw-paginator shape as /api/creator/payouts (see PayoutListResponse).
+export type TransactionListResponse = {
+  data: Transaction[];
+  total: number;
+  current_page: number;
+  last_page: number;
+};
+
 export type Message = {
   id: number;
   body: string;

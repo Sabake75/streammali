@@ -10,6 +10,7 @@ import '../models/message.dart';
 import '../models/paginated_response.dart';
 import '../models/payout.dart';
 import '../models/review.dart';
+import '../models/transaction.dart';
 import '../models/user.dart';
 import '../models/video.dart';
 
@@ -624,6 +625,19 @@ class ApiClient {
     return (json['data'] as List)
         .map((item) => Payout.fromJson(item as Map<String, dynamic>))
         .toList();
+  }
+
+  Future<TransactionPage> fetchMyTransactions(String token, {int page = 1}) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/creator/transactions?page=$page'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+
+    if (response.statusCode != 200) {
+      throw ApiException(_extractErrorMessage(response));
+    }
+
+    return TransactionPage.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
   }
 
   Future<Payout> requestPayout({

@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BalanceAndPayouts } from "@/components/creator/BalanceAndPayouts";
+import { TransactionHistory } from "@/components/creator/TransactionHistory";
 
 export const metadata: Metadata = {
-  title: "Solde et retraits — StreamMali",
+  title: "Solde et retraits - StreamMali",
 };
 
 export default function BalancePage() {
@@ -21,6 +22,7 @@ export default function BalancePage() {
       </h1>
       <div className="mt-6">
         <BalanceAndPayouts />
+        <TransactionHistory />
       </div>
     </main>
   );

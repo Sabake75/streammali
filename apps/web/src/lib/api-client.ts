@@ -9,6 +9,7 @@ import type {
   Payout,
   PayoutListResponse,
   Review,
+  TransactionListResponse,
   VideoCategory,
   VideoCategoryValue,
   VideoSummary,
@@ -285,6 +286,10 @@ export async function fetchBalance(): Promise<CreatorBalance> {
 
 export async function fetchMyPayouts(): Promise<PayoutListResponse> {
   return getJson("/creator/payouts");
+}
+
+export async function fetchMyTransactions(page = 1): Promise<TransactionListResponse> {
+  return getJson(`/creator/transactions?page=${page}`);
 }
 
 export async function requestPayout(input: {

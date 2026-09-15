@@ -28,6 +28,23 @@ class ModerationAccountManagementTest extends TestCase
             ->assertSee('Awa Traoré');
     }
 
+    public function test_the_account_list_shows_a_creators_balance(): void
+    {
+        $moderator = User::factory()->create(['role' => UserRole::Moderator]);
+        $creator = User::factory()->create(['role' => UserRole::Creator, 'name' => 'Bamako Vision']);
+
+        $creator->ledgerEntries()->create([
+            'gross_amount' => 1000,
+            'commission_amount' => 250,
+            'net_amount' => 750,
+        ]);
+
+        $this->actingAs($moderator)
+            ->get('/moderation/users')
+            ->assertOk()
+            ->assertSee('750 FCFA');
+    }
+
     public function test_moderator_accounts_are_not_listed_in_account_management(): void
     {
         $moderator = User::factory()->create(['role' => UserRole::Moderator]);

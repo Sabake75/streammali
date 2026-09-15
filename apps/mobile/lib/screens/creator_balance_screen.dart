@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../widgets/balance_and_payouts.dart';
+import '../widgets/transaction_history.dart';
 
 class CreatorBalanceScreen extends StatelessWidget {
   const CreatorBalanceScreen({super.key});
@@ -13,7 +14,13 @@ class CreatorBalanceScreen extends StatelessWidget {
         top: false,
         child: SingleChildScrollView(
           padding: EdgeInsets.all(16),
-          child: BalanceAndPayouts(),
+          child: Column(
+            children: [
+              BalanceAndPayouts(),
+              SizedBox(height: 16),
+              TransactionHistory(),
+            ],
+          ),
         ),
       ),
     );
