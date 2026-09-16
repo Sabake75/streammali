@@ -4,6 +4,7 @@ class Transaction {
   final int grossAmount;
   final int commissionAmount;
   final int netAmount;
+  final String? statusValue;
   final String? statusLabel;
   final DateTime createdAt;
 
@@ -13,6 +14,7 @@ class Transaction {
     required this.grossAmount,
     required this.commissionAmount,
     required this.netAmount,
+    required this.statusValue,
     required this.statusLabel,
     required this.createdAt,
   });
@@ -25,6 +27,7 @@ class Transaction {
       grossAmount: json['gross_amount'] as int,
       commissionAmount: json['commission_amount'] as int,
       netAmount: json['net_amount'] as int,
+      statusValue: status?['value'] as String?,
       statusLabel: status?['label'] as String?,
       createdAt: DateTime.parse(json['created_at'] as String),
     );

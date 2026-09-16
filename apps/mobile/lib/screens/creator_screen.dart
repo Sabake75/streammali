@@ -4,6 +4,7 @@ import '../models/creator_video.dart';
 import '../services/api_client.dart';
 import '../services/auth_controller.dart';
 import '../utils/formatting.dart';
+import '../widgets/status_pill.dart';
 import '../widgets/video_upload_widget.dart';
 import '../theme.dart';
 import 'creator_balance_screen.dart';
@@ -162,7 +163,7 @@ class _CreatorScreenState extends State<CreatorScreen> {
                                 ],
                               ),
                             ),
-                            Chip(label: Text(video.status.label)),
+                            StatusPill(value: video.status.value, label: video.status.label),
                           ],
                         ),
                         if (video.status.value == 'rejected' && video.rejectionReason != null) ...[

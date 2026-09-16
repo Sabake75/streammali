@@ -5,6 +5,7 @@ import '../services/api_client.dart';
 import '../services/auth_controller.dart';
 import '../utils/formatting.dart';
 import 'phone_number_field.dart';
+import 'status_pill.dart';
 
 class BalanceAndPayouts extends StatefulWidget {
   const BalanceAndPayouts({super.key});
@@ -145,7 +146,7 @@ class _BalanceAndPayoutsState extends State<BalanceAndPayouts> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(formatPrice(payout.amount), style: const TextStyle(fontWeight: FontWeight.w600)),
-                          Text(payout.statusLabel, style: const TextStyle(fontWeight: FontWeight.bold)),
+                          StatusPill(value: payout.statusValue, label: payout.statusLabel),
                         ],
                       ),
                       const SizedBox(height: 2),

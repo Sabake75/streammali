@@ -4,6 +4,7 @@ import '../models/transaction.dart';
 import '../services/api_client.dart';
 import '../services/auth_controller.dart';
 import '../utils/formatting.dart';
+import 'status_pill.dart';
 
 /// One row per vente (LedgerEntry côté API), distinct de "Historique des
 /// demandes" dans BalanceAndPayouts (qui liste les demandes de retrait, pas
@@ -93,9 +94,17 @@ class _TransactionHistoryState extends State<TransactionHistory> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text('${formatPrice(transaction.grossAmount)} brut'),
-                          Text(
-                            '${formatPrice(transaction.netAmount)} net',
-                            style: TextStyle(fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.primary),
+                          Row(
+                            children: [
+                              Text(
+                                '${formatPrice(transaction.netAmount)} net',
+                                style: TextStyle(fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.primary),
+                              ),
+                              if (transaction.statusValue != null) ...[
+                                const SizedBox(width: 8),
+                                StatusPill(value: transaction.statusValue!, label: transaction.statusLabel!),
+                              ],
+                            ],
                           ),
                         ],
                       ),
