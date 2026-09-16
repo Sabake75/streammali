@@ -6,10 +6,16 @@ use App\Domain\Payment\Enums\PaymentStatus;
 use App\Domain\Payment\Models\LedgerEntry;
 use App\Models\User;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 
 class GetCreatorStats
 {
     private const TIMESERIES_DAYS = 14;
+
+    // Short enough that a creator who just made a sale or got a view
+    // recorded won't perceive their own dashboard as stuck, long enough to
+    // spare the withCount/join aggregation on every dashboard refresh.
+    private const CACHE_TTL_SECONDS = 30;
 
     /**
      * @return array{
@@ -19,6 +25,22 @@ class GetCreatorStats
      * }
      */
     public function __invoke(User $creator): array
+    {
+        return Cache::remember(
+            "creator-stats:{$creator->id}",
+            self::CACHE_TTL_SECONDS,
+            fn () => $this->compute($creator),
+        );
+    }
+
+    /**
+     * @return array{
+     *     videos: array<int, array{id: int, title: string, views_count: int, purchases_count: int, revenue: int}>,
+     *     totals: array{views: int, purchases: int, revenue: int},
+     *     timeseries: array<int, array{date: string, revenue: int}>,
+     * }
+     */
+    private function compute(User $creator): array
     {
         $videos = $creator->videos()
             ->withCount(['payments as purchases_count' => fn ($query) => $query->where('status', PaymentStatus::Succeeded)])

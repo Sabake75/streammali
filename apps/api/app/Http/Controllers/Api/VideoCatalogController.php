@@ -17,7 +17,7 @@ class VideoCatalogController extends Controller
         $validated = $request->validate([
             'category' => ['nullable', 'string', 'exists:categories,slug'],
             'creator_id' => ['nullable', 'integer'],
-            'search' => ['nullable', 'string', 'max:255'],
+            'search' => ['nullable', 'string', 'min:2', 'max:255'],
             'sort' => ['nullable', 'string', 'in:recent,popular'],
         ]);
 
