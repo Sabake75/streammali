@@ -1,46 +1,52 @@
 @import "tailwindcss";
 
 /*
- * Palette inspirée de PayDunya (paydunya.com) : bleu marine profond comme
- * couleur de marque (logo, boutons, hero sombre) et bleu ciel vif en accent
- * secondaire (titres de section, liens, badges), sur un fond gris-bleu très
- * clair — leur identité fintech/corporate plutôt que les tons chauds
- * essayés précédemment. Redéfinit directement les échelles Tailwind
- * `orange-*` (marque) et `accent-*` (secondaire) pour que chaque usage
- * existant dans le code prenne la nouvelle teinte sans devoir toucher
- * chaque fichier. `emerald-*` reste disponible tel quel : il sert aussi à
- * distinguer les catégories dans lib/format.ts, un usage sans lien avec la
- * marque.
+ * Palette "cinéma malien" : or chaud comme couleur de marque (logo,
+ * boutons, prix, hero) et rouge grenat en accent secondaire (touches
+ * décoratives, badges de confirmation) sur un fond crème chaud — remplace
+ * la palette précédente empruntée à PayDunya (bleu marine/bleu ciel), qui
+ * lisait "appli fintech" plutôt que "plateforme vidéo" et n'avait plus de
+ * justification une fois PayDunya abandonné comme moyen de paiement (voir
+ * CLAUDE.md, section "État du projet"). L'or évoque le tapis rouge/la
+ * projection (valeur, prix, ticket) sans reprendre le orange de la marque
+ * Orange Money, pour éviter toute confusion de marque sur les pages de
+ * paiement. Chaque teinte est vérifiée AA (contraste ≥ 4.5:1) sur son usage
+ * texte/fond réel dans le code (boutons pleins, liens, badges). Redéfinit
+ * directement les échelles Tailwind `orange-*` (marque) et `accent-*`
+ * (secondaire) pour que chaque usage existant dans le code prenne la
+ * nouvelle teinte sans devoir toucher chaque fichier. `emerald-*` reste
+ * disponible tel quel : il sert aussi à distinguer les catégories dans
+ * lib/format.ts, un usage sans lien avec la marque.
  */
 @theme {
-  --color-orange-50: #f5f7fb;
-  --color-orange-100: #dbe6f7;
-  --color-orange-200: #b6cff1;
-  --color-orange-300: #8cb4eb;
-  --color-orange-400: #548be4;
-  --color-orange-500: #2f6fe0;
-  --color-orange-600: #0f2d52;
-  --color-orange-700: #0a1b33;
-  --color-orange-800: #08162b;
-  --color-orange-900: #071223;
-  --color-orange-950: #050d1a;
+  --color-orange-50: #fef5e7;
+  --color-orange-100: #fae7c6;
+  --color-orange-200: #f3cf91;
+  --color-orange-300: #e7ad55;
+  --color-orange-400: #d98e26;
+  --color-orange-500: #a66414;
+  --color-orange-600: #95520f;
+  --color-orange-700: #7a3f0b;
+  --color-orange-800: #5c2e0a;
+  --color-orange-900: #3e1e09;
+  --color-orange-950: #231106;
 
-  --color-accent-50: #f0f9ff;
-  --color-accent-100: #e0f2fe;
-  --color-accent-200: #bae6fd;
-  --color-accent-300: #7dd3fc;
-  --color-accent-400: #38bdf8;
-  --color-accent-500: #0ea5e9;
-  --color-accent-600: #0284c7;
-  --color-accent-700: #0369a1;
-  --color-accent-800: #075985;
-  --color-accent-900: #0c4a6e;
-  --color-accent-950: #082f49;
+  --color-accent-50: #feecee;
+  --color-accent-100: #fcd5da;
+  --color-accent-200: #f6acb6;
+  --color-accent-300: #ec7988;
+  --color-accent-400: #e36378;
+  --color-accent-500: #da1b41;
+  --color-accent-600: #ba1239;
+  --color-accent-700: #960d32;
+  --color-accent-800: #6f0b29;
+  --color-accent-900: #3c0718;
+  --color-accent-950: #240510;
 }
 
 :root {
-  --background: #f4f7fb;
-  --foreground: #0a1b33;
+  --background: #faf6f0;
+  --foreground: #241b10;
 }
 
 @theme inline {
@@ -52,8 +58,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #081428;
-    --foreground: #eaf2fc;
+    --background: #14110c;
+    --foreground: #f6ece0;
   }
 }
 
@@ -64,7 +70,7 @@ body {
 }
 
 @layer components {
-  /* Pilule entièrement arrondie, comme les CTA de paydunya.com. */
+  /* Pilule entièrement arrondie : lisible et facile à viser au pouce sur mobile. */
   .btn-primary {
     @apply inline-flex items-center justify-center rounded-full bg-orange-600 px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-orange-500 hover:shadow-md active:scale-[0.97] active:bg-orange-700 disabled:opacity-60 disabled:hover:bg-orange-600 disabled:hover:shadow-sm disabled:active:scale-100 dark:bg-orange-500 dark:hover:bg-orange-400 dark:active:bg-orange-600;
   }
