@@ -9,7 +9,7 @@ const PENDING_VIDEO_KEY = "streammali:pending_purchase_video_id";
 const POLL_INTERVAL_MS = 2500;
 const MAX_POLLS = 12; // ~30s — Mobile Money confirmations are usually near-instant, but Orange Money's webhook can lag.
 
-type Status = "no-pending" | "checking" | "confirmed" | "timeout";
+type Status = "no-pending" | "checking" | "confirmed" | "failed" | "timeout";
 
 export function PaymentSuccessPageClient() {
   const [status, setStatus] = useState<Status>("checking");
@@ -35,6 +35,17 @@ export function PaymentSuccessPageClient() {
         if (result.purchased) {
           setVideo(result);
           setStatus("confirmed");
+          sessionStorage.removeItem(PENDING_VIDEO_KEY);
+          return;
+        }
+
+        // Orange Money can redirect to return_url even when the payment
+        // didn't go through (wrong OTP, insufficient balance…), not just
+        // cancel_url — no point polling for up to 30s on a payment that
+        // already failed and is never going to confirm.
+        if (result.payment_status === "failed") {
+          setVideo(result);
+          setStatus("failed");
           sessionStorage.removeItem(PENDING_VIDEO_KEY);
           return;
         }
@@ -87,6 +98,21 @@ export function PaymentSuccessPageClient() {
           </p>
           <Link href={video ? `/videos/${video.id}` : "/bibliotheque"} className="btn-primary mt-6">
             Regarder maintenant
+          </Link>
+        </>
+      )}
+
+      {status === "failed" && (
+        <>
+          <span className="flex h-14 w-14 items-center justify-center rounded-full bg-neutral-100 text-2xl text-neutral-400 dark:bg-neutral-900 dark:text-neutral-600">
+            ✕
+          </span>
+          <h1 className="mt-4 text-xl font-bold text-neutral-900 dark:text-neutral-50">Le paiement a échoué</h1>
+          <p className="mt-2 text-neutral-500 dark:text-neutral-400">
+            Aucun montant n&apos;a été débité. Tu peux réessayer quand tu veux.
+          </p>
+          <Link href={video ? `/videos/${video.id}` : "/"} className="btn-primary mt-6">
+            {video ? "Retour à la vidéo" : "Retour au catalogue"}
           </Link>
         </>
       )}

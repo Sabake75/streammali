@@ -35,6 +35,20 @@ class VideoResource extends JsonResource
                 'name' => $this->creator->name,
             ],
             'purchased' => $this->when($user !== null, $purchased),
+            // Status of this user's most recent payment attempt for this
+            // video (pending/succeeded/failed, null if never attempted) —
+            // lets the success page (apps/web .../paiement/succes) stop
+            // polling as soon as it sees "failed" instead of waiting out
+            // the full timeout on a payment that's never going to confirm.
+            'payment_status' => $this->when(
+                $user !== null,
+                fn () => $this->resource->payments()
+                    ->where('buyer_id', $user->id)
+                    ->latest()
+                    ->first()
+                    ?->status
+                    ?->value,
+            ),
             'favorited' => $this->when($user !== null, fn () => $this->resource->isFavoritedBy($user)),
             // Only unlocked once bought and actually ready to stream —
             // "déverrouillage immédiat" from the cahier des charges.

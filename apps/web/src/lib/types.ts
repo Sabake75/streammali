@@ -19,6 +19,9 @@ export type VideoSummary = {
     name: string;
   };
   purchased?: boolean;
+  // Status of the current user's most recent payment attempt for this
+  // video, null if they never attempted one. Only present when authenticated.
+  payment_status?: "pending" | "succeeded" | "failed" | null;
   favorited?: boolean;
   playback_url?: string | null;
   preview_playback_url: string | null;
