@@ -1,3 +1,9 @@
+// Token lives in localStorage, not an httpOnly cookie — readable by any
+// injected script if the app ever grows an XSS hole. Accepted trade-off for
+// now: no dangerouslySetInnerHTML or similar sink exists in this codebase,
+// and moving to Sanctum's cookie-based SPA auth (CSRF dance, same-site
+// cookies, every API call rerouted) is a bigger change than this warrants
+// today. Revisit if the app starts rendering untrusted HTML.
 const TOKEN_KEY = "streammali_token";
 const USER_KEY = "streammali_user";
 const AUTH_CHANGE_EVENT = "streammali-auth-change";

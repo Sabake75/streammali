@@ -7,8 +7,7 @@ import { FilePicker } from "@/components/FilePicker";
 import { FormField } from "@/components/FormField";
 import { PhoneNumberField } from "@/components/PhoneNumberField";
 import { PinCodeField } from "@/components/PinCodeField";
-import { CreatorTermsContent } from "@/components/legal/CreatorTermsContent";
-import { TermsModal } from "@/components/legal/TermsModal";
+import { CreatorTermsAcceptanceField } from "@/components/legal/CreatorTermsAcceptanceField";
 import { registerCreator, upgradeToCreator } from "@/lib/api-client";
 import { getToken, setSession, type StoredUser } from "@/lib/auth-client";
 import { useAuthUser } from "@/lib/use-auth";
@@ -39,7 +38,6 @@ function UpgradeForm({ user }: { user: StoredUser }) {
 
   const [identityDocument, setIdentityDocument] = useState<File | null>(null);
   const [termsAccepted, setTermsAccepted] = useState(false);
-  const [termsModalOpen, setTermsModalOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -84,42 +82,12 @@ function UpgradeForm({ user }: { user: StoredUser }) {
             onChange={setIdentityDocument}
             placeholder="Choisir la pièce d'identité"
           />
-          <label className="flex items-start gap-2 text-sm text-neutral-600 dark:text-neutral-400">
-            <input
-              type="checkbox"
-              required
-              checked={termsAccepted}
-              onChange={(event) => setTermsAccepted(event.target.checked)}
-              className="mt-0.5 h-4 w-4 shrink-0 accent-orange-600"
-            />
-            <span>
-              J&apos;ai lu et j&apos;accepte les{" "}
-              <button
-                type="button"
-                onClick={() => setTermsModalOpen(true)}
-                className="font-medium text-orange-600 underline hover:no-underline dark:text-orange-400"
-              >
-                CGU créateur
-              </button>
-            </span>
-          </label>
+          <CreatorTermsAcceptanceField accepted={termsAccepted} onAcceptedChange={setTermsAccepted} />
           {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
           <button type="submit" disabled={submitting} className="btn-primary">
             {submitting ? "Passage en créateur…" : "Devenir créateur"}
           </button>
         </form>
-
-        <TermsModal
-          open={termsModalOpen}
-          title="Conditions générales d'utilisation : Créateur"
-          onClose={() => setTermsModalOpen(false)}
-          onAccept={() => {
-            setTermsAccepted(true);
-            setTermsModalOpen(false);
-          }}
-        >
-          <CreatorTermsContent />
-        </TermsModal>
       </div>
     </main>
   );
@@ -133,7 +101,6 @@ function FullRegistrationForm() {
   const [password, setPassword] = useState("");
   const [identityDocument, setIdentityDocument] = useState<File | null>(null);
   const [termsAccepted, setTermsAccepted] = useState(false);
-  const [termsModalOpen, setTermsModalOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -188,25 +155,7 @@ function FullRegistrationForm() {
             onChange={setIdentityDocument}
             placeholder="Choisir la pièce d'identité"
           />
-          <label className="flex items-start gap-2 text-sm text-neutral-600 dark:text-neutral-400">
-            <input
-              type="checkbox"
-              required
-              checked={termsAccepted}
-              onChange={(event) => setTermsAccepted(event.target.checked)}
-              className="mt-0.5 h-4 w-4 shrink-0 accent-orange-600"
-            />
-            <span>
-              J&apos;ai lu et j&apos;accepte les{" "}
-              <button
-                type="button"
-                onClick={() => setTermsModalOpen(true)}
-                className="font-medium text-orange-600 underline hover:no-underline dark:text-orange-400"
-              >
-                CGU créateur
-              </button>
-            </span>
-          </label>
+          <CreatorTermsAcceptanceField accepted={termsAccepted} onAcceptedChange={setTermsAccepted} />
           {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
           <button type="submit" disabled={submitting} className="btn-primary">
             {submitting ? "Création…" : "Créer mon compte créateur"}
@@ -224,18 +173,6 @@ function FullRegistrationForm() {
             Se connecter
           </Link>
         </p>
-
-        <TermsModal
-          open={termsModalOpen}
-          title="Conditions générales d'utilisation : Créateur"
-          onClose={() => setTermsModalOpen(false)}
-          onAccept={() => {
-            setTermsAccepted(true);
-            setTermsModalOpen(false);
-          }}
-        >
-          <CreatorTermsContent />
-        </TermsModal>
       </div>
     </main>
   );

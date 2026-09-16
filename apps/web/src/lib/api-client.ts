@@ -45,16 +45,7 @@ export async function registerCreator(input: {
   formData.set("identity_document", input.identityDocument);
   formData.set("terms_accepted", input.terms_accepted ? "1" : "0");
 
-  const response = await fetch(`${API_BASE_URL}/register/creator`, {
-    method: "POST",
-    body: formData,
-  });
-
-  if (!response.ok) {
-    throw new Error(await extractErrorMessage(response));
-  }
-
-  return response.json();
+  return (await apiFetch("/register/creator", { method: "POST", body: formData })).json();
 }
 
 /**
@@ -68,24 +59,13 @@ export async function upgradeToCreator(input: {
   identityDocument: File;
   terms_accepted: boolean;
 }): Promise<{ user: StoredUser }> {
-  const token = getToken();
-  if (!token) throw new Error("Vous devez être connecté.");
-
   const formData = new FormData();
   formData.set("identity_document", input.identityDocument);
   formData.set("terms_accepted", input.terms_accepted ? "1" : "0");
 
-  const response = await fetch(`${API_BASE_URL}/creator/upgrade`, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${token}` },
-    body: formData,
-  });
-
-  if (!response.ok) {
-    throw new Error(await extractErrorMessage(response));
-  }
-
-  return response.json();
+  return (
+    await apiFetch("/creator/upgrade", { method: "POST", body: formData }, { authenticated: true })
+  ).json();
 }
 
 export async function loginViewer(input: { phone: string; password: string }): Promise<AuthResponse> {
@@ -153,14 +133,8 @@ export async function fetchRecommendedVideos(): Promise<VideoSummary[]> {
 }
 
 export async function fetchCategories(): Promise<VideoCategory[]> {
-  const response = await fetch(`${API_BASE_URL}/categories`);
-
-  if (!response.ok) {
-    throw new Error(await extractErrorMessage(response));
-  }
-
-  const json: { data: VideoCategory[] } = await response.json();
-  return json.data;
+  const { data } = await getJson<{ data: VideoCategory[] }>("/categories", { authenticated: false });
+  return data;
 }
 
 export async function createVideo(input: {
@@ -304,13 +278,7 @@ export async function reportVideo(videoId: number, reason: string): Promise<{ me
 }
 
 export async function fetchReviews(videoId: number): Promise<PaginatedResponse<Review>> {
-  const response = await fetch(`${API_BASE_URL}/videos/${videoId}/reviews`);
-
-  if (!response.ok) {
-    throw new Error(await extractErrorMessage(response));
-  }
-
-  return response.json();
+  return getJson(`/videos/${videoId}/reviews`, { authenticated: false });
 }
 
 export async function submitReview(
@@ -353,17 +321,7 @@ export async function sendMessage(body: string): Promise<Message> {
  * endpoint directly — fetch it as a blob and trigger the save ourselves).
  */
 export async function exportAccountData(): Promise<void> {
-  const token = getToken();
-  if (!token) throw new Error("Vous devez être connecté.");
-
-  const response = await fetch(`${API_BASE_URL}/account/export`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  if (!response.ok) {
-    throw new Error(await extractErrorMessage(response));
-  }
-
+  const response = await apiFetch("/account/export", {}, { authenticated: true });
   const blob = await response.blob();
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
@@ -374,32 +332,41 @@ export async function exportAccountData(): Promise<void> {
 }
 
 export async function deleteAccount(): Promise<void> {
-  const token = getToken();
-  if (!token) throw new Error("Vous devez être connecté.");
-
-  const response = await fetch(`${API_BASE_URL}/account`, {
-    method: "DELETE",
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  if (!response.ok) {
-    throw new Error(await extractErrorMessage(response));
-  }
+  await apiFetch("/account", { method: "DELETE" }, { authenticated: true });
 }
 
-async function getJson<T>(path: string): Promise<T> {
-  const token = getToken();
-  if (!token) throw new Error("Vous devez être connecté.");
+/**
+ * Single choke point for every API call below: adds the Bearer token when
+ * `authenticated` is requested and turns a non-2xx response into a thrown
+ * Error via extractErrorMessage — so that check (and the 401 → clearSession
+ * side effect inside it) can't be forgotten at a new call site the way it
+ * used to be duplicated across fetchCategories/fetchReviews/exportAccountData
+ * /deleteAccount before this helper existed.
+ */
+async function apiFetch(
+  path: string,
+  init: RequestInit = {},
+  options: { authenticated?: boolean } = {},
+): Promise<Response> {
+  const headers = new Headers(init.headers);
 
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  if (options.authenticated) {
+    const token = getToken();
+    if (!token) throw new Error("Vous devez être connecté.");
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+
+  const response = await fetch(`${API_BASE_URL}${path}`, { ...init, headers });
 
   if (!response.ok) {
     throw new Error(await extractErrorMessage(response));
   }
 
-  return response.json();
+  return response;
+}
+
+async function getJson<T>(path: string, options: { authenticated?: boolean } = { authenticated: true }): Promise<T> {
+  return (await apiFetch(path, {}, options)).json();
 }
 
 async function postJson<T>(
@@ -407,25 +374,13 @@ async function postJson<T>(
   body: unknown,
   options: { authenticated?: boolean } = {},
 ): Promise<T> {
-  const headers: Record<string, string> = { "Content-Type": "application/json" };
-
-  if (options.authenticated) {
-    const token = getToken();
-    if (!token) throw new Error("Vous devez être connecté.");
-    headers.Authorization = `Bearer ${token}`;
-  }
-
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    method: "POST",
-    headers,
-    body: JSON.stringify(body),
-  });
-
-  if (!response.ok) {
-    throw new Error(await extractErrorMessage(response));
-  }
-
-  return response.json();
+  return (
+    await apiFetch(
+      path,
+      { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) },
+      options,
+    )
+  ).json();
 }
 
 async function extractErrorMessage(response: Response): Promise<string> {
