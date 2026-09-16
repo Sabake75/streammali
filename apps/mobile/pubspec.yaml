@@ -44,7 +44,7 @@ dependencies:
   video_player: ^2.10.0
   cached_network_image: ^4.0.0
   chewie: ^1.11.2
-  path_provider: ^2.1.5
+  path_provider: ^2.1.6
   webview_flutter: ^4.13.0
   sentry_flutter: ^9.28.0
 
