@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
 
-import '../theme.dart';
+import 'bogolan_pattern.dart';
 
 /// Condensed mobile version of the web catalogue's hero section (same
-/// copy and gradient — apps/web/src/app/page.tsx) so the two apps open on
+/// copy and background — apps/web/src/app/page.tsx) so the two apps open on
 /// the same pitch instead of the Flutter default of a bare title bar.
 class HeroBanner extends StatelessWidget {
-  /// Poster URLs to show behind the text — same idea as the web hero. Real
-  /// posters read as "cinema"; a flat color block (this palette was
-  /// borrowed from PayDunya, see theme.dart) reads as "fintech app".
-  final List<String> posterUrls;
-
-  const HeroBanner({super.key, this.posterUrls = const []});
+  const HeroBanner({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,28 +14,19 @@ class HeroBanner extends StatelessWidget {
       borderRadius: BorderRadius.circular(20),
       child: Stack(
         children: [
-          Positioned.fill(
-            child: posterUrls.isEmpty
-                ? const DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [AppColors.orange700, AppColors.orange600, AppColors.orange500],
-                      ),
-                    ),
-                  )
-                : Row(
-                    children: List.generate(6, (index) {
-                      final url = posterUrls[index % posterUrls.length];
-                      return Expanded(child: Image.network(url, fit: BoxFit.cover, height: double.infinity));
-                    }),
-                  ),
-          ),
+          const Positioned.fill(child: BogolanPattern()),
           Positioned.fill(
             child: DecoratedBox(
               decoration: BoxDecoration(
-                color: AppColors.orange700.withValues(alpha: posterUrls.isEmpty ? 0 : 0.72),
+                gradient: LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [
+                    Colors.black.withValues(alpha: 0.85),
+                    Colors.black.withValues(alpha: 0.55),
+                    Colors.black.withValues(alpha: 0.2),
+                  ],
+                ),
               ),
             ),
           ),
@@ -50,7 +36,7 @@ class HeroBanner extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Le cinéma malien, à portée de Mobile Money.',
+                  'Le cinéma malien, en un clic.',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 22,

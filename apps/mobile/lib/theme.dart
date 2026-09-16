@@ -1,30 +1,32 @@
 import 'package:flutter/material.dart';
 
 /// Mirrors the web app's design tokens (apps/web/src/app/globals.css) so
-/// both platforms read as the same product. Palette inspired by paydunya.com:
-/// deep navy blue as the brand tone (logo, buttons, dark hero), sky blue as
-/// the secondary accent, on a very light blue-grey background. `orange*`
-/// fields keep their names from the previous palette to avoid touching every
-/// consuming widget — they now hold navy blue values.
+/// both platforms read as the same product. Palette "cinéma malien" : or
+/// chaud comme couleur de marque (logo, boutons, hero) et rouge grenat en
+/// accent secondaire, sur un fond crème chaud — remplace la palette
+/// précédente empruntée à PayDunya (bleu marine/bleu ciel), qui lisait
+/// "appli fintech" plutôt que "plateforme vidéo". `orange*` fields keep
+/// their names from the previous palette to avoid touching every consuming
+/// widget — they now hold gold values.
 abstract final class AppColors {
-  static const orange700 = Color(0xFF0A1B33);
-  static const orange600 = Color(0xFF0F2D52); // primary
-  static const orange500 = Color(0xFF2F6FE0);
-  static const orange400 = Color(0xFF548BE4);
-  static const orange300 = Color(0xFF8CB4EB);
-  static const orange100 = Color(0xFFDBE6F7);
-  static const orange50 = Color(0xFFF5F7FB);
-  static const accent600 = Color(0xFF0EA5E9); // accent
-  static const dark = Color(0xFF0A1B33); // dark
-  static const background = Color(0xFFF4F7FB);
+  static const orange700 = Color(0xFF7A3F0B);
+  static const orange600 = Color(0xFF95520F); // primary
+  static const orange500 = Color(0xFFA66414);
+  static const orange400 = Color(0xFFD98E26);
+  static const orange300 = Color(0xFFE7AD55);
+  static const orange100 = Color(0xFFFAE7C6);
+  static const orange50 = Color(0xFFFEF5E7);
+  static const accent600 = Color(0xFFBA1239); // accent
+  static const dark = Color(0xFF241B10); // dark
+  static const background = Color(0xFFFAF6F0);
   static const neutral900 = Color(0xFF171717);
   static const neutral300 = Color(0xFFD4D4D4);
 
   // Dark mode — mirrors apps/web/src/app/globals.css's
   // `@media (prefers-color-scheme: dark)` block and its neutral-800/900/950
   // border/surface pairing used throughout web's dark: classes.
-  static const darkBackground = Color(0xFF081428);
-  static const darkForeground = Color(0xFFEAF2FC);
+  static const darkBackground = Color(0xFF14110C);
+  static const darkForeground = Color(0xFFF6ECE0);
   static const darkSurface = Color(0xFF0A0A0A);
   static const darkInputSurface = Color(0xFF171717);
   static const darkBorder = Color(0xFF262626);

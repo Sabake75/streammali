@@ -94,8 +94,8 @@ class _LibraryScreenState extends State<LibraryScreen> {
             physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.all(12),
             gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 280,
-              mainAxisExtent: 296,
+              maxCrossAxisExtent: 170,
+              mainAxisExtent: 226,
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
             ),

@@ -72,8 +72,8 @@ class _CreatorVideosScreenState extends State<CreatorVideosScreen> {
             physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.all(12),
             gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 280,
-              mainAxisExtent: 260,
+              maxCrossAxisExtent: 170,
+              mainAxisExtent: 190,
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
             ),
