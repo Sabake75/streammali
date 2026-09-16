@@ -21,7 +21,7 @@ export function AuthStatus() {
   }
 
   return (
-    <div className="flex items-center gap-3 text-sm">
+    <div className="flex flex-wrap items-center justify-end gap-2 text-sm sm:gap-3">
       <NavLink
         href="/favoris"
         exact
