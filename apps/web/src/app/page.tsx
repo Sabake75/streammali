@@ -53,7 +53,7 @@ export default async function CataloguePage(props: PageProps<"/">) {
         ) : (
           <div className="absolute inset-0 bg-gradient-to-br from-orange-700 via-orange-600 to-orange-500" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-r from-orange-800/95 via-orange-800/85 to-orange-700/40" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/75 to-black/30" />
         <div className="hero-dots pointer-events-none absolute inset-0" />
         <div className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-accent-400/30 blur-3xl" />
         <div className="relative px-6 py-12 sm:px-10 sm:py-16">
