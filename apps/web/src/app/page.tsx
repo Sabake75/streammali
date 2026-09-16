@@ -1,7 +1,7 @@
-import Image from "next/image";
 import Link from "next/link";
 import { fetchCategories, fetchFeaturedVideos, fetchVideos } from "@/lib/api";
 import { CatalogueFilters } from "@/components/CatalogueFilters";
+import { HeroPattern } from "@/components/HeroPattern";
 import { OnboardingModal } from "@/components/OnboardingModal";
 import { Pagination } from "@/components/Pagination";
 import { RecommendedVideos } from "@/components/RecommendedVideos";
@@ -23,37 +23,12 @@ export default async function CataloguePage(props: PageProps<"/">) {
   ]);
   const creatorName = creatorId ? catalogue.data[0]?.creator.name : undefined;
 
-  // Real posters read as "cinema" — a flat color block reads as "fintech app"
-  // (this palette was deliberately borrowed from PayDunya, see globals.css).
-  // Falls back to the plain gradient below when there's no artwork yet
-  // (empty catalogue, or every video still missing a poster).
-  const heroPosters = (featured.length > 0 ? featured : catalogue.data)
-    .map((video) => video.poster_path)
-    .filter((path): path is string => Boolean(path));
-
   return (
     <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
       <OnboardingModal />
       <section className="relative overflow-hidden rounded-2xl text-white shadow-lg">
-        {heroPosters.length > 0 ? (
-          <div aria-hidden className="absolute inset-0 grid grid-cols-6">
-            {Array.from({ length: 6 }).map((_, index) => (
-              <div key={index} className="relative h-full">
-                <Image
-                  src={heroPosters[index % heroPosters.length]}
-                  alt=""
-                  fill
-                  sizes="17vw"
-                  className="object-cover"
-                  priority={index === 0}
-                />
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-orange-700 via-orange-600 to-orange-500" />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/75 to-black/30" />
+        <HeroPattern />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/55 to-black/20" />
         <div className="hero-dots pointer-events-none absolute inset-0" />
         <div className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-accent-400/30 blur-3xl" />
         <div className="relative px-6 py-12 sm:px-10 sm:py-16">
