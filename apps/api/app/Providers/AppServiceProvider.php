@@ -51,12 +51,24 @@ class AppServiceProvider extends ServiceProvider
         });
 
         // Shared ceiling for the rest of the authenticated write endpoints
-        // (reviews, reports, favorites, messages, payout requests) — none of
-        // these were throttled at all before. Generous enough that no real
-        // user ever notices it, tight enough that a compromised or scripted
-        // client can't hammer the API.
+        // (reviews, reports, favorites, messages, payout requests, creator
+        // video creation/upload) — none of these were throttled at all
+        // before. Generous enough that no real user ever notices it, tight
+        // enough that a compromised or scripted client can't hammer the API
+        // — creator video upload in particular calls Cloudflare Stream's
+        // real API on every request, reserving a TUS upload slot each time.
         RateLimiter::for('write-action', function (Request $request) {
             return Limit::perMinute(20)->by($request->user()?->id ?: $request->ip());
+        });
+
+        // Public, unauthenticated, and previously completely unthrottled —
+        // fired on every real page view but trivial to script-spam to
+        // inflate a video's view count (skews "populaire" sort and the
+        // count itself, both shown as real numbers to viewers/creators).
+        // Per IP since there's no user to key on; generous enough for
+        // someone binge-browsing the catalogue in one sitting.
+        RateLimiter::for('view-tracking', function (Request $request) {
+            return Limit::perMinute(30)->by($request->ip());
         });
     }
 }

@@ -50,7 +50,9 @@ Route::get('/videos', [VideoCatalogController::class, 'index'])->name('videos.in
 Route::get('/videos/recommended', [VideoRecommendationController::class, 'index'])->name('videos.recommended');
 Route::get('/videos/featured', [VideoCatalogController::class, 'featured'])->name('videos.featured');
 Route::get('/videos/{video}', [VideoCatalogController::class, 'show'])->name('videos.show');
-Route::post('/videos/{video}/view', [VideoCatalogController::class, 'view'])->name('videos.view');
+Route::post('/videos/{video}/view', [VideoCatalogController::class, 'view'])
+    ->middleware('throttle:view-tracking')
+    ->name('videos.view');
 Route::get('/videos/{video}/reviews', [VideoReviewController::class, 'index'])->name('videos.reviews.index');
 
 Route::middleware(['auth:sanctum', 'account.active'])->group(function () {
@@ -103,8 +105,12 @@ Route::middleware(['auth:sanctum', 'account.active'])->group(function () {
             ->name('upgrade');
 
         Route::get('/videos', [CreatorVideoController::class, 'index'])->name('videos.index');
-        Route::post('/videos', [CreatorVideoController::class, 'store'])->name('videos.store');
-        Route::post('/videos/{video}/source', [VideoSourceController::class, 'store'])->name('videos.source.store');
+        Route::post('/videos', [CreatorVideoController::class, 'store'])
+            ->middleware('throttle:write-action')
+            ->name('videos.store');
+        Route::post('/videos/{video}/source', [VideoSourceController::class, 'store'])
+            ->middleware('throttle:write-action')
+            ->name('videos.source.store');
         Route::get('/videos/{video}/source', [VideoSourceController::class, 'show'])->name('videos.source.show');
 
         Route::get('/balance', [PayoutController::class, 'balance'])->name('balance');
