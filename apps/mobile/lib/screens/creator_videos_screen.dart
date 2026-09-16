@@ -54,7 +54,7 @@ class _CreatorVideosScreenState extends State<CreatorVideosScreen> {
           }
 
           if (snapshot.hasError) {
-            return ErrorRetryView(onRetry: _reload);
+            return ErrorRetryView(onRetry: _reload, error: snapshot.error);
           }
 
           final videos = snapshot.data!.data;

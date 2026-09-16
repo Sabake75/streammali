@@ -387,7 +387,7 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
                 }
 
                 if (snapshot.hasError) {
-                  return ErrorRetryView(onRetry: _reload);
+                  return ErrorRetryView(onRetry: _reload, error: snapshot.error);
                 }
 
                 final catalogue = snapshot.data!;

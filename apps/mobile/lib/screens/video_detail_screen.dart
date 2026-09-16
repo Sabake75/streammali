@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../models/paginated_response.dart';
@@ -85,7 +86,7 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> with WidgetsBindi
           }
 
           if (snapshot.hasError) {
-            return ErrorRetryView(onRetry: () => setState(_loadVideo));
+            return ErrorRetryView(onRetry: () => setState(_loadVideo), error: snapshot.error);
           }
 
           final video = snapshot.data;
@@ -118,10 +119,10 @@ class _VideoDetailScreenState extends State<VideoDetailScreen> with WidgetsBindi
                           child: Container(
                             color: Theme.of(context).colorScheme.surfaceContainerHighest,
                             child: video.posterPath != null
-                                ? Image.network(
-                                    video.posterPath!,
+                                ? CachedNetworkImage(
+                                    imageUrl: video.posterPath!,
                                     fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) =>
+                                    errorWidget: (context, url, error) =>
                                         const Center(child: Text('Pas de jaquette')),
                                   )
                                 : const Center(child: Text('Pas de jaquette')),

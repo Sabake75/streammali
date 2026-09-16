@@ -63,6 +63,27 @@ class ApiClient {
     defaultValue: 'https://streammali.ml',
   );
 
+  /// Applied to every simple JSON call below (not to file upload/download,
+  /// which are inherently long-running and already have their own
+  /// retry/progress handling) so a stalled 3G/4G connection fails with a
+  /// message instead of leaving the screen spinning forever.
+  static const Duration _requestTimeout = Duration(seconds: 15);
+
+  Never _onTimeout() =>
+      throw ApiException('Le serveur met trop de temps à répondre. Vérifiez votre connexion internet.');
+
+  Future<http.Response> _get(Uri url, {Map<String, String>? headers}) =>
+      http.get(url, headers: headers).timeout(_requestTimeout, onTimeout: _onTimeout);
+
+  Future<http.Response> _post(Uri url, {Map<String, String>? headers, Object? body}) =>
+      http.post(url, headers: headers, body: body).timeout(_requestTimeout, onTimeout: _onTimeout);
+
+  Future<http.Response> _delete(Uri url, {Map<String, String>? headers}) =>
+      http.delete(url, headers: headers).timeout(_requestTimeout, onTimeout: _onTimeout);
+
+  Future<http.Response> _head(Uri url, {Map<String, String>? headers}) =>
+      http.head(url, headers: headers).timeout(_requestTimeout, onTimeout: _onTimeout);
+
   Future<PaginatedResponse<Video>> fetchVideos({
     String? category,
     String? search,
@@ -81,7 +102,7 @@ class ApiClient {
       queryParameters: query.isEmpty ? null : query,
     );
 
-    final response = await http.get(uri);
+    final response = await _get(uri);
 
     if (response.statusCode != 200) {
       throw ApiException('Impossible de charger le catalogue (${response.statusCode}).');
@@ -92,7 +113,7 @@ class ApiClient {
   }
 
   Future<List<VideoCategory>> fetchCategories() async {
-    final response = await http.get(Uri.parse('$baseUrl/categories'));
+    final response = await _get(Uri.parse('$baseUrl/categories'));
 
     if (response.statusCode != 200) {
       throw ApiException('Impossible de charger les catégories (${response.statusCode}).');
@@ -105,7 +126,7 @@ class ApiClient {
   }
 
   Future<Video?> fetchVideo(int id) async {
-    final response = await http.get(Uri.parse('$baseUrl/videos/$id'));
+    final response = await _get(Uri.parse('$baseUrl/videos/$id'));
 
     if (response.statusCode == 404) return null;
     if (response.statusCode != 200) {
@@ -121,7 +142,7 @@ class ApiClient {
   /// silently swallow view increments (see the web client's RecordView).
   Future<void> recordVideoView(int id) async {
     try {
-      await http.post(Uri.parse('$baseUrl/videos/$id/view'));
+      await _post(Uri.parse('$baseUrl/videos/$id/view'));
     } catch (_) {
       // ignore — view tracking is not critical to the page working
     }
@@ -146,8 +167,7 @@ class ApiClient {
   }
 
   Future<void> logout(String token) async {
-    await http
-        .post(Uri.parse('$baseUrl/logout'), headers: {'Authorization': 'Bearer $token'})
+    await _post(Uri.parse('$baseUrl/logout'), headers: {'Authorization': 'Bearer $token'})
         .catchError((_) => http.Response('', 0));
   }
 
@@ -155,7 +175,7 @@ class ApiClient {
   /// clipboard) rather than writing a file, to avoid a file-system/share
   /// plugin dependency for a rarely-used export button.
   Future<String> exportAccountData(String token) async {
-    final response = await http.get(
+    final response = await _get(
       Uri.parse('$baseUrl/account/export'),
       headers: {'Authorization': 'Bearer $token'},
     );
@@ -168,7 +188,7 @@ class ApiClient {
   }
 
   Future<void> deleteAccount(String token) async {
-    final response = await http.delete(
+    final response = await _delete(
       Uri.parse('$baseUrl/account'),
       headers: {'Authorization': 'Bearer $token'},
     );
@@ -183,7 +203,7 @@ class ApiClient {
     required String payerMsisdn,
     required String token,
   }) async {
-    final response = await http.post(
+    final response = await _post(
       Uri.parse('$baseUrl/videos/$videoId/purchase'),
       headers: {
         'Content-Type': 'application/json',
@@ -207,7 +227,7 @@ class ApiClient {
     required int videoId,
     required String token,
   }) async {
-    final response = await http.post(
+    final response = await _post(
       Uri.parse('$baseUrl/videos/$videoId/download'),
       headers: {'Authorization': 'Bearer $token'},
     );
@@ -257,7 +277,7 @@ class ApiClient {
     required String reason,
     required String token,
   }) async {
-    final response = await http.post(
+    final response = await _post(
       Uri.parse('$baseUrl/videos/$videoId/report'),
       headers: {
         'Content-Type': 'application/json',
@@ -275,7 +295,7 @@ class ApiClient {
   }
 
   Future<PaginatedResponse<Review>> fetchReviews(int videoId) async {
-    final response = await http.get(Uri.parse('$baseUrl/videos/$videoId/reviews'));
+    final response = await _get(Uri.parse('$baseUrl/videos/$videoId/reviews'));
 
     if (response.statusCode != 200) {
       throw ApiException('Impossible de charger les avis (${response.statusCode}).');
@@ -291,7 +311,7 @@ class ApiClient {
     String? comment,
     required String token,
   }) async {
-    final response = await http.post(
+    final response = await _post(
       Uri.parse('$baseUrl/videos/$videoId/reviews'),
       headers: {
         'Content-Type': 'application/json',
@@ -312,7 +332,7 @@ class ApiClient {
   }
 
   Future<bool> toggleFavorite({required int videoId, required String token}) async {
-    final response = await http.post(
+    final response = await _post(
       Uri.parse('$baseUrl/videos/$videoId/favorite'),
       headers: {'Authorization': 'Bearer $token'},
     );
@@ -326,7 +346,7 @@ class ApiClient {
   }
 
   Future<PaginatedResponse<Video>> fetchMyFavorites(String token) async {
-    final response = await http.get(
+    final response = await _get(
       Uri.parse('$baseUrl/favorites'),
       headers: {'Authorization': 'Bearer $token'},
     );
@@ -340,7 +360,7 @@ class ApiClient {
   }
 
   Future<List<Video>> fetchRecommendedVideos() async {
-    final response = await http.get(Uri.parse('$baseUrl/videos/recommended'));
+    final response = await _get(Uri.parse('$baseUrl/videos/recommended'));
 
     if (response.statusCode != 200) {
       throw ApiException('Impossible de charger les recommandations (${response.statusCode}).');
@@ -351,7 +371,7 @@ class ApiClient {
   }
 
   Future<List<Video>> fetchFeaturedVideos() async {
-    final response = await http.get(Uri.parse('$baseUrl/videos/featured'));
+    final response = await _get(Uri.parse('$baseUrl/videos/featured'));
 
     if (response.statusCode != 200) {
       throw ApiException('Impossible de charger les vidéos en vedette (${response.statusCode}).');
@@ -362,7 +382,7 @@ class ApiClient {
   }
 
   Future<PaginatedResponse<Video>> fetchMyPurchases(String token) async {
-    final response = await http.get(
+    final response = await _get(
       Uri.parse('$baseUrl/purchases'),
       headers: {'Authorization': 'Bearer $token'},
     );
@@ -376,7 +396,7 @@ class ApiClient {
   }
 
   Future<List<CreatorVideo>> fetchMyVideos(String token) async {
-    final response = await http.get(
+    final response = await _get(
       Uri.parse('$baseUrl/creator/videos'),
       headers: {'Authorization': 'Bearer $token'},
     );
@@ -399,7 +419,7 @@ class ApiClient {
     int? price,
     int? durationSeconds,
   }) async {
-    final response = await http.post(
+    final response = await _post(
       Uri.parse('$baseUrl/creator/videos'),
       headers: {
         'Content-Type': 'application/json',
@@ -427,7 +447,7 @@ class ApiClient {
     required String token,
     required int fileSize,
   }) async {
-    final response = await http.post(
+    final response = await _post(
       Uri.parse('$baseUrl/creator/videos/$videoId/source'),
       headers: {
         'Content-Type': 'application/json',
@@ -516,7 +536,7 @@ class ApiClient {
   }
 
   Future<int> _fetchTusOffset(String uploadUrl) async {
-    final response = await http.head(Uri.parse(uploadUrl), headers: {'Tus-Resumable': _tusResumableVersion});
+    final response = await _head(Uri.parse(uploadUrl), headers: {'Tus-Resumable': _tusResumableVersion});
     final offset = int.tryParse(response.headers['upload-offset'] ?? '');
     if (response.statusCode < 200 || response.statusCode >= 300 || offset == null) {
       throw ApiException('Échec de l\'envoi du fichier vidéo (${response.statusCode}).');
@@ -569,7 +589,7 @@ class ApiClient {
     required int videoId,
     required String token,
   }) async {
-    final response = await http.get(
+    final response = await _get(
       Uri.parse('$baseUrl/creator/videos/$videoId/source'),
       headers: {'Authorization': 'Bearer $token'},
     );
@@ -583,7 +603,7 @@ class ApiClient {
   }
 
   Future<CreatorStats> fetchStats(String token) async {
-    final response = await http.get(
+    final response = await _get(
       Uri.parse('$baseUrl/creator/stats'),
       headers: {'Authorization': 'Bearer $token'},
     );
@@ -596,7 +616,7 @@ class ApiClient {
   }
 
   Future<CreatorBalance> fetchBalance(String token) async {
-    final response = await http.get(
+    final response = await _get(
       Uri.parse('$baseUrl/creator/balance'),
       headers: {'Authorization': 'Bearer $token'},
     );
@@ -609,7 +629,7 @@ class ApiClient {
   }
 
   Future<List<Payout>> fetchMyPayouts(String token) async {
-    final response = await http.get(
+    final response = await _get(
       Uri.parse('$baseUrl/creator/payouts'),
       headers: {'Authorization': 'Bearer $token'},
     );
@@ -628,7 +648,7 @@ class ApiClient {
   }
 
   Future<TransactionPage> fetchMyTransactions(String token, {int page = 1}) async {
-    final response = await http.get(
+    final response = await _get(
       Uri.parse('$baseUrl/creator/transactions?page=$page'),
       headers: {'Authorization': 'Bearer $token'},
     );
@@ -645,7 +665,7 @@ class ApiClient {
     required String destinationMsisdn,
     required String token,
   }) async {
-    final response = await http.post(
+    final response = await _post(
       Uri.parse('$baseUrl/creator/payouts'),
       headers: {
         'Content-Type': 'application/json',
@@ -662,7 +682,7 @@ class ApiClient {
   }
 
   Future<List<Message>> fetchMyMessages(String token) async {
-    final response = await http.get(
+    final response = await _get(
       Uri.parse('$baseUrl/messages'),
       headers: {'Authorization': 'Bearer $token'},
     );
@@ -678,7 +698,7 @@ class ApiClient {
   }
 
   Future<Message> sendMessage({required String body, required String token}) async {
-    final response = await http.post(
+    final response = await _post(
       Uri.parse('$baseUrl/messages'),
       headers: {
         'Content-Type': 'application/json',
@@ -695,7 +715,7 @@ class ApiClient {
   }
 
   Future<NotificationListResult> fetchNotifications(String token) async {
-    final response = await http.get(
+    final response = await _get(
       Uri.parse('$baseUrl/notifications'),
       headers: {'Authorization': 'Bearer $token'},
     );
@@ -714,7 +734,7 @@ class ApiClient {
   }
 
   Future<void> markNotificationRead({required String id, required String token}) async {
-    final response = await http.post(
+    final response = await _post(
       Uri.parse('$baseUrl/notifications/$id/read'),
       headers: {'Authorization': 'Bearer $token'},
     );
@@ -725,7 +745,7 @@ class ApiClient {
   }
 
   Future<void> markAllNotificationsRead(String token) async {
-    final response = await http.post(
+    final response = await _post(
       Uri.parse('$baseUrl/notifications/read-all'),
       headers: {'Authorization': 'Bearer $token'},
     );
@@ -790,7 +810,7 @@ class ApiClient {
   }
 
   Future<AuthResult> _postAuth(String path, Map<String, dynamic> body) async {
-    final response = await http.post(
+    final response = await _post(
       Uri.parse('$baseUrl$path'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(body),

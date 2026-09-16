@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../models/video.dart';
@@ -21,10 +22,10 @@ class VideoCard extends StatelessWidget {
             AspectRatio(
               aspectRatio: 16 / 9,
               child: video.posterPath != null
-                  ? Image.network(
-                      video.posterPath!,
+                  ? CachedNetworkImage(
+                      imageUrl: video.posterPath!,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) =>
+                      errorWidget: (context, url, error) =>
                           _PosterPlaceholder(categoryValue: video.category.value),
                     )
                   : _PosterPlaceholder(categoryValue: video.category.value),

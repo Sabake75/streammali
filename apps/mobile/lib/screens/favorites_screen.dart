@@ -71,7 +71,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           }
 
           if (snapshot.hasError) {
-            return ErrorRetryView(onRetry: _reload);
+            return ErrorRetryView(onRetry: _reload, error: snapshot.error);
           }
 
           _videos ??= snapshot.data!.data;

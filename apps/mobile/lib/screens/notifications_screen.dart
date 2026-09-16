@@ -72,7 +72,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           }
 
           if (snapshot.hasError) {
-            return ErrorRetryView(onRetry: _reload);
+            return ErrorRetryView(onRetry: _reload, error: snapshot.error);
           }
 
           final notifications = snapshot.data!.data;
