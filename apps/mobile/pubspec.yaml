@@ -45,7 +45,7 @@ dependencies:
   cached_network_image: ^4.0.0
   chewie: ^1.11.2
   path_provider: ^2.1.5
-  webview_flutter: ^4.13.0
+  webview_flutter: ^4.14.1
   sentry_flutter: ^9.28.0
 
 dev_dependencies:
