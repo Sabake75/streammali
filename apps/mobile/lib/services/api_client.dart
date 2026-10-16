@@ -13,6 +13,7 @@ import '../models/review.dart';
 import '../models/transaction.dart';
 import '../models/user.dart';
 import '../models/video.dart';
+import 'auth_controller.dart';
 
 class ApiException implements Exception {
   final String message;
@@ -72,17 +73,55 @@ class ApiClient {
   Never _onTimeout() =>
       throw ApiException('Le serveur met trop de temps à répondre. Vérifiez votre connexion internet.');
 
-  Future<http.Response> _get(Uri url, {Map<String, String>? headers}) =>
-      http.get(url, headers: headers).timeout(_requestTimeout, onTimeout: _onTimeout);
+  /// A 401 means the stored token is no longer valid (expired or revoked).
+  /// A suspended/blocked account instead gets 403 with an `account_status`
+  /// field on the body (EnsureAccountIsActive — a real account in good
+  /// standing as far as auth is concerned, just not allowed to act), which
+  /// an ordinary 403 ("Seuls les créateurs peuvent…") never carries, so
+  /// this only fires for the account-inactive case, not every permission
+  /// error. Without either check, the app stays "logged in" client-side
+  /// forever, silently retrying with a dead token — same gap the web
+  /// client had until its own fix (see apps/web/src/lib/api-client.ts).
+  void _clearSessionIfAuthRejected(http.Response response) {
+    if (response.statusCode == 401) {
+      AuthController.instance.clearSession();
+      return;
+    }
 
-  Future<http.Response> _post(Uri url, {Map<String, String>? headers, Object? body}) =>
-      http.post(url, headers: headers, body: body).timeout(_requestTimeout, onTimeout: _onTimeout);
+    if (response.statusCode == 403) {
+      try {
+        final json = jsonDecode(response.body) as Map<String, dynamic>;
+        if (json['account_status'] is String) AuthController.instance.clearSession();
+      } catch (_) {
+        // not a JSON body — nothing to check
+      }
+    }
+  }
 
-  Future<http.Response> _delete(Uri url, {Map<String, String>? headers}) =>
-      http.delete(url, headers: headers).timeout(_requestTimeout, onTimeout: _onTimeout);
+  Future<http.Response> _get(Uri url, {Map<String, String>? headers}) async {
+    final response = await http.get(url, headers: headers).timeout(_requestTimeout, onTimeout: _onTimeout);
+    _clearSessionIfAuthRejected(response);
+    return response;
+  }
 
-  Future<http.Response> _head(Uri url, {Map<String, String>? headers}) =>
-      http.head(url, headers: headers).timeout(_requestTimeout, onTimeout: _onTimeout);
+  Future<http.Response> _post(Uri url, {Map<String, String>? headers, Object? body}) async {
+    final response =
+        await http.post(url, headers: headers, body: body).timeout(_requestTimeout, onTimeout: _onTimeout);
+    _clearSessionIfAuthRejected(response);
+    return response;
+  }
+
+  Future<http.Response> _delete(Uri url, {Map<String, String>? headers}) async {
+    final response = await http.delete(url, headers: headers).timeout(_requestTimeout, onTimeout: _onTimeout);
+    _clearSessionIfAuthRejected(response);
+    return response;
+  }
+
+  Future<http.Response> _head(Uri url, {Map<String, String>? headers}) async {
+    final response = await http.head(url, headers: headers).timeout(_requestTimeout, onTimeout: _onTimeout);
+    _clearSessionIfAuthRejected(response);
+    return response;
+  }
 
   Future<PaginatedResponse<Video>> fetchVideos({
     String? category,
