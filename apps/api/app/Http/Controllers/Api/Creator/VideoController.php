@@ -28,7 +28,15 @@ class VideoController extends Controller
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'category' => ['required', 'string', 'exists:categories,slug'],
-            'poster_path' => ['nullable', 'string', 'max:2048'],
+            // `url` rule only matters for a caller-supplied value: the
+            // normal path (Cloudflare's auto-generated thumbnail, set by
+            // RefreshVideoSourceStatus) never goes through this validation
+            // at all. Without it, a creator could point poster_path at an
+            // arbitrary non-image string, rendered as <img src> to every
+            // viewer of the catalogue and used in the Open Graph tags
+            // WhatsApp/etc. fetch — a tracking beacon leaking viewers' IPs
+            // to a third party of the creator's choosing.
+            'poster_path' => ['nullable', 'string', 'max:2048', 'url'],
             'duration_seconds' => ['nullable', 'integer', 'min:1'],
             'price' => ['nullable', 'integer', 'min:0'],
         ]);
