@@ -41,4 +41,17 @@ interface VideoStorageGateway
      * expected result, not an error.
      */
     public function getDownloadState(Video $video): VideoDownloadState;
+
+    /**
+     * A short-lived, tokenized version of $video->playback_url — the
+     * un-tokenized URL plays for anyone who gets hold of it, with no
+     * server involvement on our side once Cloudflare has it (see
+     * App\Http\Resources\VideoResource, the only caller: it already
+     * decides WHO gets handed a playback URL at all, this decides how
+     * long it keeps working once they have it). Null when $video has no
+     * playback_url/provider_video_id yet, or when no signing key is
+     * configured — the caller falls back to the un-tokenized URL in that
+     * case rather than breaking playback.
+     */
+    public function signPlaybackUrl(Video $video): ?string;
 }

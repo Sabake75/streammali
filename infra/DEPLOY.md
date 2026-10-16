@@ -22,7 +22,20 @@ Les pièces d'identité des créateurs ne peuvent pas rester sur le disque du co
 
 Ces valeurs vont dans `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_BUCKET`, `AWS_ENDPOINT` sur Render (étape 3).
 
-## 2. Render (API + web + PostgreSQL)
+## 2. Cloudflare Stream (signature des URLs de lecture)
+
+Optionnel mais fortement recommandé avant la vraie mise en prod (audit sécurité du 2026-10-16) : sans ça, `playback_url` est l'URL HLS publique brute que Cloudflare renvoie par défaut — notre API gate correctement qui reçoit ce lien (`VideoResource` ne l'expose qu'à l'acheteur), mais une fois le lien en main, n'importe qui peut le streamer indéfiniment sans authentification. Voir `App\Domain\Video\Gateways\CloudflareStreamGateway::signPlaybackUrl()`.
+
+1. Créer une clé de signature sur le vrai compte (nécessite le même `CLOUDFLARE_STREAM_API_TOKEN`/`CLOUDFLARE_STREAM_ACCOUNT_ID` qu'ailleurs) :
+   ```
+   curl -X POST "https://api.cloudflare.com/client/v4/accounts/<account_id>/stream/keys" \
+     -H "Authorization: Bearer <api_token>"
+   ```
+   La réponse contient `result.id` (→ `CLOUDFLARE_STREAM_SIGNING_KEY_ID`) et `result.pem` (→ `CLOUDFLARE_STREAM_SIGNING_KEY_PEM`, clé privée RSA — à garder secrète comme n'importe quelle autre clé API, jamais committée). Cloudflare ne la renvoie qu'une fois, à cet appel : pas de moyen de la récupérer après coup, seulement de révoquer et recréer.
+2. Renseigner ces deux valeurs sur Render (étape 3 ci-dessous), plus `CLOUDFLARE_STREAM_SIGNED_URL_TTL_SECONDS` si la valeur par défaut (14400 = 4h, pensée pour couvrir une séance de visionnage même avec pauses) ne convient pas.
+3. **Ne pas activer ça rétroactivement sur des vidéos déjà uploadées sans y repenser** : `requireSignedURLs` n'est demandé qu'à la création de l'upload (`createUpload()`), pas appliqué aux vidéos existantes. Celles déjà en ligne avant la création de cette clé restent sur l'URL publique jusqu'à un ré-upload — pas un problème bloquant (elles continuent de fonctionner), juste une protection qui ne s'applique qu'aux nouvelles vidéos à partir de ce moment-là.
+
+## 3. Render (API + web + PostgreSQL)
 
 `render.yaml` déclare trois ressources : la base Postgres, `streammali-api` (Docker/FrankenPHP) et `streammali-web` (Next.js, runtime Node natif — `buildCommand: npm install && npm run build`, `startCommand: npm run start`, `rootDir: apps/web`).
 
@@ -34,6 +47,7 @@ Ces valeurs vont dans `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_BUCKET`
    - `ORANGE_MONEY_CLIENT_ID`, `ORANGE_MONEY_CLIENT_SECRET`, `ORANGE_MONEY_MERCHANT_KEY`, `ORANGE_MONEY_RETURN_URL`, `ORANGE_MONEY_CANCEL_URL`, `ORANGE_MONEY_NOTIF_URL` — gateway de paiement actif (voir `AppServiceProvider`), compte sandbox "Orange Money WebPay Dev" du Developer Center, vérifié en réel (voir `CLAUDE.md`). `merchant_key` sans le point final affiché sur le Developer Center. `ORANGE_MONEY_COUNTRY` vaut `dev` (hardcodé dans `render.yaml`, pas `sync: false`) tant que seul ce produit sandbox est approuvé.
    - `PAYDUNYA_MASTER_KEY`, `PAYDUNYA_PRIVATE_KEY`, `PAYDUNYA_PUBLIC_KEY`, `PAYDUNYA_TOKEN` — gateway de repli, bloqué par son KYC marchand (voir `CLAUDE.md`).
    - `CLOUDFLARE_STREAM_ACCOUNT_ID`, `CLOUDFLARE_STREAM_API_TOKEN`.
+   - `CLOUDFLARE_STREAM_SIGNING_KEY_ID`, `CLOUDFLARE_STREAM_SIGNING_KEY_PEM` — optionnel (étape 2 ci-dessus).
 4. Après le premier déploiement de chaque service, Render assigne une URL `*.onrender.com` :
    - Côté `streammali-api` : la reporter dans `APP_URL`, puis redéployer manuellement.
    - Côté `streammali-web` : la reporter dans `NEXT_PUBLIC_SITE_URL`, puis redéployer manuellement.
@@ -47,12 +61,12 @@ Les migrations tournent automatiquement via le "Pre-Deploy Command" (`php artisa
 - Redéployer les deux services après ces changements. `NEXT_PUBLIC_API_URL` (côté web) est déjà mis à jour dans `render.yaml` (`https://api.streammali.ml/api`), pas besoin de le toucher manuellement.
 - Ces URLs Orange Money doivent être publiques (Orange rejette localhost) et déjà servies en HTTPS avant d'être renseignées côté Developer Center Orange Money — le domaine étant maintenant vérifié, c'est bon.
 
-## 3. Mobile
+## 4. Mobile
 
 La CI (`.github/workflows/ci.yml`) construit un APK release et un App Bundle (`.aab`, format de soumission Play Store) à chaque push sur `master`, publiés comme artefacts GitHub Actions téléchargeables (30 jours de rétention). Signature : avec la vraie clé de release si les secrets `ANDROID_KEYSTORE_BASE64`/`ANDROID_KEYSTORE_PASSWORD`/`ANDROID_KEY_ALIAS` sont configurés (repo Settings → Secrets → Actions), sinon repli automatique sur la signature de debug (suffisant pour tester, pas pour soumettre au Play Store).
 
 Préparation de la publication Play Store déjà avancée (voir `infra/PLAY_STORE_LISTING.md` et `infra/PLAY_STORE_DATA_SAFETY.md`) : fiche store et formulaire sécurité des données rédigés, feature graphic générée. Reste à faire manuellement : compte développeur Play Console (payant, externe), captures d'écran (attendent du vrai contenu en prod), et la soumission elle-même.
 
-## 4. Recommandé (à faire manuellement)
+## 5. Recommandé (à faire manuellement)
 
 GitHub → Settings → Branches → règle de protection sur `master` exigeant que les 3 jobs CI (`API`, `Web`, `Mobile`) passent avant un merge.

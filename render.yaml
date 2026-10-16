@@ -172,6 +172,16 @@ services:
         value: "7200"
       - key: CLOUDFLARE_STREAM_PREVIEW_DURATION_SECONDS
         value: "45"
+      # Optionnel mais recommandé avant la vraie mise en prod (sécurité
+      # audit du 2026-10-16) — voir infra/DEPLOY.md pour la commande de
+      # création de cette clé sur le vrai compte. Laissé vide, playback_url
+      # reste l'URL publique brute (comportement actuel, inchangé).
+      - key: CLOUDFLARE_STREAM_SIGNING_KEY_ID
+        sync: false
+      - key: CLOUDFLARE_STREAM_SIGNING_KEY_PEM
+        sync: false
+      - key: CLOUDFLARE_STREAM_SIGNED_URL_TTL_SECONDS
+        value: "14400"
 
   # Web (Next.js) — sur Render plutôt que Vercel : même compte déjà en
   # place, et `next start` gère nativement le $PORT que Render assigne

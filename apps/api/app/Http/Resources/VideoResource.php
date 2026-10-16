@@ -2,12 +2,14 @@
 
 namespace App\Http\Resources;
 
+use App\Domain\Video\Contracts\VideoStorageGateway;
 use App\Domain\Video\Enums\VideoSourceStatus;
+use App\Domain\Video\Models\Video;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @mixin \App\Domain\Video\Models\Video
+ * @mixin Video
  */
 class VideoResource extends JsonResource
 {
@@ -51,10 +53,16 @@ class VideoResource extends JsonResource
             ),
             'favorited' => $this->when($user !== null, fn () => $this->resource->isFavoritedBy($user)),
             // Only unlocked once bought and actually ready to stream —
-            // "déverrouillage immédiat" from the cahier des charges.
+            // "déverrouillage immédiat" from the cahier des charges. A
+            // short-lived signed URL (see
+            // CloudflareStreamGateway::signPlaybackUrl) when a signing key
+            // is configured, falling back to the un-tokenized URL
+            // otherwise — same URL this resource always returned, so
+            // nothing breaks before a signing key exists on the real
+            // account (see infra/DEPLOY.md).
             'playback_url' => $this->when(
                 $purchased && $this->resource->source_status === VideoSourceStatus::Ready,
-                $this->playback_url,
+                fn () => app(VideoStorageGateway::class)->signPlaybackUrl($this->resource) ?? $this->playback_url,
             ),
             // Unlike playback_url, always exposed (even to guests) once
             // set — it's a short standalone clip, not the gated asset.

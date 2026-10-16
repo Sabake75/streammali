@@ -71,13 +71,29 @@ return [
         'callback_url' => env('PAYDUNYA_CALLBACK_URL'),
     ],
 
-    // À vérifier contre la doc Cloudflare Stream une fois un compte
-    // disponible — voir App\Domain\Video\Gateways\CloudflareStreamGateway.
+    // Vérifié en réel (2026-08-24) avec un compte Cloudflare Stream réel —
+    // voir App\Domain\Video\Gateways\CloudflareStreamGateway.
     'cloudflare_stream' => [
         'account_id' => env('CLOUDFLARE_STREAM_ACCOUNT_ID'),
         'api_token' => env('CLOUDFLARE_STREAM_API_TOKEN'),
         'max_duration_seconds' => (int) env('CLOUDFLARE_STREAM_MAX_DURATION_SECONDS', 7200),
         'preview_duration_seconds' => (int) env('CLOUDFLARE_STREAM_PREVIEW_DURATION_SECONDS', 45),
+        // Audit sécurité avant mise en prod (2026-10-16) : sans ça,
+        // playback_url est l'URL HLS publique brute que Cloudflare renvoie
+        // par défaut — notre API gate correctement QUI reçoit ce lien
+        // (VideoResource ne l'expose qu'à l'acheteur), mais une fois le
+        // lien en main, n'importe qui peut le streamer indéfiniment sans
+        // authentification, Cloudflare le servant directement. Avec une
+        // clé de signature configurée, createUpload() active
+        // requiresignedurls et VideoResource expose un lien à jeton
+        // (JWT court terme) à la place du lien statique — voir
+        // CloudflareStreamGateway::signPlaybackUrl(). Laissé vide tant que
+        // la clé n'est pas créée sur le vrai compte (voir infra/DEPLOY.md) :
+        // le gateway retombe alors sur l'URL publique brute, comportement
+        // actuel inchangé plutôt qu'un blocage.
+        'signing_key_id' => env('CLOUDFLARE_STREAM_SIGNING_KEY_ID'),
+        'signing_key_pem' => env('CLOUDFLARE_STREAM_SIGNING_KEY_PEM'),
+        'signed_url_ttl_seconds' => (int) env('CLOUDFLARE_STREAM_SIGNED_URL_TTL_SECONDS', 14400),
     ],
 
 ];
