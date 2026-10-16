@@ -384,15 +384,23 @@ async function postJson<T>(
 }
 
 async function extractErrorMessage(response: Response): Promise<string> {
-  // A 401 means the stored token is no longer valid (expired, revoked, or
-  // the account got suspended/blocked mid-session — see CLAUDE.md, that
-  // takes effect immediately on existing tokens). Without this, the app
-  // stays "logged in" client-side forever, silently failing every
-  // subsequent request with no way out except manually visiting /connexion.
+  // A 401 means the stored token is no longer valid (expired or revoked).
+  // Without this, the app stays "logged in" client-side forever, silently
+  // failing every subsequent request with no way out except manually
+  // visiting /connexion.
   if (response.status === 401) clearSession();
 
   try {
     const json = await response.json();
+
+    // A suspended/blocked account gets 403, not 401 (EnsureAccountIsActive
+    // — it's a real account in good standing as far as auth is concerned,
+    // just not allowed to act), so the check above alone misses it. The
+    // body carries `account_status` precisely so this case can be told
+    // apart from an ordinary 403 ("Seuls les créateurs peuvent…") that
+    // must NOT log the user out.
+    if (response.status === 403 && typeof json.account_status === "string") clearSession();
+
     if (json.errors) {
       return Object.values(json.errors as Record<string, string[]>).flat().join(" ");
     }
