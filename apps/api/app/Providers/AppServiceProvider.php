@@ -29,11 +29,19 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // A 4-digit code has only 10 000 combinations, so login attempts must
-        // be throttled per phone+IP to keep brute-forcing impractical.
+        // be throttled per phone+IP to keep brute-forcing impractical. That
+        // alone isn't enough against an attacker rotating through many IPs
+        // (cheap with proxies) while keeping the same target phone — 5/IP/
+        // minute lets them exhaust all 10 000 combinations in well under an
+        // hour with a modest proxy pool. The second, phone-only limit closes
+        // that gap: it doesn't care how many IPs the attempts come from.
         RateLimiter::for('login', function (Request $request) {
-            $key = Str::lower((string) $request->input('phone')).'|'.$request->ip();
+            $phone = Str::lower((string) $request->input('phone'));
 
-            return Limit::perMinute(5)->by($key);
+            return [
+                Limit::perMinute(5)->by($phone.'|'.$request->ip()),
+                Limit::perHour(20)->by($phone),
+            ];
         });
 
         // Account creation was completely unthrottled — by IP (no user yet
