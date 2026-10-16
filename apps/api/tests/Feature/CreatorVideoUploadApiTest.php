@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Domain\Moderation\Enums\VideoStatus;
 use App\Domain\Video\Models\Video;
 use App\Enums\UserRole;
 use App\Models\User;

@@ -4,6 +4,8 @@ namespace Tests\Feature;
 
 use App\Domain\Video\Models\Category;
 use App\Domain\Video\Models\Video;
+use App\Enums\UserRole;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -67,8 +69,8 @@ class VideoCatalogApiTest extends TestCase
 
     public function test_catalogue_search_also_matches_the_creator_name(): void
     {
-        $creator = \App\Models\User::factory()->create([
-            'role' => \App\Enums\UserRole::Creator,
+        $creator = User::factory()->create([
+            'role' => UserRole::Creator,
             'name' => 'Fatoumata Diarra',
         ]);
         Video::factory()->approved()->create(['creator_id' => $creator->id, 'title' => 'Titre sans rapport']);
@@ -82,8 +84,8 @@ class VideoCatalogApiTest extends TestCase
 
     public function test_catalogue_can_be_filtered_by_creator(): void
     {
-        $creatorA = \App\Models\User::factory()->create(['role' => \App\Enums\UserRole::Creator]);
-        $creatorB = \App\Models\User::factory()->create(['role' => \App\Enums\UserRole::Creator]);
+        $creatorA = User::factory()->create(['role' => UserRole::Creator]);
+        $creatorB = User::factory()->create(['role' => UserRole::Creator]);
         Video::factory()->approved()->create(['creator_id' => $creatorA->id]);
         Video::factory()->approved()->create(['creator_id' => $creatorB->id]);
 

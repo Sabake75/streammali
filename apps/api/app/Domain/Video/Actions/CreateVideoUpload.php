@@ -9,9 +9,7 @@ use App\Domain\Video\Models\Video;
 
 class CreateVideoUpload
 {
-    public function __construct(private readonly VideoStorageGateway $gateway)
-    {
-    }
+    public function __construct(private readonly VideoStorageGateway $gateway) {}
 
     public function __invoke(Video $video, int $fileSizeBytes): VideoUploadInitiation
     {

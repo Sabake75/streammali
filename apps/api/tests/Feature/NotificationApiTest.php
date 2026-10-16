@@ -3,12 +3,12 @@
 namespace Tests\Feature;
 
 use App\Domain\Moderation\Actions\SendMessage;
-use App\Domain\Moderation\Enums\VideoStatus;
 use App\Domain\Video\Enums\VideoSourceStatus;
 use App\Domain\Video\Models\Video;
 use App\Enums\UserRole;
 use App\Filament\Resources\Videos\Pages\ListVideos;
 use App\Models\User;
+use App\Notifications\VideoStatusChanged;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -86,7 +86,7 @@ class NotificationApiTest extends TestCase
     {
         $creator = User::factory()->create(['role' => UserRole::Creator]);
         $video = Video::factory()->create(['creator_id' => $creator->id, 'source_status' => VideoSourceStatus::Ready]);
-        $video->creator->notify(new \App\Notifications\VideoStatusChanged($video));
+        $video->creator->notify(new VideoStatusChanged($video));
 
         $notificationId = $creator->notifications()->first()->id;
 
@@ -103,8 +103,8 @@ class NotificationApiTest extends TestCase
         $creator = User::factory()->create(['role' => UserRole::Creator]);
         $videoA = Video::factory()->create(['creator_id' => $creator->id]);
         $videoB = Video::factory()->create(['creator_id' => $creator->id]);
-        $creator->notify(new \App\Notifications\VideoStatusChanged($videoA));
-        $creator->notify(new \App\Notifications\VideoStatusChanged($videoB));
+        $creator->notify(new VideoStatusChanged($videoA));
+        $creator->notify(new VideoStatusChanged($videoB));
 
         $this->actingAs($creator, 'sanctum')
             ->postJson('/api/notifications/read-all')
@@ -118,7 +118,7 @@ class NotificationApiTest extends TestCase
         $creator = User::factory()->create(['role' => UserRole::Creator]);
         $otherViewer = User::factory()->create(['role' => UserRole::Viewer]);
         $video = Video::factory()->create(['creator_id' => $creator->id]);
-        $creator->notify(new \App\Notifications\VideoStatusChanged($video));
+        $creator->notify(new VideoStatusChanged($video));
 
         $notificationId = $creator->notifications()->first()->id;
 

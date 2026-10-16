@@ -7,6 +7,5 @@ final readonly class VideoUploadInitiation
     public function __construct(
         public string $uploadUrl,
         public string $providerVideoId,
-    ) {
-    }
+    ) {}
 }

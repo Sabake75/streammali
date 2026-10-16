@@ -25,7 +25,7 @@ class CreatorStatsApiTest extends TestCase
         $payment = Payment::factory()->create([
             'video_id' => $video->id,
             'amount' => $amount,
-            'provider_pay_token' => 'pay-token-' . uniqid(),
+            'provider_pay_token' => 'pay-token-'.uniqid(),
         ]);
 
         app(ConfirmPayment::class)($payment);

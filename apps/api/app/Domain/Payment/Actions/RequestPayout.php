@@ -10,9 +10,7 @@ use Illuminate\Support\Facades\Cache;
 
 class RequestPayout
 {
-    public function __construct(private readonly GetCreatorBalance $getCreatorBalance)
-    {
-    }
+    public function __construct(private readonly GetCreatorBalance $getCreatorBalance) {}
 
     public function __invoke(User $creator, int $amount, string $destinationMsisdn): Payout
     {

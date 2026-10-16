@@ -12,9 +12,7 @@ use Illuminate\Support\Str;
 
 class InitiatePayment
 {
-    public function __construct(private readonly PaymentGateway $gateway)
-    {
-    }
+    public function __construct(private readonly PaymentGateway $gateway) {}
 
     public function __invoke(User $buyer, Video $video, string $payerMsisdn): InitiatedPayment
     {

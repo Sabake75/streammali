@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Domain\Payment\Enums\PaymentStatus;
 use App\Domain\Video\Enums\VideoSourceStatus;
 use App\Domain\Video\Models\Video;
 use App\Enums\UserRole;
@@ -113,7 +114,7 @@ class VideoUploadApiTest extends TestCase
             'buyer_id' => $viewer->id,
             'amount' => $video->price,
             'order_reference' => 'order-1',
-            'status' => \App\Domain\Payment\Enums\PaymentStatus::Succeeded,
+            'status' => PaymentStatus::Succeeded,
             'confirmed_at' => now(),
         ]);
 

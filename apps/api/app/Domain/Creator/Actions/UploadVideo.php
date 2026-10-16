@@ -10,7 +10,7 @@ use App\Models\User;
 class UploadVideo
 {
     /**
-     * @param array{title: string, description?: ?string, category: string, poster_path?: ?string, duration_seconds?: ?int, price?: ?int} $data
+     * @param  array{title: string, description?: ?string, category: string, poster_path?: ?string, duration_seconds?: ?int, price?: ?int}  $data
      */
     public function __invoke(User $creator, array $data): Video
     {

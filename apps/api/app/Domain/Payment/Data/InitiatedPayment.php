@@ -9,6 +9,5 @@ final readonly class InitiatedPayment
     public function __construct(
         public Payment $payment,
         public string $paymentUrl,
-    ) {
-    }
+    ) {}
 }

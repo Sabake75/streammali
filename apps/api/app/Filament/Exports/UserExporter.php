@@ -30,7 +30,7 @@ class UserExporter extends Exporter
             ExportColumn::make('account_status')
                 ->label('Statut')
                 ->formatStateUsing(fn (AccountStatus $state) => $state->label()),
-            ExportColumn::make('identity_verified_at')->label("Identité vérifiée le"),
+            ExportColumn::make('identity_verified_at')->label('Identité vérifiée le'),
             ExportColumn::make('created_at')->label('Inscrit le'),
         ];
     }

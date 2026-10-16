@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Domain\Moderation\Enums\VideoStatus;
 use App\Domain\Payment\Enums\PaymentStatus;
 use App\Domain\Payment\Models\Payment;
 use App\Domain\Video\Enums\VideoSourceStatus;

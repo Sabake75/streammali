@@ -8,6 +8,5 @@ final readonly class PaymentInitiationResult
         public string $paymentUrl,
         public string $payToken,
         public ?string $notifToken = null,
-    ) {
-    }
+    ) {}
 }

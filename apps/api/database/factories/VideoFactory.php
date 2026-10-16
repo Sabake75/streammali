@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Domain\Moderation\Enums\VideoStatus;
 use App\Domain\Video\Models\Category;
 use App\Domain\Video\Models\Video;
+use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -21,7 +22,7 @@ class VideoFactory extends Factory
     public function definition(): array
     {
         return [
-            'creator_id' => User::factory()->state(['role' => \App\Enums\UserRole::Creator]),
+            'creator_id' => User::factory()->state(['role' => UserRole::Creator]),
             'title' => fake()->sentence(3),
             'description' => fake()->paragraph(),
             'category_id' => Category::inRandomOrder()->value('id'),

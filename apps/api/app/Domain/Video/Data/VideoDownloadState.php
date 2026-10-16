@@ -7,6 +7,5 @@ final readonly class VideoDownloadState
     public function __construct(
         public bool $ready,
         public ?string $url,
-    ) {
-    }
+    ) {}
 }

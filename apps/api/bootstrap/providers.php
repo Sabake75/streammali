@@ -1,6 +1,9 @@
 <?php
 
+use App\Providers\AppServiceProvider;
+use App\Providers\Filament\ModerationPanelProvider;
+
 return [
-    App\Providers\AppServiceProvider::class,
-    App\Providers\Filament\ModerationPanelProvider::class,
+    AppServiceProvider::class,
+    ModerationPanelProvider::class,
 ];

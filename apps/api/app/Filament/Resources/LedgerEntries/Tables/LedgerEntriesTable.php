@@ -77,8 +77,12 @@ class LedgerEntriesTable
                         ->when($data['max'] ?? null, fn ($query, $value) => $query->where('id', '<=', $value)))
                     ->indicateUsing(function (array $data): array {
                         $indicators = [];
-                        if ($data['min'] ?? null) $indicators[] = 'ID ≥ '.$data['min'];
-                        if ($data['max'] ?? null) $indicators[] = 'ID ≤ '.$data['max'];
+                        if ($data['min'] ?? null) {
+                            $indicators[] = 'ID ≥ '.$data['min'];
+                        }
+                        if ($data['max'] ?? null) {
+                            $indicators[] = 'ID ≤ '.$data['max'];
+                        }
 
                         return $indicators;
                     }),
@@ -109,8 +113,12 @@ class LedgerEntriesTable
                         ->when($data['max'] ?? null, fn ($query, $value) => $query->where('gross_amount', '<=', $value)))
                     ->indicateUsing(function (array $data): array {
                         $indicators = [];
-                        if ($data['min'] ?? null) $indicators[] = 'Brut ≥ '.$data['min'].' FCFA';
-                        if ($data['max'] ?? null) $indicators[] = 'Brut ≤ '.$data['max'].' FCFA';
+                        if ($data['min'] ?? null) {
+                            $indicators[] = 'Brut ≥ '.$data['min'].' FCFA';
+                        }
+                        if ($data['max'] ?? null) {
+                            $indicators[] = 'Brut ≤ '.$data['max'].' FCFA';
+                        }
 
                         return $indicators;
                     }),
@@ -125,8 +133,12 @@ class LedgerEntriesTable
                         ->when($data['max'] ?? null, fn ($query, $value) => $query->where('commission_amount', '<=', $value)))
                     ->indicateUsing(function (array $data): array {
                         $indicators = [];
-                        if ($data['min'] ?? null) $indicators[] = 'Commission ≥ '.$data['min'].' FCFA';
-                        if ($data['max'] ?? null) $indicators[] = 'Commission ≤ '.$data['max'].' FCFA';
+                        if ($data['min'] ?? null) {
+                            $indicators[] = 'Commission ≥ '.$data['min'].' FCFA';
+                        }
+                        if ($data['max'] ?? null) {
+                            $indicators[] = 'Commission ≤ '.$data['max'].' FCFA';
+                        }
 
                         return $indicators;
                     }),
@@ -141,8 +153,12 @@ class LedgerEntriesTable
                         ->when($data['max'] ?? null, fn ($query, $value) => $query->where('net_amount', '<=', $value)))
                     ->indicateUsing(function (array $data): array {
                         $indicators = [];
-                        if ($data['min'] ?? null) $indicators[] = 'Net ≥ '.$data['min'].' FCFA';
-                        if ($data['max'] ?? null) $indicators[] = 'Net ≤ '.$data['max'].' FCFA';
+                        if ($data['min'] ?? null) {
+                            $indicators[] = 'Net ≥ '.$data['min'].' FCFA';
+                        }
+                        if ($data['max'] ?? null) {
+                            $indicators[] = 'Net ≤ '.$data['max'].' FCFA';
+                        }
 
                         return $indicators;
                     }),
@@ -177,8 +193,12 @@ class LedgerEntriesTable
                         ->when($data['until'] ?? null, fn ($query, $value) => $query->whereDate('created_at', '<=', $value)))
                     ->indicateUsing(function (array $data): array {
                         $indicators = [];
-                        if ($data['from'] ?? null) $indicators[] = 'Depuis le '.Carbon::parse($data['from'])->format('d/m/Y');
-                        if ($data['until'] ?? null) $indicators[] = "Jusqu'au ".Carbon::parse($data['until'])->format('d/m/Y');
+                        if ($data['from'] ?? null) {
+                            $indicators[] = 'Depuis le '.Carbon::parse($data['from'])->format('d/m/Y');
+                        }
+                        if ($data['until'] ?? null) {
+                            $indicators[] = "Jusqu'au ".Carbon::parse($data['until'])->format('d/m/Y');
+                        }
 
                         return $indicators;
                     }),

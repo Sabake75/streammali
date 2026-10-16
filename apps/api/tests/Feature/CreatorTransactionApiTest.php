@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Domain\Moderation\Enums\VideoStatus;
 use App\Domain\Payment\Actions\ConfirmPayment;
+use App\Domain\Payment\Models\Payment;
 use App\Domain\Video\Models\Video;
 use App\Enums\UserRole;
 use App\Models\User;
@@ -27,7 +28,7 @@ class CreatorTransactionApiTest extends TestCase
             ->state(['status' => VideoStatus::Approved, 'price' => $amount, 'title' => $videoTitle])
             ->create();
 
-        $payment = \App\Domain\Payment\Models\Payment::factory()->create([
+        $payment = Payment::factory()->create([
             'video_id' => $video->id,
             'amount' => $amount,
             'provider_pay_token' => 'pay-token',

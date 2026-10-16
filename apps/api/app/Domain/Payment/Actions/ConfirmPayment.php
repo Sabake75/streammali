@@ -18,9 +18,7 @@ use Illuminate\Support\Facades\DB;
  */
 class ConfirmPayment
 {
-    public function __construct(private readonly PaymentGateway $gateway)
-    {
-    }
+    public function __construct(private readonly PaymentGateway $gateway) {}
 
     public function __invoke(Payment $payment): Payment
     {
