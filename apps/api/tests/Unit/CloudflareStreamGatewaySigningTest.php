@@ -33,7 +33,7 @@ class CloudflareStreamGatewaySigningTest extends TestCase
     public function test_returns_null_when_the_video_has_no_playback_url_yet(): void
     {
         [, $pem] = $this->generateKeyPair();
-        config(['services.cloudflare_stream.signing_key_id' => 'key-1', 'services.cloudflare_stream.signing_key_pem' => $pem]);
+        config(['services.cloudflare_stream.signing_key_id' => 'key-1', 'services.cloudflare_stream.signing_key_pem' => base64_encode($pem)]);
 
         $video = Video::factory()->create(['provider_video_id' => null, 'playback_url' => null]);
 
@@ -45,7 +45,10 @@ class CloudflareStreamGatewaySigningTest extends TestCase
         [$publicKey, $privateKeyPem] = $this->generateKeyPair();
         config([
             'services.cloudflare_stream.signing_key_id' => 'key-1',
-            'services.cloudflare_stream.signing_key_pem' => $privateKeyPem,
+            // Base64, same shape as Cloudflare's own POST /stream/keys
+            // response (confirmed against the real account, 2026-10-16) —
+            // signPlaybackUrl() decodes this itself.
+            'services.cloudflare_stream.signing_key_pem' => base64_encode($privateKeyPem),
             'services.cloudflare_stream.signed_url_ttl_seconds' => 3600,
         ]);
 

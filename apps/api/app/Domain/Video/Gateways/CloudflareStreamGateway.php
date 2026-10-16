@@ -197,8 +197,17 @@ class CloudflareStreamGateway implements VideoStorageGateway
             'exp' => $exp,
         ]));
 
+        // `POST /stream/keys`'s response has `pem` already base64-encoded
+        // (confirmed against the real account, 2026-10-16) — the literal
+        // PEM text (dashes, "-----BEGIN RSA PRIVATE KEY-----"...) is what
+        // openssl_sign() actually needs, not the base64 wrapper around it.
+        // Storing the env var exactly as Cloudflare returned it (a flat
+        // base64 string, no embedded newlines to escape) keeps it a
+        // single-line value on both .env and Render's dashboard.
+        $privateKeyPem = base64_decode($config['signing_key_pem']);
+
         $signingInput = "{$header}.{$payload}";
-        $signed = openssl_sign($signingInput, $signature, $config['signing_key_pem'], OPENSSL_ALGO_SHA256);
+        $signed = openssl_sign($signingInput, $signature, $privateKeyPem, OPENSSL_ALGO_SHA256);
 
         if (! $signed) {
             return null;
