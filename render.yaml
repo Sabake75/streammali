@@ -122,11 +122,14 @@ services:
       # attente que son KYC marchand aboutisse.
       - key: ORANGE_MONEY_BASE_URL
         value: https://api.orange.com
-      # "dev" tant que seul le produit sandbox "Orange Money WebPay Dev" est
-      # approuvé côté Developer Center — repasser à "ml" une fois le produit
-      # de production approuvé (voir CLAUDE.md).
+      # Produit de production approuvé (2026-10-16) — nouveaux
+      # client_id/client_secret dont le scope OAuth inclut
+      # ope:orange-money_mpay_ml:v1:access (vérifié avec un vrai appel
+      # oauth/v3/token), "ml" est donc maintenant le bon code pays au lieu
+      # du "dev" littéral utilisé tant que seul le produit sandbox "Orange
+      # Money WebPay Dev" était approuvé côté Developer Center.
       - key: ORANGE_MONEY_COUNTRY
-        value: dev
+        value: ml
       - key: ORANGE_MONEY_CLIENT_ID
         sync: false
       - key: ORANGE_MONEY_CLIENT_SECRET
