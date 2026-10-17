@@ -36,7 +36,7 @@ class HeroBanner extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Le cinéma malien, en un clic.',
+                  'Profite des vidéos de ton créateur préféré.',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 22,
@@ -46,8 +46,8 @@ class HeroBanner extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Films, clips et sketchs de créateurs maliens, 100 FCFA la vidéo. '
-                  'Paiement Mobile Money, accès immédiat.',
+                  'Soutiens-le directement à chaque vue : 100 FCFA la vidéo, payée en Mobile Money, '
+                  'accès immédiat.',
                   style: TextStyle(color: Colors.white.withValues(alpha: 0.92), fontSize: 16, height: 1.4),
                 ),
                 const SizedBox(height: 14),

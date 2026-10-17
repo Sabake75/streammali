@@ -6,6 +6,7 @@ import '../services/api_client.dart';
 import '../services/auth_controller.dart';
 import '../theme.dart';
 import '../widgets/app_logo.dart';
+import '../widgets/become_creator_banner.dart';
 import '../widgets/error_retry_view.dart';
 import '../widgets/hero_banner.dart';
 import '../widgets/notification_bell.dart';
@@ -230,6 +231,10 @@ class _CatalogueScreenState extends State<CatalogueScreen> {
             Padding(
               padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
               child: const HeroBanner(),
+            ),
+            const Padding(
+              padding: EdgeInsets.fromLTRB(12, 12, 12, 0),
+              child: BecomeCreatorBanner(),
             ),
             if (_featured != null && _featured!.isNotEmpty)
               Padding(

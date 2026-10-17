@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../models/user.dart';
 import '../services/api_client.dart';
 import '../services/auth_controller.dart';
+import '../theme.dart';
 import '../widgets/app_logo.dart';
 import '../widgets/phone_number_field.dart';
 import '../widgets/pin_code_field.dart';
@@ -108,6 +109,8 @@ class _UpgradeToCreatorScreenState extends State<_UpgradeToCreatorScreen> {
           children: [
             const Center(child: AppLogo(badgeSize: 44, fontSize: 24)),
             const SizedBox(height: 28),
+            const _CreatorPitch(),
+            const SizedBox(height: 24),
             Text('Connecté en tant que ${user.name}. Plus qu\'une pièce d\'identité pour publier tes vidéos.'),
             const SizedBox(height: 16),
             OutlinedButton.icon(
@@ -237,6 +240,8 @@ class _FullRegistrationScreenState extends State<_FullRegistrationScreen> {
             children: [
               const Center(child: AppLogo(badgeSize: 44, fontSize: 24)),
               const SizedBox(height: 28),
+              const _CreatorPitch(),
+              const SizedBox(height: 24),
               const Text(
                 "Une pièce d'identité est requise pour publier des vidéos sur StreamMali.",
               ),
@@ -283,6 +288,81 @@ class _FullRegistrationScreenState extends State<_FullRegistrationScreen> {
         ),
         ),
       ),
+    );
+  }
+}
+
+/// Shared pitch above both registration variants — mirrors the hero section
+/// on apps/web/src/app/inscription-createur/page.tsx, including the exact
+/// copy tested against the Facebook creator-acquisition campaign.
+class _CreatorPitch extends StatelessWidget {
+  const _CreatorPitch();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Tes vidéos tournent déjà partout. Pourquoi tu ne gagnes rien ?',
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          'Réalisateur, humoriste, artiste ? Mets tes créations sur StreamMali, fixe ton prix, et '
+          'fais-toi payer par tes fans à chaque vue, directement sur Orange Money.',
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade600),
+        ),
+        const SizedBox(height: 16),
+        const _PitchRow(
+          title: '75 % pour toi',
+          text: "Sur chaque vente de 100 FCFA, StreamMali garde une commission pour l'hébergement "
+              'et le paiement Mobile Money.',
+        ),
+        const SizedBox(height: 10),
+        const _PitchRow(
+          title: 'Reversé chaque semaine',
+          text: 'Retrait vers ton Mobile Money dès 10 000 FCFA de solde.',
+        ),
+        const SizedBox(height: 10),
+        const _PitchRow(
+          title: 'Mise en ligne simple',
+          text: "Dépose ta vidéo et une pièce d'identité, la modération vérifie puis valide la "
+              'mise en ligne.',
+        ),
+      ],
+    );
+  }
+}
+
+class _PitchRow extends StatelessWidget {
+  final String title;
+  final String text;
+
+  const _PitchRow({required this.title, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 6,
+          height: 6,
+          margin: const EdgeInsets.only(top: 7),
+          decoration: const BoxDecoration(color: AppColors.orange600, shape: BoxShape.circle),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w700)),
+              Text(text, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey.shade600)),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

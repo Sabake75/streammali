@@ -8,6 +8,7 @@ import '../widgets/status_pill.dart';
 import '../widgets/video_upload_widget.dart';
 import '../theme.dart';
 import 'creator_balance_screen.dart';
+import 'login_screen.dart';
 import 'messaging_screen.dart';
 import 'creator_new_video_screen.dart';
 import 'creator_stats_screen.dart';
@@ -60,32 +61,48 @@ class _CreatorScreenState extends State<CreatorScreen> {
           final user = AuthController.instance.user;
 
           if (user == null) {
-            return const Center(child: Text('Connecte-toi pour accéder à cet espace.'));
+            return _CreatorGateCard(
+              subtitle: 'Connecte-toi ou crée un compte créateur pour commencer à être payé à chaque vue.',
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => const RegisterCreatorScreen()),
+                      );
+                    },
+                    child: const Text('Crée un compte créateur'),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => const LoginScreen()),
+                    );
+                  },
+                  child: const Text('Déjà un compte ? Connecte-toi'),
+                ),
+              ],
+            );
           }
 
           if (user.role != 'creator') {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text(
-                      'Cet espace est réservé aux comptes créateur.',
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 12),
-                    OutlinedButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => const RegisterCreatorScreen()),
-                        );
-                      },
-                      child: const Text('Devenir créateur'),
-                    ),
-                  ],
+            return _CreatorGateCard(
+              subtitle: "Cet espace est réservé aux comptes créateur (pièce d'identité requise).",
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => const RegisterCreatorScreen()),
+                      );
+                    },
+                    child: const Text('Devenir créateur'),
+                  ),
                 ),
-              ),
+              ],
             );
           }
 
@@ -228,6 +245,67 @@ class _ActionTile extends StatelessWidget {
                 ),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Mirrors the redesigned auth gate on apps/web/src/app/creer/layout.tsx —
+/// a card (not bare centered text) with the same hook headline and a CTA
+/// button instead of a plain link, for whoever lands on this screen without
+/// a creator account yet.
+class _CreatorGateCard extends StatelessWidget {
+  final String subtitle;
+  final List<Widget> children;
+
+  const _CreatorGateCard({required this.subtitle, required this.children});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 360),
+          child: Card(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [AppColors.orange500, AppColors.accent600],
+                      ),
+                      borderRadius: BorderRadius.circular(40 * 0.28),
+                    ),
+                    child: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 24),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Tes vidéos tournent déjà partout. Pourquoi tu ne gagnes rien ?',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    subtitle,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey.shade600),
+                  ),
+                  const SizedBox(height: 20),
+                  ...children,
+                ],
+              ),
+            ),
           ),
         ),
       ),
