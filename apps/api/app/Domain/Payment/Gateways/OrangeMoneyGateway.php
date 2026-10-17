@@ -24,6 +24,10 @@ use RuntimeException;
  *   Orange rejette explicitement localhost/127.0.0.1 ("localhost and
  *   127.0.0.1 are not allowed"), donc impossible de tester le
  *   redirect/webhook en boucle complète depuis un frontend en dev local.
+ * - `currency` dépend du pays dans l'URL, pas d'une constante : `OUV` (placeholder
+ *   sandbox) sur le chemin `dev`, mais le vrai code ISO (`XOF`, Franc CFA BCEAO) sur
+ *   le chemin pays réel (`ml`) — confirmé en réel (2026-10-17) avec un 400 "currency
+ *   OUV unknown for ML" une fois `ORANGE_MONEY_COUNTRY` passé à `ml`.
  */
 class OrangeMoneyGateway implements PaymentGateway
 {
@@ -35,7 +39,7 @@ class OrangeMoneyGateway implements PaymentGateway
             ->baseUrl($this->apiBaseUrl())
             ->post('/webpayment', [
                 'merchant_key' => $config['merchant_key'],
-                'currency' => 'OUV', // Franc CFA (UEMOA) selon la nomenclature Orange Money Web Payment
+                'currency' => $config['country'] === 'dev' ? 'OUV' : 'XOF',
                 'order_id' => $payment->order_reference,
                 'amount' => $payment->amount,
                 'return_url' => $config['return_url'],
