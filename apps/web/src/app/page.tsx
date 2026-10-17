@@ -33,10 +33,10 @@ export default async function CataloguePage(props: PageProps<"/">) {
         <div className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-accent-400/30 blur-3xl" />
         <div className="relative px-6 py-12 sm:px-10 sm:py-16">
           <h1 className="max-w-2xl text-3xl font-extrabold tracking-tight sm:text-4xl">
-            Le cinéma malien, en un clic.
+            Profite des vidéos de ton créateur préféré.
           </h1>
           <p className="mt-3 max-w-xl text-orange-50">
-            Films, clips et sketchs de créateurs maliens, 100 FCFA la vidéo. Paiement Mobile Money, accès immédiat.
+            Soutiens-le directement à chaque vue : 100 FCFA la vidéo, payée en Mobile Money, accès immédiat.
           </p>
           <div className="mt-6 flex flex-wrap gap-2 text-sm font-medium">
             <span className="flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 backdrop-blur">

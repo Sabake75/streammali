@@ -12,11 +12,11 @@ export default function RegisterCreatorPage() {
     <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-12 sm:px-6">
       <section className="text-center">
         <h1 className="text-2xl font-extrabold tracking-tight text-neutral-900 dark:text-neutral-50 sm:text-3xl">
-          Fais connaître tes films, clips et sketchs, et touche un revenu
+          Tes vidéos tournent déjà partout. Pourquoi tu ne gagnes rien ?
         </h1>
         <p className="mx-auto mt-3 max-w-xl text-neutral-600 dark:text-neutral-400">
-          Tes vidéos circulent déjà sur WhatsApp sans rien te rapporter. Sur StreamMali, chaque vue est payante,
-          100 FCFA en Mobile Money, et une partie te revient directement.
+          Réalisateur, humoriste, artiste ? Mets tes créations sur StreamMali, fixe ton prix, et fais-toi payer par
+          tes fans à chaque vue, directement sur Orange Money.
         </p>
         <dl className="mt-8 grid gap-4 text-left sm:grid-cols-3">
           <div className="rounded-xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-950">
