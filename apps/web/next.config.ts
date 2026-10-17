@@ -31,11 +31,16 @@ const contentSecurityPolicy = [
   // dangerouslySetInnerHTML, all user content goes through React's
   // auto-escaping) — this CSP's real job is the other directives:
   // frame-ancestors, object-src, connect-src, base-uri, form-action.
-  "script-src 'self' 'unsafe-inline'",
+  // Umami (analytics de fréquentation, voir layout.tsx) : le script est
+  // chargé depuis cloud.umami.is et envoie ses événements au même host —
+  // sans ces deux entrées, le navigateur bloque silencieusement les deux
+  // (aucune erreur visible hors console), le script apparaît dans le HTML
+  // mais aucune visite ne remonte jamais sur le dashboard Umami.
+  "script-src 'self' 'unsafe-inline' https://cloud.umami.is",
   "style-src 'self' 'unsafe-inline'",
   `img-src 'self' data: ${cloudflareStream}`,
   `media-src 'self' ${cloudflareStream}`,
-  `connect-src 'self' ${apiOrigin} ${cloudflareStream}`,
+  `connect-src 'self' ${apiOrigin} ${cloudflareStream} https://cloud.umami.is`,
   "font-src 'self'",
   "object-src 'none'",
   "frame-ancestors 'none'",
