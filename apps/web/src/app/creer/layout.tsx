@@ -10,14 +10,19 @@ export default function CreatorLayout({ children }: { children: React.ReactNode 
   if (!user) {
     return (
       <CenteredMessage>
-        <Link href="/connexion?next=/creer" className="font-medium text-orange-600 hover:underline dark:text-orange-400">
-          Connecte-toi
-        </Link>{" "}
-        ou{" "}
-        <Link href="/inscription-createur" className="font-medium text-orange-600 hover:underline dark:text-orange-400">
-          crée un compte créateur
-        </Link>{" "}
-        pour accéder à cet espace.
+        <p className="text-lg font-bold text-neutral-900 dark:text-neutral-50">
+          Tes vidéos tournent déjà partout. Pourquoi tu ne gagnes rien ?
+        </p>
+        <p className="mt-2">
+          <Link href="/connexion?next=/creer" className="font-medium text-orange-600 hover:underline dark:text-orange-400">
+            Connecte-toi
+          </Link>{" "}
+          ou{" "}
+          <Link href="/inscription-createur" className="font-medium text-orange-600 hover:underline dark:text-orange-400">
+            crée un compte créateur
+          </Link>{" "}
+          pour commencer à être payé à chaque vue.
+        </p>
       </CenteredMessage>
     );
   }
@@ -25,11 +30,16 @@ export default function CreatorLayout({ children }: { children: React.ReactNode 
   if (user.role !== "creator") {
     return (
       <CenteredMessage>
-        Cet espace est réservé aux comptes créateur.{" "}
-        <Link href="/inscription-createur" className="font-medium text-orange-600 hover:underline dark:text-orange-400">
-          Devenir créateur
-        </Link>{" "}
-        (pièce d&apos;identité requise).
+        <p className="text-lg font-bold text-neutral-900 dark:text-neutral-50">
+          Tes vidéos tournent déjà partout. Pourquoi tu ne gagnes rien ?
+        </p>
+        <p className="mt-2">
+          Cet espace est réservé aux comptes créateur.{" "}
+          <Link href="/inscription-createur" className="font-medium text-orange-600 hover:underline dark:text-orange-400">
+            Devenir créateur
+          </Link>{" "}
+          (pièce d&apos;identité requise).
+        </p>
       </CenteredMessage>
     );
   }
@@ -40,7 +50,7 @@ export default function CreatorLayout({ children }: { children: React.ReactNode 
 function CenteredMessage({ children }: { children: React.ReactNode }) {
   return (
     <main className="mx-auto flex w-full max-w-md flex-1 flex-col items-center justify-center px-4 py-16 text-center text-neutral-600 dark:text-neutral-400">
-      <p>{children}</p>
+      {children}
     </main>
   );
 }
