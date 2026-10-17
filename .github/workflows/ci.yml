@@ -77,9 +77,15 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      # pubspec.lock's own "sdks:" section pins flutter: ">=3.44.0" (pulled
+      # in by a dependency bump, not the app's own `environment:` floor) —
+      # a version here below that silently breaks `flutter pub get` in CI
+      # ("Install dependencies" fails before any analyze/test/build step
+      # even runs), confirmed 2026-10-17 after this had been stuck on 3.38.0
+      # since before the project's SDK requirements moved past it.
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.38.0"
+          flutter-version: "3.47.4"
           channel: stable
 
       - name: Install dependencies
