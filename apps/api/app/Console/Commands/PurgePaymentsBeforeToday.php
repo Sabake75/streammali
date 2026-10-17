@@ -13,30 +13,39 @@ use Illuminate\Support\Facades\DB;
  * is dev/sandbox test data, inflating the moderator dashboard's "chiffre
  * d'affaires"/solde stats. Dry-run by default; `--force` actually deletes.
  *
- * Refuses to run if any Payout exists: GetCreatorBalance computes a
- * creator's balance as sum(net_amount) minus already-paid payouts, so
- * deleting the ledger entries a real payout was computed against would
- * silently corrupt that creator's balance.
+ * Refuses to run if any Payout exists, unless `--include-paid-payouts` is
+ * also passed: GetCreatorBalance computes a creator's balance as
+ * sum(net_amount) minus pending/paid payouts, so deleting the ledger
+ * entries a payout was computed against would silently corrupt that
+ * creator's balance — `--include-paid-payouts` is an explicit
+ * acknowledgment that no real money actually moved for those payouts
+ * (the disbursement itself is a manual step outside the app, see
+ * App\Domain\Payment\README.md — a "paid" status alone doesn't prove it).
  */
 class PurgePaymentsBeforeToday extends Command
 {
-    protected $signature = 'payments:purge-before-today {--force : Supprime réellement (sans ce flag, affiche seulement un rapport)}';
+    protected $signature = 'payments:purge-before-today
+        {--force : Supprime réellement (sans ce flag, affiche seulement un rapport)}
+        {--include-paid-payouts : Supprime aussi les demandes de retrait (même "paid") créées avant aujourd\'hui — à utiliser seulement si aucun argent réel n\'a été envoyé}';
 
-    protected $description = "Supprime les paiements et écritures de ledger créés avant aujourd'hui (nettoyage des ventes de test avant lancement public)";
+    protected $description = "Supprime les paiements, écritures de ledger et (optionnellement) demandes de retrait créés avant aujourd'hui (nettoyage des ventes de test avant lancement public)";
 
     public function handle(): int
     {
-        if (Payout::query()->exists()) {
-            $this->error('Au moins une demande de retrait existe déjà — abandon. Supprimer ces paiements de test rendrait les soldes créateur incohérents.');
+        $cutoff = now()->startOfDay();
+        $includePayouts = (bool) $this->option('include-paid-payouts');
+
+        $payoutsBefore = Payout::query()->where('created_at', '<', $cutoff)->get();
+        if ($payoutsBefore->isNotEmpty() && ! $includePayouts) {
+            $this->error('Au moins une demande de retrait existe déjà — abandon. Relance avec --include-paid-payouts seulement si aucun argent réel n\'a été envoyé pour ces retraits.');
 
             return self::FAILURE;
         }
 
-        $cutoff = now()->startOfDay();
         $payments = Payment::query()->where('created_at', '<', $cutoff)->get();
 
-        if ($payments->isEmpty()) {
-            $this->info("Aucun paiement créé avant aujourd'hui.");
+        if ($payments->isEmpty() && $payoutsBefore->isEmpty()) {
+            $this->info("Rien à supprimer avant aujourd'hui.");
 
             return self::SUCCESS;
         }
@@ -44,11 +53,20 @@ class PurgePaymentsBeforeToday extends Command
         $paymentIds = $payments->pluck('id');
         $ledgerCount = LedgerEntry::query()->whereIn('payment_id', $paymentIds)->count();
 
-        $this->table(
-            ['Statut', 'Nombre'],
-            $payments->groupBy('status')->map(fn ($group) => $group->count())->map(fn ($count, $status) => [$status, $count])->values(),
-        );
+        if ($payments->isNotEmpty()) {
+            $this->table(
+                ['Statut paiement', 'Nombre'],
+                $payments->groupBy('status')->map(fn ($group) => $group->count())->map(fn ($count, $status) => [$status, $count])->values(),
+            );
+        }
         $this->line("→ {$payments->count()} paiement(s), {$ledgerCount} écriture(s) de ledger associée(s).");
+
+        if ($payoutsBefore->isNotEmpty()) {
+            $this->table(
+                ['Statut retrait', 'Nombre'],
+                $payoutsBefore->groupBy('status')->map(fn ($group) => $group->count())->map(fn ($count, $status) => [$status, $count])->values(),
+            );
+        }
 
         if (! $this->option('force')) {
             $this->warn('Dry-run : relance avec --force pour supprimer réellement.');
@@ -56,9 +74,10 @@ class PurgePaymentsBeforeToday extends Command
             return self::SUCCESS;
         }
 
-        DB::transaction(function () use ($paymentIds) {
+        DB::transaction(function () use ($paymentIds, $payoutsBefore) {
             LedgerEntry::query()->whereIn('payment_id', $paymentIds)->delete();
             Payment::query()->whereIn('id', $paymentIds)->delete();
+            Payout::query()->whereIn('id', $payoutsBefore->pluck('id'))->delete();
         });
 
         $this->info('Suppression effectuée.');

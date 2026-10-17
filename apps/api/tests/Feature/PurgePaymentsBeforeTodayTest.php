@@ -57,17 +57,37 @@ class PurgePaymentsBeforeTodayTest extends TestCase
         $this->assertSame($today->id, LedgerEntry::first()->payment_id);
     }
 
-    public function test_refuses_to_run_if_a_payout_already_exists(): void
+    public function test_refuses_to_run_if_a_payout_already_exists_without_the_include_flag(): void
     {
         $payment = Payment::factory()->succeeded()->create(['created_at' => now()->subDay()]);
-        Payout::create([
+        $payout = Payout::create([
             'creator_id' => $payment->video->creator_id,
             'amount' => 10000,
             'destination_msisdn' => '+223 76 00 00 00',
         ]);
+        $payout->forceFill(['created_at' => now()->subDay()])->save();
 
         $this->artisan('payments:purge-before-today', ['--force' => true])->assertFailed();
 
         $this->assertSame(1, Payment::count());
+        $this->assertSame(1, Payout::count());
+    }
+
+    public function test_include_paid_payouts_flag_also_deletes_payouts_created_before_today(): void
+    {
+        $payment = Payment::factory()->succeeded()->create(['created_at' => now()->subDay()]);
+        $payout = Payout::create([
+            'creator_id' => $payment->video->creator_id,
+            'amount' => 10000,
+            'destination_msisdn' => '+223 76 00 00 00',
+            'status' => 'paid',
+        ]);
+        $payout->forceFill(['created_at' => now()->subDay()])->save();
+
+        $this->artisan('payments:purge-before-today', ['--force' => true, '--include-paid-payouts' => true])
+            ->assertSuccessful();
+
+        $this->assertSame(0, Payment::count());
+        $this->assertSame(0, Payout::count());
     }
 }
