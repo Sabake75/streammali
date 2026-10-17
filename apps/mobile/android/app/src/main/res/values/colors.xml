@@ -3,6 +3,5 @@
      screen so the splash matches the app's own background instead of the
      default Flutter-template white. -->
 <resources>
-    <color name="launch_background">#F4F7FB</color>
-	<color name="ic_launcher_background">#2F6FE0</color>
+    <color name="launch_background">#FAF6F0</color>
 </resources>
