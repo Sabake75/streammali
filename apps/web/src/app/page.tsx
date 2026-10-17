@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { fetchCategories, fetchFeaturedVideos, fetchVideos } from "@/lib/api";
+import { BecomeCreatorBanner } from "@/components/BecomeCreatorBanner";
 import { CatalogueFilters } from "@/components/CatalogueFilters";
 import { HeroPattern } from "@/components/HeroPattern";
 import { OnboardingModal } from "@/components/OnboardingModal";
@@ -51,6 +52,8 @@ export default async function CataloguePage(props: PageProps<"/">) {
           </div>
         </div>
       </section>
+
+      <BecomeCreatorBanner />
 
       {featured.length > 0 && (
         <section className="mt-14">
