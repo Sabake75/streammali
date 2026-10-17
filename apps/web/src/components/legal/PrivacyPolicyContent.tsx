@@ -59,6 +59,10 @@ export function PrivacyPolicyContent() {
           <li>
             <strong>Cloudflare Stream</strong> : hébergement et diffusion des vidéos.
           </li>
+          <li>
+            <strong>Umami</strong> : statistiques de fréquentation anonymisées (pages vues,
+            provenance), sans cookie ni donnée personnelle.
+          </li>
         </ul>
       </TermsSection>
 
@@ -81,9 +85,11 @@ export function PrivacyPolicyContent() {
 
       <TermsSection title="Cookies et stockage local">
         <p>
-          StreamMali n&apos;utilise pas de cookies publicitaires ni de traceurs tiers. Le site
-          garde localement, sur ton appareil, ton jeton de connexion et le fait que tu aies déjà vu
-          le message de bienvenue, rien de plus, rien qui te suive d&apos;un site à l&apos;autre.
+          StreamMali n&apos;utilise pas de cookies publicitaires. Le site garde localement, sur ton
+          appareil, ton jeton de connexion et le fait que tu aies déjà vu le message de bienvenue,
+          rien de plus, rien qui te suive d&apos;un site à l&apos;autre. Un outil de mesure
+          d&apos;audience (Umami) enregistre les pages vues de façon anonymisée, sans cookie et
+          sans identifier qui que ce soit individuellement.
         </p>
       </TermsSection>
 

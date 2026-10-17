@@ -211,3 +211,8 @@ services:
         sync: false
       - key: SENTRY_DSN
         sync: false
+      # Optionnel : analytics de trafic (Umami Cloud, plan gratuit) — laissé
+      # vide, le script reste inactif tant que non défini (voir layout.tsx).
+      # ID du "website" créé sur cloud.umami.is, pas une clé secrète.
+      - key: NEXT_PUBLIC_UMAMI_WEBSITE_ID
+        sync: false
