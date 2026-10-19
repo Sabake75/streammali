@@ -29,6 +29,36 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   const umamiWebsiteId = process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://streammali.ml";
+
+  // Aide Google à identifier la marque et à proposer une recherche directe
+  // depuis les résultats (sitelinks search box) — /?search={terme} est déjà
+  // un paramètre réel de la page d'accueil (voir src/app/page.tsx).
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": `${siteUrl}/#organization`,
+        name: "StreamMali",
+        url: siteUrl,
+        email: "contact@streammali.ml",
+        telephone: "+22378981188",
+      },
+      {
+        "@type": "WebSite",
+        "@id": `${siteUrl}/#website`,
+        name: "StreamMali",
+        url: siteUrl,
+        publisher: { "@id": `${siteUrl}/#organization` },
+        potentialAction: {
+          "@type": "SearchAction",
+          target: { "@type": "EntryPoint", urlTemplate: `${siteUrl}/?search={search_term_string}` },
+          "query-input": "required name=search_term_string",
+        },
+      },
+    ],
+  };
 
   return (
     <html
@@ -36,6 +66,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-[var(--background)] text-[var(--foreground)]">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
         {/* Inert unless NEXT_PUBLIC_UMAMI_WEBSITE_ID is set — no cookies, no personal data, see politique-de-confidentialite. */}
         {umamiWebsiteId && (
           <Script
