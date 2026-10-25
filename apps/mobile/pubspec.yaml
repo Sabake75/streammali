@@ -46,7 +46,7 @@ dependencies:
   chewie: ^1.11.2
   path_provider: ^2.1.6
   webview_flutter: ^4.14.1
-  sentry_flutter: ^9.30.0
+  sentry_flutter: ^10.1.0
 
 dev_dependencies:
   flutter_test:
